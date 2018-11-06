@@ -1,0 +1,22 @@
+description: |
+  Install the AWS CLI via pip.
+
+steps:
+  - run:
+      name: Install AWS CLI
+      command: |
+        if [[ $(command -v pip) == "" ]]; then
+          echo "🚫 pip is required to install AWS CLI and is not available"
+          exit 1
+        else
+          if [[ $(command -v sudo) == "" ]]; then
+            echo "🚫 sudo is required to install AWS CLI and is not available"
+            exit 1
+          else
+            if [[ $(command -v aws) == "" ]]; then
+              sudo pip install awscli
+            else
+              echo "✅ AWS CLI is already installed"
+            fi
+          fi
+        fi
