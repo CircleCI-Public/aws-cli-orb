@@ -4,7 +4,7 @@ description: |
 
   View this orb on GitHub: https://github.com/CircleCI-Public/aws-cli-orb
 
-  View this orb in CircleCI's Orb Registry: https://circleci.com/orbs/registry/orb/circleci/aws-cli
+  View this orb in CircleCI's Orbs Registry: https://circleci.com/orbs/registry/orb/circleci/aws-cli
 
 executors:
   default:
