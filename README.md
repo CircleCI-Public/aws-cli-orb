@@ -14,7 +14,7 @@ In this example `config.yml` snippet, the required AWS secrets (Access Key ID, S
 version: 2.1
 
 orbs:
-  aws-cli: circleci/aws-cli@0.0.1
+  aws-cli: circleci/aws-cli@0.1.1
 
 jobs:
   aws-cli:
