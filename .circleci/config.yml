@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools
+  orb-tools: circleci/orb-tools:latest
 
 jobs:
   validate:
