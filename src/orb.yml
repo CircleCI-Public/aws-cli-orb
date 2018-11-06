@@ -1,6 +1,10 @@
 version: 2.1
 description: |
-  Installs and configures the AWS command-ine interface (awscli)
+  Installs and configures the AWS command-line interface (awscli)
+
+  View this orb on GitHub: https://github.com/CircleCI-Public/aws-cli-orb
+
+  View this orb in CircleCI's Orb Registry: https://circleci.com/orbs/registry/orb/circleci/aws-cli
 
 executors:
   default:
@@ -30,24 +34,24 @@ commands:
           name: Install AWS CLI
           command: |
             if [[ $(command -v pip) == "" ]]; then
-              echo "🚫 pip is required to install AWS CLI and is not available"
+              echo "pip is required to install AWS CLI and is not available"
               exit 1
             else
               if [[ $(command -v sudo) == "" ]]; then
-                echo "🚫 sudo is required to install AWS CLI and is not available"
+                echo "sudo is required to install AWS CLI and is not available"
                 exit 1
               else
                 if [[ $(command -v aws) == "" ]]; then
                   sudo pip install awscli
                 else
-                  echo "✅ AWS CLI is already installed"
+                  echo "AWS CLI is already installed"
                 fi
               fi
             fi
 
   configure:
     description: |
-      configure and store AWS credentials in
+      Configure and store AWS credentials in
       ~/.aws/credentials and ~/.aws/config
 
     parameters:
@@ -81,14 +85,14 @@ commands:
 
     steps:
       - run:
-          name: configure AWS Access Key ID
+          name: Configure AWS Access Key ID
           command: |
             aws configure set aws_access_key_id \
             << parameters.aws-access-key-id >> \
             --profile << parameters.profile-name >>
 
       - run:
-          name: configure AWS Secret Access Key
+          name: Configure AWS Secret Access Key
           command: |
             aws configure set aws_secret_access_key \
             << parameters.aws-secret-access-key >> \
