@@ -13,6 +13,7 @@ jobs:
           orb-path: src/@orb.yml
 
   publish:
+    executor: cli/default
     steps:
       - orb-path: src/@orb.yml
 
