@@ -1,6 +1,6 @@
 # AWS CLI Orb
 
-Easily nstall and configure the AWS CLI in your CircleCI jobs.
+Easily install and configure the AWS CLI in your CircleCI jobs.
 
 ## Usage
 
