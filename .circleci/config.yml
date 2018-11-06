@@ -1,0 +1,28 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools
+
+jobs:
+  validate:
+    executor: cli/default
+    steps:
+      - checkout
+
+      - orb-tools/validate:
+          orb-path: src/@orb.yml
+
+  publish:
+    orb-path: src/@orb.yml
+    orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH
+    publish-token-variable: $CIRCLE_TOKEN
+
+workflows:
+  version: 2
+  validate-publish:
+    jobs:
+      - validate
+
+      - publish:
+          requires:
+            - validate
