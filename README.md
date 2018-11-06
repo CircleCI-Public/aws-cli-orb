@@ -4,11 +4,11 @@ Easily install and configure the AWS CLI in your CircleCI jobs.
 
 ## Usage
 
-See [this orb's listing in CircleCI's Orbs registry](https://circleci.com/orbs/registry/orb/circleci/aws-cli) for details on usage, or see below example:
+See [this orb's listing in CircleCI's Orbs Registry](https://circleci.com/orbs/registry/orb/circleci/aws-cli) for details on usage, or see below example:
 
 ## Example
 
-In this example `config.yml` snippet, the required AWS secrets (Access Key ID, Secret Access Key) are stored, via Contexts, as environment variables in the `aws` context and then read as default parameter values by the `aws-cli/configure` command.
+In this example `config.yml` snippet, the required AWS secrets (Access Key ID, Secret Access Key) are stored, via [Contexts](https://circleci.com/docs/2.0/contexts), as environment variables in the `aws` context and then read as default parameter values by the `aws-cli/configure` command.
 
 ```yaml
 version: 2.1
