@@ -30,5 +30,7 @@ workflows:
       - validate
 
       - publish:
+          context:
+            orb-publishing
           requires:
             - validate
