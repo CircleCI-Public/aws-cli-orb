@@ -14,10 +14,11 @@ jobs:
           orb-path: src/@orb.yml
 
   orb-tools/publish:
-    executor: cli/default
     orb-path: src/@orb.yml
     orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH
     publish-token-variable: $CIRCLE_TOKEN
+    steps:
+      - publish
 
 workflows:
   version: 2
