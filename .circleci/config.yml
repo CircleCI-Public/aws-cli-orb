@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@2.0.0
-  cli: circleci/circleci-cli@0.0.1
+  orb-tools: circleci/orb-tools@volatile
+  cli: circleci/circleci-cli@volatile
 
 jobs:
   validate:
