@@ -1,10 +1,7 @@
 version: 2.1
+
 description: |
   Installs and configures the AWS command-line interface (awscli)
-
-  View this orb on GitHub: https://github.com/CircleCI-Public/aws-cli-orb
-
-  View this orb in CircleCI's Orbs Registry: https://circleci.com/orbs/registry/orb/circleci/aws-cli
 
 executors:
   default:
