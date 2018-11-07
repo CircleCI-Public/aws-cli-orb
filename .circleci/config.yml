@@ -20,7 +20,7 @@ jobs:
 
       - orb-tools/publish:
           orb-path: src/@orb.yml
-          orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH
+          orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH-$CIRCLE_SHA1
           token-variable: $CIRCLE_TOKEN
 
 workflows:
