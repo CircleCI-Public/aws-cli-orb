@@ -26,6 +26,6 @@ workflows:
     jobs:
       - validate
 
-      - publish:
+      - orb-tools/publish:
           requires:
             - validate
