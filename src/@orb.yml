@@ -1,7 +1,7 @@
 version: 2.1
 
 description: |
-  Installs and configures the AWS command-line interface (awscli)
+  Install and configure the AWS command-line interface (awscli)
 
 executors:
   default:
