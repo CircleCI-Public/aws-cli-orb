@@ -11,7 +11,7 @@ jobs:
       - checkout
 
       - orb-tools/validate:
-          orb-path: src/@orb.yml
+          orb-path: src/orb.yml
 
   publish:
     executor: cli/default
