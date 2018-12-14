@@ -57,7 +57,7 @@ jobs:
           token-variable: $CIRCLE_TOKEN
 
   promote-prod:
-    executor: cli
+    executor: cli/default
     parameters:
       release:
         type: enum
