@@ -1,36 +1,72 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@volatile
-  cli: circleci/circleci-cli@volatile
+  orb-tools: circleci/orb-tools@2.0.2
+  cli: circleci/circleci-cli@0.1.2
 
-jobs:
-  validate:
-    executor: cli/default
-    steps:
-      - checkout
-
-      - orb-tools/validate:
-          orb-path: src/orb.yml
-
-  publish:
-    executor: cli/default
-    steps:
-      - checkout
-
-      - orb-tools/publish:
-          orb-path: src/@orb.yml
-          orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH-$CIRCLE_SHA1
-          token-variable: $CIRCLE_TOKEN
+executors:
+  lint:
+    docker:
+      - image: singapore/lint-condo
 
 workflows:
   version: 2
-  validate-publish:
+  test-and-deploy:
     jobs:
-      - validate
+      - lint
 
-      - publish:
+      - validate:
+          requires:
+            - lint
+
+      - publish-dev:
           context:
             orb-publishing
           requires:
             - validate
+
+      - promote-prod:
+          name: publish-patch-release
+          requires:
+            - publish-dev
+          filters:
+            branches:
+              only: master
+
+jobs:
+  lint:
+    executor: lint
+    resource_class: small
+    steps:
+      - checkout
+      - run: yamllint .
+
+  validate:
+    executor: cli/default
+    resource_class: small
+    steps:
+      - checkout
+      - orb-tools/validate:
+          orb-path: src/orb.yml
+
+  publish-dev:
+    executor: cli/default
+    resource_class: small
+    steps:
+      - checkout
+      - orb-tools/publish:
+          orb-path: src/orb.yml
+          orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH-$CIRCLE_SHA1
+          token-variable: $CIRCLE_TOKEN
+
+  promote-prod:
+    executor: cli/default
+    resource_class: small
+    parameters:
+      release:
+        type: enum
+        default: "patch"
+        enum: ["patch", "minor", "major"]
+    steps:
+      - checkout
+      - run: circleci orb publish promote circleci/aws-cli@dev:$CIRCLE_BRANCH-$CIRCLE_SHA1 <<parameters.release>> --token $CIRCLE_TOKEN
