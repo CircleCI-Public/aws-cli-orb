@@ -36,12 +36,14 @@ workflows:
 jobs:
   lint:
     executor: lint
+    resource_class: small
     steps:
       - checkout
       - run: yamllint .
 
   validate:
     executor: cli/default
+    resource_class: small
     steps:
       - checkout
       - orb-tools/validate:
@@ -49,6 +51,7 @@ jobs:
 
   publish-dev:
     executor: cli/default
+    resource_class: small
     steps:
       - checkout
       - orb-tools/publish:
@@ -58,6 +61,7 @@ jobs:
 
   promote-prod:
     executor: cli/default
+    resource_class: small
     parameters:
       release:
         type: enum
