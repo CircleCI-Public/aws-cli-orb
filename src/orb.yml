@@ -109,4 +109,3 @@ commands:
           command: |
             aws configure set region << parameters.aws-region >> \
             --profile << parameters.profile-name >>
-
