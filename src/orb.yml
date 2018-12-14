@@ -71,23 +71,23 @@ commands:
           AWS access key id for IAM role. Set this to the name of
           the environment variable you will use to hold this
           value, i.e. $AWS_ACCESS_KEY.
-        type: string
-        default: $AWS_ACCESS_KEY_ID
+        type: env_var_name
+        default: AWS_ACCESS_KEY_ID
 
       aws-secret-access-key:
         description: |
           AWS secret key for IAM role. Set this to the name of
           the environment variable you will use to hold this
           value, i.e. $AWS_SECRET_ACCESS_KEY.
-        type: string
-        default: $AWS_SECRET_ACCESS_KEY
+        type: env_var_name
+        default: AWS_SECRET_ACCESS_KEY
 
       aws-region:
         description: |
           AWS region to operate in
           (defaults to the value of $AWS_REGION)
-        type: string
-        default: $AWS_REGION
+        type: env_var_name
+        default: AWS_DEFAULT_REGION
 
     steps:
       - run:
