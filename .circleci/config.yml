@@ -3,18 +3,18 @@ version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@2.0.2
   cli: circleci/circleci-cli@0.1.2
-  
+
 executors:
   lint:
     docker:
       - image: singapore/lint-condo
-  
+
 workflows:
   version: 2
   test-and-deploy:
     jobs:
       - lint
-    
+
       - validate:
           requires:
             - lint
@@ -24,7 +24,7 @@ workflows:
             orb-publishing
           requires:
             - validate
-            
+
       - promote-prod:
           name: publish-patch-release
           requires:
@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - run: yamllint .
-      
+
   validate:
     executor: cli/default
     steps:
