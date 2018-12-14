@@ -27,6 +27,8 @@ workflows:
 
       - promote-prod:
           name: publish-patch-release
+          context:
+            orb-publishing
           requires:
             - publish-dev
           filters:
