@@ -133,11 +133,13 @@ workflows:
       # triggered by non-master branch commits
       - integration-tests:
           name: integration-tests_dev
+          context: orb-publishing
           filters: *integration-dev_filters
 
       # triggered by master branch commits
       - integration-tests:
           name: integration-tests_master
+          context: orb-publishing
           filters: *integration-master_filters
 
       - dev-promote-prod:
