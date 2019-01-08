@@ -83,7 +83,6 @@ jobs:
   dev-promote-prod:
     executor: cli
     steps:
-      - checkout
       - run: circleci orb publish promote circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
 
 integration-dev_filters: &integration-dev_filters
