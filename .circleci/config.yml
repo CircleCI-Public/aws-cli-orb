@@ -1,17 +1,105 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@2.0.2
-  cli: circleci/circleci-cli@0.1.2
+  aws-cli: circleci/aws-cli@dev:alpha
 
 executors:
+  cli:
+    resource_class: small
+    docker:
+      - image: circleci/circleci-cli
+
   lint:
+    resource_class: small
     docker:
       - image: singapore/lint-condo
 
+  github:
+    resource_class: small
+    docker:
+      - image: cibuilds/github
+
+jobs:
+  lint:
+    executor: lint
+    steps:
+      - checkout
+      - run: yamllint .
+
+  validate:
+    executor: cli
+    steps:
+      - checkout
+      - run: circleci orb validate src/@orb.yml
+
+  publish-dev:
+    executor: cli
+    steps:
+      - checkout
+
+      - run:
+          name: publish dev versions
+          command: |
+            # for integration testing
+            circleci orb publish src/@orb.yml circleci/aws-cli@dev:alpha --token $CIRCLE_TOKEN
+
+            # for transparency
+            circleci orb publish src/@orb.yml circleci/aws-cli@dev:$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
+
+            # for potentially promoting to prod
+            circleci orb publish src/@orb.yml circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
+
+  trigger-integration:
+    executor: github
+    parameters:
+      tag:
+        type: enum
+        default: "integration"
+        enum: ["integration", master]
+    steps:
+      - checkout
+
+      - add_ssh_keys:
+          fingerprints:
+            - "ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd"
+
+      - run:
+          name: git config
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+
+      - run: |
+          INTEGRATION_TAG=<<parameters.tag>>-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
+          git tag $INTEGRATION_TAG
+          git push origin $INTEGRATION_TAG
+
+  integration-tests:
+    executor: aws-cli/default
+    steps:
+      - aws-cli/install
+      - aws-cli/configure
+
+  dev-promote-prod:
+    executor: cli
+    steps:
+      - checkout
+      - run: circleci orb publish promote circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
+
+integration-dev_filters: &integration-dev_filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /integration-.*/
+
+integration-master_filters: &integration-master_filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /master-.*/
+
 workflows:
-  version: 2
-  test-and-deploy:
+  lint_validate_deploy-dev:
     jobs:
       - lint
 
@@ -20,55 +108,41 @@ workflows:
             - lint
 
       - publish-dev:
-          context:
-            orb-publishing
+          context: orb-publishing
           requires:
             - validate
 
-      - promote-prod:
-          name: publish-patch-release
-          context:
-            orb-publishing
+      - trigger-integration:
+          name: trigger-integration-dev
+          requires:
+            - publish-dev
+          filters:
+            branches:
+              ignore: master
+
+      - trigger-integration:
+          name: trigger-integration-master
+          tag: master
           requires:
             - publish-dev
           filters:
             branches:
               only: master
 
-jobs:
-  lint:
-    executor: lint
-    resource_class: small
-    steps:
-      - checkout
-      - run: yamllint .
+  integration-tests_deploy-prod:
+    jobs:
+      # triggered by non-master branch commits
+      - integration-tests:
+          name: integration-tests_dev
+          filters: *integration-dev_filters
 
-  validate:
-    executor: cli/default
-    resource_class: small
-    steps:
-      - checkout
-      - orb-tools/validate:
-          orb-path: src/orb.yml
+      # triggered by master branch commits
+      - integration-tests:
+          name: integration-tests_master
+          filters: *integration-master_filters
 
-  publish-dev:
-    executor: cli/default
-    resource_class: small
-    steps:
-      - checkout
-      - orb-tools/publish:
-          orb-path: src/orb.yml
-          orb-ref: circleci/aws-cli@dev:$CIRCLE_BRANCH-$CIRCLE_SHA1
-          token-variable: $CIRCLE_TOKEN
-
-  promote-prod:
-    executor: cli/default
-    resource_class: small
-    parameters:
-      release:
-        type: enum
-        default: "patch"
-        enum: ["patch", "minor", "major"]
-    steps:
-      - checkout
-      - run: circleci orb publish promote circleci/aws-cli@dev:$CIRCLE_BRANCH-$CIRCLE_SHA1 <<parameters.release>> --token $CIRCLE_TOKEN
+      - dev-promote-prod:
+          context: orb-publishing
+          filters: *integration-master_filters
+          requires:
+            - integration-tests_master
