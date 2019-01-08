@@ -70,7 +70,7 @@ commands:
         description: |
           AWS access key id for IAM role. Set this to the name of
           the environment variable you will use to hold this
-          value, i.e. $AWS_ACCESS_KEY.
+          value, i.e. AWS_ACCESS_KEY.
         type: env_var_name
         default: AWS_ACCESS_KEY_ID
 
@@ -84,8 +84,8 @@ commands:
 
       aws-region:
         description: |
-          AWS region to operate in
-          (defaults to the value of $AWS_REGION)
+          Env var of AWS region to operate in
+          (defaults to AWS_DEFAULT_REGION)
         type: env_var_name
         default: AWS_DEFAULT_REGION
 
@@ -100,14 +100,14 @@ commands:
           name: Configure AWS Access Key ID
           command: |
             aws configure set aws_access_key_id \
-            <<parameters.aws-access-key-id>> \
+            $<<parameters.aws-access-key-id>> \
             --profile <<parameters.profile-name>>
 
       - run:
           name: Configure AWS Secret Access Key
           command: |
             aws configure set aws_secret_access_key \
-            <<parameters.aws-secret-access-key>> \
+            $<<parameters.aws-secret-access-key>> \
             --profile <<parameters.profile-name>>
 
       - when:
@@ -116,5 +116,5 @@ commands:
             - run:
                 name: Configure AWS default region
                 command: |
-                  aws configure set region <<parameters.aws-region>> \
+                  aws configure set region $<<parameters.aws-region>> \
                   --profile <<parameters.profile-name>>
