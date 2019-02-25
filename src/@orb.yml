@@ -36,7 +36,7 @@ commands:
                 sudo $PIP install awscli --upgrade
               else
                 # This installs the AWS CLI to ~/.local/bin. Make sure that ~/.local/bin is in your $PATH.
-                $PIP install aws --upgrade --user
+                $PIP install awscli --upgrade --user
               fi
             elif [[ $(which unzip curl | wc -l) -eq 2 ]]; then
               cd
