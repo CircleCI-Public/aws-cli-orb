@@ -1,4 +1,4 @@
-# AWS CLI Orb ![CircleCI status](https://circleci.com/gh/CircleCI-Public/aws-cli-orb.svg "CircleCI status")
+# AWS CLI Orb ![CircleCI status](https://circleci.com/gh/CircleCI-Public/aws-cli-orb.svg "CircleCI status") [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/circleci/aws-cli)](https://circleci.com/orbs/registry/orb/circleci/aws-cli)
 
 Easily install and configure the AWS CLI in your CircleCI jobs.
 
