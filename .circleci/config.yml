@@ -1,91 +1,112 @@
 version: 2.1
 
+# add your orb below, to be used in integration tests (note: a @dev:alpha
+# release must exist; you'll need to publish manually at least once)
+# you can use scripts/publish-alpha.sh to publish a @dev:alpha release
 orbs:
   aws-cli: circleci/aws-cli@dev:alpha
+  orb-tools: circleci/orb-tools@8.27.3
 
-executors:
-  cli:
-    resource_class: small
-    docker:
-      - image: circleci/circleci-cli
+workflows:
+  # this `lint-pack_validate_publish-dev` workflow will run on any commit
+  lint-pack_validate_publish-dev:
+    jobs:
+      # lint your destructured orb YAML files
+      - orb-tools/lint
 
-  lint:
-    resource_class: small
-    docker:
-      - image: singapore/lint-condo
+      # pack your orb YAML files to a single orb.yml
+      # validate the orb.yml file to ensure it is well-formed
+      - orb-tools/pack:
+          requires:
+            - orb-tools/lint
 
-  github:
-    resource_class: small
-    docker:
-      - image: cibuilds/github
+      # release dev version of orb, for testing & possible publishing
+      # requires a CircleCI API token to be stored as CIRCLE_TOKEN (default)
+      # https://circleci.com/docs/2.0/managing-api-tokens
+      # store CIRCLE_TOKEN as a project env var or Contexts resource
+      # if using Contexts, add your context below
+      - orb-tools/publish-dev:
+          orb-name: circleci/aws-cli
+          requires:
+            - orb-tools/pack
 
-jobs:
-  lint:
-    executor: lint
-    steps:
-      - checkout
-      - run: yamllint .
+      # trigger an integration workflow to test the dev version of your orb
+      # an SSH key must be stored in your orb's repository and in CircleCI
+      # (add the public key as a read/write key on GitHub; add the private
+      # key in CircleCI via SSH Permissions, with github.com as Hostname)
+      - orb-tools/trigger-integration-workflow:
+          name: trigger-integration-dev
+          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
+          requires:
+            - orb-tools/publish-dev
+          filters:
+            branches:
+              ignore: master
 
-  validate:
-    executor: cli
-    steps:
-      - checkout
-      - run: circleci orb validate src/@orb.yml
+      # by default, the 1st job (above) will trigger only integration tests;
+      # the 2nd job (below) may also publish a production orb version
+      - orb-tools/trigger-integration-workflow:
+          name: trigger-integration-master
+          cleanup-tags: true
+          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
+          tag: master
+          requires:
+            - orb-tools/publish-dev
+          filters:
+            branches:
+              only: master
 
-  publish-dev:
-    executor: cli
-    steps:
-      - checkout
 
-      - run:
-          name: publish dev versions
-          command: |
-            # for integration testing
-            circleci orb publish src/@orb.yml circleci/aws-cli@dev:alpha --token $CIRCLE_TOKEN
+  integration-tests_prod-release:
+    jobs:
+      - test-install:
+          executor: aws-cli/default
+          steps:
+            - checkout
+            - aws-cli/install
 
-            # for transparency
-            circleci orb publish src/@orb.yml circleci/aws-cli@dev:$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-patch
+          orb-name: circleci/orb-tools
+          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
+          cleanup-tags: true
+          requires:
+            - test-install
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-patch.*/
 
-            # for potentially promoting to prod
-            circleci orb publish src/@orb.yml circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-minor
+          release: minor
+          orb-name: circleci/orb-tools
+          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
+          cleanup-tags: true
+          requires:
+            - test-install
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-minor.*/
 
-  trigger-integration:
-    executor: github
-    parameters:
-      tag:
-        type: enum
-        default: "integration"
-        enum: ["integration", master]
-    steps:
-      - checkout
+      - orb-tools/dev-promote-prod:
+          name: dev-promote-major
+          release: major
+          orb-name: circleci/orb-tools
+          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
+          cleanup-tags: true
+          requires:
+            - test-install
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-major.*/
 
-      - add_ssh_keys:
-          fingerprints:
-            - "ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd"
-
-      - run:
-          name: git config
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-      - run: |
-          INTEGRATION_TAG=<<parameters.tag>>-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
-          git tag $INTEGRATION_TAG
-          git push origin $INTEGRATION_TAG
-
-  integration-tests:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/install
-      - aws-cli/configure
-
-  dev-promote-prod:
-    executor: cli
-    steps:
-      - run: circleci orb publish promote circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
-
+# yaml anchor filters
 integration-dev_filters: &integration-dev_filters
   branches:
     ignore: /.*/
@@ -97,64 +118,3 @@ integration-master_filters: &integration-master_filters
     ignore: /.*/
   tags:
     only: /master-.*/
-
-integration-pre-steps: &integration-pre-steps
-  [add_ssh_keys: {fingerprints: ["ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd"]}]
-
-integration-post-steps: &integration-post-steps
-  [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
-
-workflows:
-  lint_validate_deploy-dev:
-    jobs:
-      - lint
-
-      - validate:
-          requires:
-            - lint
-
-      - publish-dev:
-          context: orb-publishing
-          requires:
-            - validate
-
-      - trigger-integration:
-          name: trigger-integration-dev
-          requires:
-            - publish-dev
-          filters:
-            branches:
-              ignore: master
-
-      - trigger-integration:
-          name: trigger-integration-master
-          tag: master
-          requires:
-            - publish-dev
-          filters:
-            branches:
-              only: master
-
-  integration-tests_deploy-prod:
-    jobs:
-      # triggered by non-master branch commits
-      - integration-tests:
-          name: integration-tests_dev
-          context: orb-publishing
-          pre-steps: *integration-pre-steps
-          filters: *integration-dev_filters
-          post-steps: *integration-post-steps
-
-      # triggered by master branch commits
-      - integration-tests:
-          name: integration-tests_master
-          context: orb-publishing
-          pre-steps: *integration-pre-steps
-          filters: *integration-master_filters
-          post-steps: *integration-post-steps
-
-      - dev-promote-prod:
-          context: orb-publishing
-          filters: *integration-master_filters
-          requires:
-            - integration-tests_master
