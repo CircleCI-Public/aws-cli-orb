@@ -7,6 +7,13 @@ orbs:
   aws-cli: circleci/aws-cli@dev:alpha
   orb-tools: circleci/orb-tools@8.27.3
 
+jobs:
+  test-install:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/install
+
 workflows:
   # this `lint-pack_validate_publish-dev` workflow will run on any commit
   lint-pack_validate_publish-dev:
@@ -56,15 +63,9 @@ workflows:
             branches:
               only: master
 
-
   integration-tests_prod-release:
     jobs:
-      - test-install:
-          executor: aws-cli/default
-          steps:
-            - checkout
-            - aws-cli/install
-
+      - test-install
       - orb-tools/dev-promote-prod:
           name: dev-promote-patch
           orb-name: circleci/orb-tools
