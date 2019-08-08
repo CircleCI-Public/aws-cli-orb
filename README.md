@@ -21,8 +21,7 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/install
-      - aws-cli/configure:
+      - aws-cli/install:
           profile-name: example
 
 workflows:
