@@ -25,7 +25,7 @@ executors:
 commands:
   install:
     description: |
-      Install the AWS CLI via pip.
+      Install and configure the AWS CLI via pip.
       
     parameters:
       profile-name:
