@@ -1,7 +1,7 @@
 version: 2.1
 
 description: |
-  Install and configure the AWS command-line interface (awscli). View 
+  Install and configure the AWS command-line interface (awscli). View
   this orb's source: https://github.com/CircleCI-Public/aws-cli-orb
 
 executors:
