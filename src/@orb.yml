@@ -16,7 +16,8 @@ executors:
         default: "2.7"
 
       debian-release:
-        type: string
+        type: enum
+        enum: ["stretch", "jessie"]
         default: "stretch"
 
     docker:
