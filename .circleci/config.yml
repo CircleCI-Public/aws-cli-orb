@@ -34,6 +34,7 @@ workflows:
       # if using Contexts, add your context below
       - orb-tools/publish-dev:
           orb-name: circleci/aws-cli
+          context: orb-publishing
           requires:
             - orb-tools/pack
 
@@ -43,6 +44,7 @@ workflows:
       # key in CircleCI via SSH Permissions, with github.com as Hostname)
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-dev
+          context: orb-publishing
           ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
           requires:
             - orb-tools/publish-dev
@@ -54,6 +56,7 @@ workflows:
       # the 2nd job (below) may also publish a production orb version
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-master
+          context: orb-publishing
           cleanup-tags: true
           ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
           tag: master
