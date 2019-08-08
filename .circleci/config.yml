@@ -65,8 +65,10 @@ workflows:
 
   integration-tests_prod-release:
     jobs:
-      - test-install
+      - test-install:
+          context: orb-publishing
       - orb-tools/dev-promote-prod:
+          context: orb-publishing
           name: dev-promote-patch
           orb-name: circleci/orb-tools
           ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
@@ -80,6 +82,7 @@ workflows:
               only: /master-patch.*/
 
       - orb-tools/dev-promote-prod:
+          context: orb-publishing
           name: dev-promote-minor
           release: minor
           orb-name: circleci/orb-tools
@@ -94,6 +97,7 @@ workflows:
               only: /master-minor.*/
 
       - orb-tools/dev-promote-prod:
+          context: orb-publishing
           name: dev-promote-major
           release: major
           orb-name: circleci/orb-tools
