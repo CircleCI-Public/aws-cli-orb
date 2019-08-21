@@ -24,13 +24,16 @@ executors:
 
 commands:
   install:
-    description: |
-      Install the AWS CLI via pip.
-
+    description: "Install the AWS CLI via Pip if not already installed."
     steps:
       - run:
-          name: Install AWS CLI
+          name: "Install AWS CLI"
           command: |
+            if which aws > /dev/null; then
+              echo "The AWS CLI is already installed. Skipping."
+              exit 0
+            fi
+
             export PIP=$(which pip pip3 | head -1)
             if [[ -n $PIP ]]; then
               if which sudo > /dev/null; then
