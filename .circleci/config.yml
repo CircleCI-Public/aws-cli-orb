@@ -140,7 +140,6 @@ workflows:
       # triggered by non-master branch commits
       - integration-tests:
           name: integration-tests_dev
-          context: orb-publishing
           pre-steps: *integration-pre-steps
           filters: *integration-dev_filters
           post-steps: *integration-post-steps
@@ -148,7 +147,6 @@ workflows:
       # triggered by master branch commits
       - integration-tests:
           name: integration-tests_master
-          context: orb-publishing
           pre-steps: *integration-pre-steps
           filters: *integration-master_filters
           post-steps: *integration-post-steps
