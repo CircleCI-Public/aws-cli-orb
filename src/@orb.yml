@@ -23,6 +23,54 @@ executors:
       - image: circleci/python:<<parameters.python-version>>-<<parameters.debian-release>>
 
 commands:
+
+  setup:
+    description: |
+      Install and configure the AWS CLI automatially from a single command.
+
+    parameters:
+      profile-name:
+        description: Profile name to be configured.
+        type: string
+        default: "default"
+
+      aws-access-key-id:
+        description: |
+          AWS access key id for IAM role. Set this to the name of
+          the environment variable you will use to hold this
+          value, i.e. AWS_ACCESS_KEY.
+        type: env_var_name
+        default: AWS_ACCESS_KEY_ID
+
+      aws-secret-access-key:
+        description: |
+          AWS secret key for IAM role. Set this to the name of
+          the environment variable you will use to hold this
+          value, i.e. $AWS_SECRET_ACCESS_KEY.
+        type: env_var_name
+        default: AWS_SECRET_ACCESS_KEY
+
+      aws-region:
+        description: |
+          Env var of AWS region to operate in
+          (defaults to AWS_DEFAULT_REGION)
+        type: env_var_name
+        default: AWS_DEFAULT_REGION
+
+      configure-default-region:
+        description: |
+          Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
+        type: boolean
+        default: true
+    steps:
+      - install
+      - configure:
+          aws-access-key-id: << parameters.aws-access-key-id >>
+          aws-secret-access-key: << parameters.aws-secret-access-key >>
+          profile-name: << parameters.profile-name >>
+          aws-region: << parameters.aws-region >>
+          configure-default-region: << parameters.configure-default-region >>
+
   install:
     description: "Install the AWS CLI via Pip if not already installed."
     steps:
@@ -122,3 +170,18 @@ commands:
                 command: |
                   aws configure set region $<<parameters.aws-region>> \
                   --profile <<parameters.profile-name>>
+
+examples:
+  aws_cli_setup:
+    description: |
+      Automatically install the AWS CLI via pip if not already installed, and automatically configure the AWS profile.
+    usage:
+      version: 2.1
+      orbs:
+        aws-cli: circleci/aws-cli@x.y
+      jobs:
+        my-job:
+          executor: aws-cli/default
+          steps:
+            - aws-cli/setup
+            - run: echo "Add your custom commands here"
