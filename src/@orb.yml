@@ -59,7 +59,7 @@ commands:
               exit 1
             fi
 
-  configure:
+  setup:
     description: |
       Configure and store AWS credentials in
       ~/.aws/credentials and ~/.aws/config
@@ -100,6 +100,8 @@ commands:
         default: true
 
     steps:
+      - install
+
       - run:
           name: Configure AWS Access Key ID
           command: |
