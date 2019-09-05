@@ -149,4 +149,3 @@ examples:
             jobs:
               - aws-cli-example:
                   context: aws
-    
