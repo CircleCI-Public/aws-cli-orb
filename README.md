@@ -14,21 +14,21 @@ In this example `config.yml` snippet, the required AWS secrets (Access Key ID, S
 version: 2.1
 
 orbs:
-  aws-cli: circleci/aws-cli@0.1.1
+  aws-cli: circleci/aws-cli@x.y
 
 jobs:
-  aws-cli:
+  aws-cli-example:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/install
-      - aws-cli/configure:
+      - aws-cli/setup:
           profile-name: example
+      - run: echo "Run your code here"
 
 workflows:
   version: 2
   aws-cli:
     jobs:
-      - aws-cli:
+      - aws-cli-example:
           context: aws
 ```
