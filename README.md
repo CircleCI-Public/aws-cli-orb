@@ -8,7 +8,7 @@ See [this orb's listing in CircleCI's Orbs Registry](https://circleci.com/orbs/r
 
 ## Example
 
-In this example `config.yml` snippet, the required AWS secrets (Access Key ID, Secret Access Key) are stored, via [Contexts](https://circleci.com/docs/2.0/contexts), as environment variables in the `aws` context and then read as default parameter values by the `aws-cli/configure` command.
+In this example `config.yml` snippet, the required AWS secrets (Access Key ID, Secret Access Key) are stored, via [Contexts](https://circleci.com/docs/2.0/contexts), as environment variables in the `aws` context and then read as default parameter values by the `aws-cli/setup` command.
 
 ```yaml
 version: 2.1
