@@ -168,7 +168,6 @@ workflows:
           name: test-skip-install-check_dev
           pre-steps: *integration-pre-steps
           filters: *integration-dev_filters
-          post-steps: *integration-post-steps
 
       # triggered by master branch commits
       - integration-tests:
@@ -181,7 +180,6 @@ workflows:
           name: test-skip-install-check_master
           pre-steps: *integration-pre-steps
           filters: *integration-master_filters
-          post-steps: *integration-post-steps
 
       - dev-promote-prod:
           context: orb-publishing
