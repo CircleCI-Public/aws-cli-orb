@@ -167,7 +167,6 @@ workflows:
 
       - test-skip-install-check:
           name: test-skip-install-check_dev
-          pre-steps: *integration-pre-steps
           filters: *integration-dev_filters
 
       # triggered by master branch commits
@@ -179,7 +178,6 @@ workflows:
 
       - test-skip-install-check:
           name: test-skip-install-check_master
-          pre-steps: *integration-pre-steps
           filters: *integration-master_filters
 
       - dev-promote-prod:
