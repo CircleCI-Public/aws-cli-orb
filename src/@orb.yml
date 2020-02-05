@@ -27,11 +27,17 @@ executors:
 commands:
   install:
     description: "Install the AWS CLI via Pip if not already installed."
+    parameters:
+      skip-install-check:
+        description: |
+          Set to true to skip checking for existing installations before installing.
+        type: boolean
+        default: false
     steps:
       - run:
           name: "Install AWS CLI"
           command: |
-            if which aws > /dev/null; then
+            if [ "<<parameters.skip-install-check>>" == "false" ] && which aws > /dev/null; then
               echo "The AWS CLI is already installed. Skipping."
               exit 0
             fi
@@ -101,8 +107,15 @@ commands:
         type: boolean
         default: true
 
+      skip-install-check:
+        description: |
+          Set to true to skip checking for existing installations before installing.
+        type: boolean
+        default: false
+
     steps:
-      - install
+      - install:
+          skip-install-check: <<parameters.skip-install-check>>
 
       - run:
           name: Configure AWS Access Key ID
