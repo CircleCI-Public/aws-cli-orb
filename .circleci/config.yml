@@ -19,6 +19,18 @@ executors:
     docker:
       - image: cibuilds/github
 
+commands:
+  check-latest-version-installed:
+    steps:
+      - run:
+          name: Check that the latest version is installed
+          command: |
+            aws --version
+            if [ "$(pip list --outdated | grep -c "awscli")" -ge 1 ]; then
+              echo "aws version is outdated"
+              exit 1
+            fi
+
 jobs:
   lint:
     executor: lint
@@ -79,6 +91,15 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup
+
+  test-skip-install-check:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - aws-cli/setup:
+          skip-install-check: true
+      - check-latest-version-installed
 
   dev-promote-prod:
     executor: cli
@@ -143,9 +164,21 @@ workflows:
           filters: *integration-dev_filters
           post-steps: *integration-post-steps
 
+      - test-skip-install-check:
+          name: test-skip-install-check_dev
+          pre-steps: *integration-pre-steps
+          filters: *integration-dev_filters
+          post-steps: *integration-post-steps
+
       # triggered by master branch commits
       - integration-tests:
           name: integration-tests_master
+          pre-steps: *integration-pre-steps
+          filters: *integration-master_filters
+          post-steps: *integration-post-steps
+
+      - test-skip-install-check:
+          name: test-skip-install-check_master
           pre-steps: *integration-pre-steps
           filters: *integration-master_filters
           post-steps: *integration-post-steps
@@ -155,3 +188,4 @@ workflows:
           filters: *integration-master_filters
           requires:
             - integration-tests_master
+            - test-skip-install-check_master
