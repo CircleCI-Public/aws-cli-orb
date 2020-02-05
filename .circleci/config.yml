@@ -93,6 +93,7 @@ jobs:
       - aws-cli/setup
 
   test-skip-install-check:
+    # This image is suitable for the test as it comes with aws preinstalled
     machine:
       image: ubuntu-1604:201903-01
     steps:
