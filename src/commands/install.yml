@@ -6,6 +6,10 @@ parameters:
       Set to true to skip checking for existing installations before installing.
     type: boolean
     default: false
+    when:
+        type: string
+        description: 'equivalent to the "when" attribute of job steps'
+        default: 'on_success'
 
 steps:
   - run:
@@ -40,3 +44,4 @@ steps:
           echo "Unable to install AWS CLI. Please install pip."
           exit 1
         fi
+      when: << parameters.when >>
