@@ -1,0 +1,22 @@
+description: Always run orb step regardless of previous step status
+usage:
+    version: 2.1
+
+    orbs:
+      aws-cli: circleci/aws-cli@x.y
+
+    jobs:
+      aws-cli-example:
+        executor: aws-cli/default
+        steps:
+          - checkout
+          - run: echo "Run your code here"
+          - aws-cli/setup:
+              when: always
+
+    workflows:
+      version: 2
+      aws-cli:
+        jobs:
+          - aws-cli-example:
+              context: aws
