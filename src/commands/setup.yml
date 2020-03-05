@@ -51,15 +51,15 @@ steps:
       name: Configure AWS Access Key ID
       command: |
         aws configure set aws_access_key_id \
-        $<<parameters.aws-access-key-id>> \
-        --profile <<parameters.profile-name>>
+          $<<parameters.aws-access-key-id>> \
+          --profile <<parameters.profile-name>>
 
   - run:
       name: Configure AWS Secret Access Key
       command: |
         aws configure set aws_secret_access_key \
-        $<<parameters.aws-secret-access-key>> \
-        --profile <<parameters.profile-name>>
+          $<<parameters.aws-secret-access-key>> \
+          --profile <<parameters.profile-name>>
 
   - when:
       condition: <<parameters.configure-default-region>>
@@ -68,4 +68,4 @@ steps:
             name: Configure AWS default region
             command: |
               aws configure set region $<<parameters.aws-region>> \
-              --profile <<parameters.profile-name>>
+                --profile <<parameters.profile-name>>
