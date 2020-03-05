@@ -1,23 +1,19 @@
 version: 2.1
 
 orbs:
+  orb-tools: circleci/orb-tools@9.0
   aws-cli: circleci/aws-cli@dev:alpha
 
-executors:
-  cli:
-    resource_class: small
-    docker:
-      - image: circleci/circleci-cli
-
-  lint:
-    resource_class: small
-    docker:
-      - image: singapore/lint-condo
-
-  github:
-    resource_class: small
-    docker:
-      - image: cibuilds/github
+# Pipeline parameters
+parameters:
+  # These pipeline parameters are required by the "trigger-integration-tests-workflow"
+  # job, by default.
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
 
 commands:
   check-latest-version-installed:
@@ -32,60 +28,6 @@ commands:
             fi
 
 jobs:
-  lint:
-    executor: lint
-    steps:
-      - checkout
-      - run: yamllint .
-
-  validate:
-    executor: cli
-    steps:
-      - checkout
-      - run: circleci orb validate src/@orb.yml
-
-  publish-dev:
-    executor: cli
-    steps:
-      - checkout
-
-      - run:
-          name: publish dev versions
-          command: |
-            # for integration testing
-            circleci orb publish src/@orb.yml circleci/aws-cli@dev:alpha --token $CIRCLE_TOKEN
-
-            # for transparency
-            circleci orb publish src/@orb.yml circleci/aws-cli@dev:$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
-
-            # for potentially promoting to prod
-            circleci orb publish src/@orb.yml circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} --token $CIRCLE_TOKEN
-
-  trigger-integration:
-    executor: github
-    parameters:
-      tag:
-        type: enum
-        default: "integration"
-        enum: ["integration", master]
-    steps:
-      - checkout
-
-      - add_ssh_keys:
-          fingerprints:
-            - "ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd"
-
-      - run:
-          name: git config
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-
-      - run: |
-          INTEGRATION_TAG=<<parameters.tag>>-$CIRCLE_BRANCH-${CIRCLE_SHA1:0:7}
-          git tag $INTEGRATION_TAG
-          git push origin $INTEGRATION_TAG
-
   integration-tests:
     executor: aws-cli/default
     steps:
@@ -102,87 +44,43 @@ jobs:
           skip-install-check: true
       - check-latest-version-installed
 
-  dev-promote-prod:
-    executor: cli
-    steps:
-      - run: circleci orb publish promote circleci/aws-cli@dev:${CIRCLE_SHA1:0:7} patch --token $CIRCLE_TOKEN
-
-integration-dev_filters: &integration-dev_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /integration-.*/
-
-integration-master_filters: &integration-master_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /master-.*/
-
-integration-pre-steps: &integration-pre-steps
-  [add_ssh_keys: {fingerprints: ["ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd"]}]
-
-integration-post-steps: &integration-post-steps
-  [run: {when: "always", name: "cleanup tag", command: "git config --global user.email $CIRCLE_USERNAME@users.noreply.github.com && git config --global user.name $CIRCLE_USERNAME && git push --delete origin $CIRCLE_TAG"}]
-
 workflows:
-  lint_validate_deploy-dev:
+  lint-pack_validate_deploy-dev:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - lint
+      - orb-tools/lint
 
-      - validate:
-          requires:
-            - lint
+      - orb-tools/pack:
+          requires: [orb-tools/lint]
 
-      - publish-dev:
+      - orb-tools/publish-dev:
           context: orb-publishing
-          requires:
-            - validate
+          orb-name: circleci/aws-cli
+          requires: [orb-tools/pack]
 
-      - trigger-integration:
-          name: trigger-integration-dev
-          requires:
-            - publish-dev
-          filters:
-            branches:
-              ignore: master
+      - orb-tools/trigger-integration-tests-workflow:
+          context: orb-publishing
+          requires: [orb-tools/publish-dev]
 
-      - trigger-integration:
-          name: trigger-integration-master
-          tag: master
-          requires:
-            - publish-dev
+  integration-tests_deploy-prod:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - integration-tests
+
+      - test-skip-install-check
+
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: circleci/aws-cli
+          context: orb-publishing
+          add-pr-comment: true
+          bot-token-variable: GHI_TOKEN
+          bot-user: cpe-bot
+          fail-if-semver-not-indicated: true
+          publish-version-tag: true
+          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
           filters:
             branches:
               only: master
-
-  integration-tests_deploy-prod:
-    jobs:
-      # triggered by non-master branch commits
-      - integration-tests:
-          name: integration-tests_dev
-          pre-steps: *integration-pre-steps
-          filters: *integration-dev_filters
-          post-steps: *integration-post-steps
-
-      - test-skip-install-check:
-          name: test-skip-install-check_dev
-          filters: *integration-dev_filters
-
-      # triggered by master branch commits
-      - integration-tests:
-          name: integration-tests_master
-          pre-steps: *integration-pre-steps
-          filters: *integration-master_filters
-          post-steps: *integration-post-steps
-
-      - test-skip-install-check:
-          name: test-skip-install-check_master
-          filters: *integration-master_filters
-
-      - dev-promote-prod:
-          context: orb-publishing
-          filters: *integration-master_filters
           requires:
-            - integration-tests_master
-            - test-skip-install-check_master
+            - integration-tests
+            - test-skip-install-check
