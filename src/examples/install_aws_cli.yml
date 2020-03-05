@@ -1,0 +1,21 @@
+description: Easily install and configure the AWS CLI automatically in your jobs or commands.
+usage:
+  version: 2.1
+
+  orbs:
+    aws-cli: circleci/aws-cli@x.y
+
+  jobs:
+    aws-cli-example:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/setup:
+            profile-name: example
+        - run: echo "Run your code here"
+
+  workflows:
+    aws-cli:
+      jobs:
+        - aws-cli-example:
+            context: aws
