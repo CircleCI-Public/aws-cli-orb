@@ -4,7 +4,7 @@ description: |
   Install and configure the AWS command-line interface (awscli).
 
 display:
-  home_url: https://github.com/CircleCI-Public/aws-cli-orb
+  source_url: https://github.com/CircleCI-Public/aws-cli-orb
 
 executors:
   default:
