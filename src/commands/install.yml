@@ -21,6 +21,8 @@ steps:
             command: |
               if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
+              cd /tmp || exit
+
               # PLATFORM CHECK: mac vs. alpine vs. other linux
               if uname -a | grep Darwin; then
                 SYS_ENV_PLATFORM=darwin
@@ -46,12 +48,13 @@ steps:
                   ;;
                 *)
                   echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
-                  echo: https://github.com/CircleCI-Public/aws-cli-orb/issues/new
+                  echo "https://github.com/CircleCI-Public/aws-cli-orb/issues/new"
                   exit 1
               esac
 
               # Installation check
-              if [[ aws --version &> grep -q "aws-cli/2"  ]]; then
+
+              if aws --version &> grep -q "aws-cli/2"; then
                 echo "AWS CLI V2 has been installed successfully"
                 exit 0
               else
