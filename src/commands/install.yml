@@ -22,9 +22,10 @@ steps:
               if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
               # PLATFORM CHECK: mac vs. alpine vs. other linux
-              SYS_ENV_PLATFORM=linux
               if uname -a | grep Darwin; then
                 SYS_ENV_PLATFORM=darwin
+              elif uname -a | grep Darwin; then
+                SYS_ENV_PLATFORM=linux
               else
                 echo "This platform appears to be unsupported."
                 uname -a
