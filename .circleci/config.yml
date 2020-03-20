@@ -15,18 +15,6 @@ parameters:
     type: string
     default: "dev:alpha"
 
-commands:
-  check-latest-version-installed:
-    steps:
-      - run:
-          name: Check that the latest version is installed
-          command: |
-            aws --version
-            if [ "$(pip list --outdated | grep -c "awscli")" -ge 1 ]; then
-              echo "aws version is outdated"
-              exit 1
-            fi
-
 jobs:
   integration-tests:
     executor: aws-cli/default
@@ -42,7 +30,6 @@ jobs:
       - checkout
       - aws-cli/setup:
           skip-install-check: true
-      - check-latest-version-installed
 
 workflows:
   lint-pack_validate_deploy-dev:
