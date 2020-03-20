@@ -24,7 +24,7 @@ steps:
               # PLATFORM CHECK: mac vs. alpine vs. other linux
               if uname -a | grep Darwin; then
                 SYS_ENV_PLATFORM=darwin
-              elif uname -a | grep Darwin; then
+              elif uname -a | grep Linux; then
                 SYS_ENV_PLATFORM=linux
               else
                 echo "This platform appears to be unsupported."
