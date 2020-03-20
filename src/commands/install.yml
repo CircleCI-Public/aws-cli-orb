@@ -20,6 +20,7 @@ steps:
             name: "Install AWS CLI"
             command: |
               if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+
               # PLATFORM CHECK: mac vs. alpine vs. other linux
               SYS_ENV_PLATFORM=linux
               if uname -a | grep Darwin; then
@@ -36,18 +37,26 @@ steps:
                   unzip awscliv2.zip
                   $SUDO ./aws/install
                   rm awscliv2.zip
-                  if [[ echo $(aws --version) | grep aws-cli/2  ]]; then
-                    echo "AWS CLI V2 has been installed successfully"
-                    exit 0
-                  else
-                    echo "There was an issue installing the AWS CLI V2. Exiting."
-                    exit 1
-                  fi
                   ;;
                 darwin)
-                  echo "install on MacOS"
+                  curl -sSL "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+                  $SUDO installer -pkg AWSCLIV2.pkg -target /
+                  rm AWSCLIV2.pkg
                   ;;
+                *)
+                  echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
+                  echo: https://github.com/CircleCI-Public/aws-cli-orb/issues/new
+                  exit 1
               esac
+
+              # Installation check
+              if [[ echo $(aws --version) | grep aws-cli/2  ]]; then
+                echo "AWS CLI V2 has been installed successfully"
+                exit 0
+              else
+                echo "There was an issue installing the AWS CLI V2. Exiting."
+                exit 1
+              fi
   # Install V1
   - unless:
       condition: << parameters.install-v2 >>
