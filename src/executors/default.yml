@@ -1,5 +1,5 @@
 description: |
-  Highly cached minimal Ubuntu docker designed for CircleCI with Python. 
+  Highly cached minimal Ubuntu docker designed for CircleCI with Python.
 parameters:
   python-version:
     description: >
