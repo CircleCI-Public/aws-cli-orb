@@ -20,12 +20,20 @@ integration_tests: &integration_tests
   [
     integration-test-install-v2,
     integration-test-install-v1,
-    integration-test-skip-install
+    integration-test-skip-install,
+    integration-test-install-v2-macos
   ]
 
 jobs:
   integration-test-install-v2:
     executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup
+
+  integration-test-install-v2-macos:
+    macos:
+      xcode: "11.3.0"
     steps:
       - checkout
       - aws-cli/setup
@@ -70,6 +78,7 @@ workflows:
       - integration-test-install-v2
       - integration-test-install-v1
       - integration-test-skip-install
+      - integration-test-install-v2-macos
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
