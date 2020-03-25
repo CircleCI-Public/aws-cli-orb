@@ -15,14 +15,29 @@ parameters:
     type: string
     default: "dev:alpha"
 
+# Integration tests
+integration_tests: &integration_tests
+  [
+    integration-test-install-v2,
+    integration-test-install-v1,
+    integration-test-skip-install
+  ]
+
 jobs:
-  integration-tests:
+  integration-test-install-v2:
     executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup
 
-  test-skip-install-check:
+  integration-test-install-v1:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          install-v2: false
+
+  integration-test-skip-install:
     # This image is suitable for the test as it comes with aws preinstalled
     machine:
       image: ubuntu-1604:201903-01
@@ -52,9 +67,9 @@ workflows:
   integration-tests_deploy-prod:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-tests
-
-      - test-skip-install-check
+      - integration-test-install-v2
+      - integration-test-install-v1
+      - integration-test-skip-install
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
@@ -68,6 +83,4 @@ workflows:
           filters:
             branches:
               only: master
-          requires:
-            - integration-tests
-            - test-skip-install-check
+          requires: *integration_tests
