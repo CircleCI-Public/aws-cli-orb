@@ -19,6 +19,12 @@ steps:
         - run:
             name: "Install AWS CLI"
             command: |
+
+              if [ "<<parameters.skip-install-check>>" == "false" ] && which aws > /dev/null; then
+                echo "The AWS CLI is already installed. Skipping."
+                exit 0
+              fi
+
               if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
               cd /tmp || exit
