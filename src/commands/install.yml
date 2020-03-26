@@ -1,10 +1,11 @@
 description: "Install the AWS CLI via Pip if not already installed."
 
 parameters:
-  install-v2:
-    description: Installs AWS CLI version 2 by default. Disable if the 1.0 CLI is required.
-    type: boolean
-    default: true
+  version:
+    description: Which version of the CLI to install. Version "1" and "2" are currently available. Will default to "2"
+    type: enum
+    enum: ["1", "2"]
+    default: "2"
   skip-install-check:
     description: |
       Set to true to skip checking for existing installations before installing.
@@ -12,15 +13,44 @@ parameters:
     default: false
 
 steps:
-  # Install V2
-  - when:
-      condition: << parameters.install-v2 >>
-      steps:
-        - run:
-            name: "Install AWS CLI"
-            command: |
+  - run:
+      name: Install AWS CLI v<<parameters.version>>
+      command: |
+        AWS_CLI_VERSION_SELECTED=<<parameters.version>>
+        case $AWS_CLI_VERSION_SELECTED in
+          "1")
+            if [ "<<parameters.skip-install-check>>" == "false" ] && which aws > /dev/null; then
+                echo "The AWS CLI is already installed. Skipping."
+                exit 0
+              fi
 
-              if [ "<<parameters.skip-install-check>>" == "false" ] && which aws > /dev/null; then
+              export PIP=$(which pip pip3 | head -1)
+              if [[ -n $PIP ]]; then
+                if which sudo > /dev/null; then
+                  sudo $PIP install awscli --upgrade
+                else
+                  # This installs the AWS CLI to ~/.local/bin. Make sure that ~/.local/bin is in your $PATH.
+                  $PIP install awscli --upgrade --user
+                fi
+              elif [[ $(which unzip curl | wc -l) -eq 2 ]]; then
+                cd
+                curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+                unzip awscli-bundle.zip
+                if which sudo > /dev/null; then
+                  sudo ~/awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+                else
+                  # This installs the AWS CLI to the default location (~/.local/lib/aws) and create a symbolic link (symlink) at ~/bin/aws. Make sure that ~/bin is in your $PATH.
+                  awscli-bundle/install -b ~/bin/aws
+                fi
+                rm -rf awscli-bundle*
+                cd -
+              else
+                echo "Unable to install AWS CLI. Please install pip."
+                exit 1
+              fi
+          ;;
+          "2")
+            if [ "<<parameters.skip-install-check>>" == "false" ] && which aws > /dev/null; then
                 echo "The AWS CLI is already installed. Skipping."
                 exit 0
               fi
@@ -67,39 +97,9 @@ steps:
                 echo "There was an issue installing the AWS CLI V2. Exiting."
                 exit 1
               fi
-  # Install V1
-  - unless:
-      condition: << parameters.install-v2 >>
-      steps:
-        - run:
-            name: "Install AWS CLI"
-            command: |
-              if [ "<<parameters.skip-install-check>>" == "false" ] && which aws > /dev/null; then
-                echo "The AWS CLI is already installed. Skipping."
-                exit 0
-              fi
-
-              export PIP=$(which pip pip3 | head -1)
-              if [[ -n $PIP ]]; then
-                if which sudo > /dev/null; then
-                  sudo $PIP install awscli --upgrade
-                else
-                  # This installs the AWS CLI to ~/.local/bin. Make sure that ~/.local/bin is in your $PATH.
-                  $PIP install awscli --upgrade --user
-                fi
-              elif [[ $(which unzip curl | wc -l) -eq 2 ]]; then
-                cd
-                curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-                unzip awscli-bundle.zip
-                if which sudo > /dev/null; then
-                  sudo ~/awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-                else
-                  # This installs the AWS CLI to the default location (~/.local/lib/aws) and create a symbolic link (symlink) at ~/bin/aws. Make sure that ~/bin is in your $PATH.
-                  awscli-bundle/install -b ~/bin/aws
-                fi
-                rm -rf awscli-bundle*
-                cd -
-              else
-                echo "Unable to install AWS CLI. Please install pip."
-                exit 1
-              fi
+          ;;
+          *)
+            echo "An incorrect version selection has been made."
+            exit 1
+          ;;
+        esac
