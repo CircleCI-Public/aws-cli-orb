@@ -42,8 +42,7 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/setup:
-          install-v2: false
+      - aws-cli/setup
 
   integration-test-skip-install:
     # This image is suitable for the test as it comes with aws preinstalled
