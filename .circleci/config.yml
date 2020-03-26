@@ -59,13 +59,12 @@ workflows:
     jobs:
       - orb-tools/lint
 
-      - orb-tools/pack:
-          requires: [orb-tools/lint]
+      - orb-tools/pack
 
       - orb-tools/publish-dev:
           context: orb-publishing
           orb-name: circleci/aws-cli
-          requires: [orb-tools/pack]
+          requires: [orb-tools/pack, orb-tools/lint]
 
       - orb-tools/trigger-integration-tests-workflow:
           context: orb-publishing

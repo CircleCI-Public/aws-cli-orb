@@ -24,10 +24,11 @@ parameters:
     type: env_var_name
     default: AWS_SECRET_ACCESS_KEY
 
-  install-v2:
-    description: Installs AWS CLI version 2 by default. Disable if the 1.0 CLI is required.
-    type: boolean
-    default: true
+  version:
+    description: Which version of the CLI to install. Version "1" and "2" are currently available. Will default to "2"
+    type: enum
+    enum: ["1", "2"]
+    default: "2"
 
   aws-region:
     description: |
@@ -51,7 +52,7 @@ parameters:
 steps:
   - install:
       skip-install-check: <<parameters.skip-install-check>>
-      install-v2: <<parameters.install-v2>>
+      version: <<parameters.version>>
 
   - run:
       name: Configure AWS Access Key ID
