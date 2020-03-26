@@ -44,6 +44,14 @@ jobs:
       - checkout
       - aws-cli/setup:
           version: "1"
+      - run:
+          name: Check latest v1 version is installed.
+          command: |
+            aws --version
+            if [ "$(pip list --outdated | grep -c "awscli")" -ge 1 ]; then
+              echo "aws version is outdated"
+              exit 1
+            fi
 
   integration-test-skip-install:
     # This image is suitable for the test as it comes with aws preinstalled
