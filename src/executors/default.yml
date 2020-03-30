@@ -1,11 +1,15 @@
 description: |
-  Highly cached minimal Ubuntu docker designed for CircleCI with Python and NodeJS installed.
+  The Debian-based Docker container to use when
+  installing/configuring the AWS CLI
+
 parameters:
   python-version:
-    description: >
-      Select your python version or any of the available tags here: https://hub.docker.com/r/cimg/python.
     type: string
-    default: "3.8-node"
+    default: "2.7"
+
+  debian-release:
+    type: string
+    default: "stretch"
 
 docker:
-  - image: cimg/python:<<parameters.python-version>>
+  - image: circleci/python:<<parameters.python-version>>-<<parameters.debian-release>>
