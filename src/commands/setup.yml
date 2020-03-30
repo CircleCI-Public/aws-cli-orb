@@ -24,6 +24,12 @@ parameters:
     type: env_var_name
     default: AWS_SECRET_ACCESS_KEY
 
+  version:
+    description: Which version of the CLI to install. Version "1" and "2" are currently available. Will default to "2"
+    type: enum
+    enum: ["1", "2"]
+    default: "2"
+
   aws-region:
     description: |
       Env var of AWS region to operate in
@@ -46,6 +52,7 @@ parameters:
 steps:
   - install:
       skip-install-check: <<parameters.skip-install-check>>
+      version: <<parameters.version>>
 
   - run:
       name: Configure AWS Access Key ID
