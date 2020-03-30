@@ -15,11 +15,37 @@ parameters:
     type: string
     default: "dev:alpha"
 
-commands:
-  check-latest-version-installed:
+# Integration tests
+integration_tests: &integration_tests
+  [
+    integration-test-install-v2,
+    integration-test-install-v1,
+    integration-test-skip-install,
+    integration-test-install-v2-macos
+  ]
+
+jobs:
+  integration-test-install-v2:
+    executor: aws-cli/default
     steps:
+      - checkout
+      - aws-cli/setup
+
+  integration-test-install-v2-macos:
+    macos:
+      xcode: "11.3.0"
+    steps:
+      - checkout
+      - aws-cli/setup
+
+  integration-test-install-v1:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          version: "1"
       - run:
-          name: Check that the latest version is installed
+          name: Check latest v1 version is installed.
           command: |
             aws --version
             if [ "$(pip list --outdated | grep -c "awscli")" -ge 1 ]; then
@@ -27,14 +53,7 @@ commands:
               exit 1
             fi
 
-jobs:
-  integration-tests:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup
-
-  test-skip-install-check:
+  integration-test-skip-install:
     # This image is suitable for the test as it comes with aws preinstalled
     machine:
       image: ubuntu-1604:201903-01
@@ -42,7 +61,6 @@ jobs:
       - checkout
       - aws-cli/setup:
           skip-install-check: true
-      - check-latest-version-installed
 
 workflows:
   lint-pack_validate_deploy-dev:
@@ -50,13 +68,12 @@ workflows:
     jobs:
       - orb-tools/lint
 
-      - orb-tools/pack:
-          requires: [orb-tools/lint]
+      - orb-tools/pack
 
       - orb-tools/publish-dev:
           context: orb-publishing
           orb-name: circleci/aws-cli
-          requires: [orb-tools/pack]
+          requires: [orb-tools/pack, orb-tools/lint]
 
       - orb-tools/trigger-integration-tests-workflow:
           context: orb-publishing
@@ -65,9 +82,10 @@ workflows:
   integration-tests_deploy-prod:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-tests
-
-      - test-skip-install-check
+      - integration-test-install-v2
+      - integration-test-install-v1
+      - integration-test-skip-install
+      - integration-test-install-v2-macos
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
@@ -81,6 +99,4 @@ workflows:
           filters:
             branches:
               only: master
-          requires:
-            - integration-tests
-            - test-skip-install-check
+          requires: *integration_tests
