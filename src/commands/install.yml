@@ -11,6 +11,11 @@ parameters:
       Set to true to skip checking for existing installations before installing.
     type: boolean
     default: false
+  disable-aws-pager:
+    description: |
+      Set to false to skip forceful disabling of output paging if the less command is not installed.
+    type: boolean
+    default: true
 
 steps:
   - run:
@@ -88,28 +93,14 @@ steps:
                   exit 1
               esac
 
-              # Install `less` for paging if not present
+              # If `less` is not installed and AWS_PAGER is not set explicitly
+              # override with the empty string so that certain commands do not fail.
 
-              if [ -z "$(command -v less)" ]; then
-                case $SYS_ENV_PLATFORM in
-                  linux)
-                    if [ -x "$(command -v apt-get)" ]; then
-                      $SUDO apt-get update && $SUDO apt-get install -y less
-                    else
-                      echo "Unable to install missing less command on this platform."
-                    fi
-                    ;;
-                  *)
-                    echo "Unable to install missing less command on this platform."
-                esac
-              fi
-
-              # Print message on how to work around missing paging command if
-              # it could not be installed
-
-              if [ -z "$(command -v less)" ]; then
-                echo "AWS CLI V2 requires the less command for paging, but it could not be found or installed."
-                echo "You can set the AWS_PAGER environment variable to point at a different command."
+              if [ "<<parameters.disable-aws-pager>>" == "true" && -z "$(command -v less)" && -z "${AWS_PAGER}"]; then
+                echo 'export AWS_PAGER=""' >> $BASH_ENV
+                echo "AWS CLI V2 expects the less command to be installed for paging, but it could not be found."
+                echo "AWS_PAGER is therefore now being set to the empty string."
+                echo "You can set the `disable-aws-pager` parameter to `false` to disable this behavior."
               fi
 
               # Installation check
