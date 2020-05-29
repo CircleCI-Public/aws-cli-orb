@@ -94,7 +94,7 @@ steps:
                 case $SYS_ENV_PLATFORM in
                   linux)
                     if [ -x "$(command -v apt-get)" ]; then
-                      $SUDO apt-get install less
+                      $SUDO apt-get update && $SUDO apt-get install -y less
                     else
                       echo "Unable to install missing less command on this platform."
                     fi

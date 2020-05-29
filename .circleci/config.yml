@@ -15,28 +15,52 @@ parameters:
     type: string
     default: "dev:alpha"
 
+executors:
+  without-less:
+    docker:
+      - image: circleci/python:3.7
+  macos:
+    macos:
+      xcode: 11.4
+  machine:
+    machine:
+      image: ubuntu-1604:202004-01
+
 # Integration tests
 integration_tests: &integration_tests
   [
     integration-test-install-v2,
     integration-test-install-v1,
-    integration-test-skip-install,
-    integration-test-install-v2-macos
+    integration-test-skip-install
   ]
 
 jobs:
   integration-test-install-v2:
-    executor: aws-cli/default
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
     steps:
       - checkout
       - aws-cli/setup
-
-  integration-test-install-v2-macos:
-    macos:
-      xcode: "11.3.0"
-    steps:
-      - checkout
-      - aws-cli/setup
+      - run:
+          name: Test with aws command that requires less
+          command: |
+            cat > template.yaml \<<-EOF
+            AWSTemplateFormatVersion: '2010-09-09'
+            Resources:
+              myStack:
+                Type: AWS::CloudFormation::Stack
+                Properties:
+                  TemplateURL: https://s3.amazonaws.com/cloudformation-templates-us-east-1/S3_Bucket.template
+                  TimeoutInMinutes: '60'
+            Outputs:
+              StackRef:
+                Value: !Ref myStack
+              OutputFromNestedStack:
+                Value: !GetAtt myStack.Outputs.BucketName
+            EOF
+            aws cloudformation validate-template --template-body file://template.yaml
 
   integration-test-install-v1:
     executor: aws-cli/default
@@ -82,10 +106,12 @@ workflows:
   integration-tests_deploy-prod:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test-install-v2
+      - integration-test-install-v2:
+          matrix:
+            parameters:
+              executor: [aws-cli/default, without-less, macos, machine]
       - integration-test-install-v1
       - integration-test-skip-install
-      - integration-test-install-v2-macos
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
