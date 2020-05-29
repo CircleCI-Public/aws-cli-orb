@@ -60,7 +60,7 @@ jobs:
               OutputFromNestedStack:
                 Value: !GetAtt myStack.Outputs.BucketName
             EOF
-            aws cloudformation validate-template --template-body file://template.yaml
+            TERM=xterm aws cloudformation validate-template --template-body file://template.yaml
 
   integration-test-install-v1:
     executor: aws-cli/default
