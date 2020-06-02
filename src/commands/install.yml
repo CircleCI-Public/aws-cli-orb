@@ -13,7 +13,7 @@ parameters:
     default: false
   disable-aws-pager:
     description: |
-      Set to false to skip forceful disabling of output paging if the less command is not installed.
+      Set to false to skip forceful disabling of all AWS CLI output paging.
     type: boolean
     default: true
 
@@ -93,13 +93,11 @@ steps:
                   exit 1
               esac
 
-              # If `less` is not installed and AWS_PAGER is not set explicitly
-              # override with the empty string so that certain commands do not fail.
+              # Unless the user indicates otherwise set AWS_PAGER to the empty string
 
-              if [ "<<parameters.disable-aws-pager>>" == "true" && -z "$(command -v less)" && -z "${AWS_PAGER}"]; then
+              if [ "<<parameters.disable-aws-pager>>" == "true" && -z "${AWS_PAGER}" ]; then
                 echo 'export AWS_PAGER=""' >> $BASH_ENV
-                echo "AWS CLI V2 expects the less command to be installed for paging, but it could not be found."
-                echo "AWS_PAGER is therefore now being set to the empty string."
+                echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
                 echo "You can set the `disable-aws-pager` parameter to `false` to disable this behavior."
               fi
 
