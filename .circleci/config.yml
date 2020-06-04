@@ -44,23 +44,12 @@ jobs:
       - checkout
       - aws-cli/setup
       - run:
-          name: Test with aws command that requires less
+          name: Test that paging is disabled
           command: |
-            cat > template.yaml \<<-EOF
-            AWSTemplateFormatVersion: '2010-09-09'
-            Resources:
-              myStack:
-                Type: AWS::CloudFormation::Stack
-                Properties:
-                  TemplateURL: https://s3.amazonaws.com/cloudformation-templates-us-east-1/S3_Bucket.template
-                  TimeoutInMinutes: '60'
-            Outputs:
-              StackRef:
-                Value: !Ref myStack
-              OutputFromNestedStack:
-                Value: !GetAtt myStack.Outputs.BucketName
-            EOF
-            TERM=xterm aws cloudformation validate-template --template-body file://template.yaml
+            # Test with aws command that would require paging if a pager is enabled
+            aws ec2 describe-images \
+              --owners amazon \
+              --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
 
   integration-test-install-v1:
     executor: aws-cli/default
