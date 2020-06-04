@@ -11,6 +11,11 @@ parameters:
       Set to true to skip checking for existing installations before installing.
     type: boolean
     default: false
+  disable-aws-pager:
+    description: |
+      Set to false to skip forceful disabling of all AWS CLI output paging.
+    type: boolean
+    default: true
 
 steps:
   - run:
@@ -103,3 +108,15 @@ steps:
             exit 1
           ;;
         esac
+
+  - when:
+      condition: <<parameters.disable-aws-pager>>
+      steps:
+        - run:
+            name: Disable AWS pager if not already configured
+            command: |
+              if [ -z "${AWS_PAGER}" ]; then
+                echo 'export AWS_PAGER=""' >> $BASH_ENV
+                echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
+                echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
+              fi
