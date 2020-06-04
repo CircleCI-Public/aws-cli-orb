@@ -49,10 +49,17 @@ parameters:
     type: boolean
     default: false
 
+  disable-aws-pager:
+    description: |
+      Set to false to skip forceful disabling of all AWS CLI output paging.
+    type: boolean
+    default: true
+
 steps:
   - install:
       skip-install-check: <<parameters.skip-install-check>>
       version: <<parameters.version>>
+      disable-aws-pager: <<parameters.disable-aws-pager>>
 
   - run:
       name: Configure AWS Access Key ID

@@ -93,14 +93,6 @@ steps:
                   exit 1
               esac
 
-              # Unless the user indicates otherwise set AWS_PAGER to the empty string
-
-              if [ "<<parameters.disable-aws-pager>>" == "true" ] && [ -z "${AWS_PAGER}" ]; then
-                echo 'export AWS_PAGER=""' >> $BASH_ENV
-                echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
-                echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
-              fi
-
               # Installation check
 
               if aws --version &> grep -q "aws-cli/2"; then
@@ -116,3 +108,15 @@ steps:
             exit 1
           ;;
         esac
+
+  - when:
+      condition: <<parameters.disable-aws-pager>>
+      steps:
+        - run:
+            name: Disable AWS pager if not already configured
+            command: |
+              if [ -z "${AWS_PAGER}" ]; then
+                echo 'export AWS_PAGER=""' >> $BASH_ENV
+                echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
+                echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
+              fi
