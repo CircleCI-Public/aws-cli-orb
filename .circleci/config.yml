@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@9.0
-  aws-cli: circleci/aws-cli@dev:alpha
+  aws-cli: circleci/aws-cli@<<pipeline.parameters.dev-orb-version>>
 
 # Pipeline parameters
 parameters:
