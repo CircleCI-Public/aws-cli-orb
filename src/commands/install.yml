@@ -29,7 +29,7 @@ steps:
                     echo "The AWS CLI is already installed. Skipping."
                     exit 0
                 else
-                  echo "You have selected to install version 2, but version 1 is installed. Installing version 2 "
+                  echo "You have selected to install version 1, but version 12 is installed. Installing version 1 "
                 fi
               fi
 
@@ -64,7 +64,7 @@ steps:
                     echo "The AWS CLI is already installed. Skipping."
                     exit 0
                 else
-                  echo "You have selected to install version 1, but version 2 is installed. Installing version 1 "
+                  echo "You have selected to install version 2, but version 1 is installed. Installing version 2 "
                 fi
               fi
 

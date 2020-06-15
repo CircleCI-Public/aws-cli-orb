@@ -18,7 +18,7 @@ parameters:
 executors:
   without-less:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/base:stable
   macos:
     macos:
       xcode: 11.4
@@ -43,6 +43,16 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup
+      - run:
+          name: Check installed AWS CLI version
+          command: |
+            echo $(aws --version)
+            if echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
+                echo "Version 2 installed successfully."
+            else
+                echo "Incorrect version installed"
+                exit 1
+            fi
       - run:
           name: Test that paging is disabled
           command: |
