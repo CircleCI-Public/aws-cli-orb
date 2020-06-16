@@ -42,13 +42,7 @@ parameters:
       Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
     type: boolean
     default: true
-
-  skip-install-check:
-    description: |
-      Set to true to skip checking for existing installations before installing.
-    type: boolean
-    default: false
-
+  
   disable-aws-pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
@@ -57,7 +51,6 @@ parameters:
 
 steps:
   - install:
-      skip-install-check: <<parameters.skip-install-check>>
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
 

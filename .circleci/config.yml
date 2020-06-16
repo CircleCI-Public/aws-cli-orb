@@ -82,8 +82,7 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - aws-cli/setup:
-          skip-install-check: true
+      - aws-cli/setup
 
 workflows:
   lint-pack_validate_deploy-dev:
