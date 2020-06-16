@@ -32,10 +32,16 @@ if [[ $AWS_CLI_VERSION_SELECTED != $AWS_CLI_INSTALLED_VERSION ]]; then
 
     case $AWS_CLI_VERSION_SELECTED in
         "1")
+            if ! which python; then
+                echo "Your environment does not seem to have Python installed, a requirement of the AWS CLI."
+                echo "Please either utilize the AWS CLI v2, or select an envionment with Python installed."
+                echo "Recommended image: cimg:/python:3.8"
+                exit 1
+            fi
             # install CLI v1
             export PIP=$(which pip pip3 | head -1)
             if [[ -n $PIP ]]; then
-                if which sudo > /dev/null; then
+                if which sudo > /dev/null; 
                     sudo $PIP install awscli --upgrade
                 else
                     # This installs the AWS CLI to ~/.local/bin. Make sure that ~/.local/bin is in your $PATH.
