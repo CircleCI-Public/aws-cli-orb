@@ -42,7 +42,7 @@ parameters:
       Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
     type: boolean
     default: true
-  
+
   disable-aws-pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
