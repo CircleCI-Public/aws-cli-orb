@@ -59,7 +59,7 @@ steps:
                     # install CLI v1
                     export PIP=$(which pip pip3 | head -1)
                     if [[ -n $PIP ]]; then
-                        if which sudo > /dev/null; 
+                        if which sudo > /dev/null;
                             sudo $PIP install awscli --upgrade
                         else
                             # This installs the AWS CLI to ~/.local/bin. Make sure that ~/.local/bin is in your $PATH.
