@@ -58,7 +58,7 @@ if [[ $AWS_CLI_VERSION_SELECTED != $AWS_CLI_INSTALLED_VERSION ]]; then
                 exit 1
             fi
             # Installation check
-            if ! aws --version &> grep -q "aws-cli/1"; then
+            if aws --version &> grep -q "aws-cli/1"; then
                 echo "AWS CLI V1 has been installed successfully"
                 exit 0
             else
@@ -101,7 +101,7 @@ if [[ $AWS_CLI_VERSION_SELECTED != $AWS_CLI_INSTALLED_VERSION ]]; then
                 ;;
             esac
             # Installation check
-            if ! aws --version &> grep -q "aws-cli/2"; then
+            if aws --version &> grep -q "aws-cli/2"; then
                 echo "AWS CLI V2 has been installed successfully"
                 exit 0
             else
