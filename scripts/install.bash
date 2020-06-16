@@ -4,6 +4,8 @@ AWS_VER_REGEXP_1='aws-cli\/2.\d*.\d*'
 AWS_CLI_INSTALLED_VERSION="0"
 AWS_CLI_VERSION_SELECTED="<<parameters.version>>"
 
+if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+
 if ! command -v aws --version >/dev/null 2>&1  ; then
     echo AWS is not installed
 else
@@ -20,6 +22,13 @@ fi
 
 #If the desired version of the CLI is not installed, install it.
 if [[ $AWS_CLI_VERSION_SELECTED != $AWS_CLI_INSTALLED_VERSION ]]; then
+
+    #uninstall AWS CLI if it is installed.
+    if which aws; then
+        echo Uninstalling old CLI
+        $SUDO rm -rf /usr/local/aws
+        $SUDO rm /usr/local/bin/aws
+    fi
 
     case $AWS_CLI_VERSION_SELECTED in
         "1")
@@ -59,7 +68,6 @@ if [[ $AWS_CLI_VERSION_SELECTED != $AWS_CLI_INSTALLED_VERSION ]]; then
         ;;
         "2")
             # install CLI v2
-            if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
             cd /tmp || exit
 
