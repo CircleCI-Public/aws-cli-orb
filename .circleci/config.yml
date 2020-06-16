@@ -47,7 +47,7 @@ jobs:
           name: Check installed AWS CLI version
           command: |
             echo $(aws --version)
-            if echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
+            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
                 echo "Version 2 installed successfully."
             else
                 echo "Incorrect version installed"
