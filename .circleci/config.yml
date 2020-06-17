@@ -30,7 +30,7 @@ executors:
 integration_tests: &integration_tests
   [
     integration-test-install-v2,
-    v1-docker,
+    # v1-docker,
     v1-machine,
     integration-test-skip-install
   ]
@@ -115,9 +115,11 @@ workflows:
       - integration-test-install-v1:
           name: v1-machine
           executor: machine
-      - integration-test-install-v1:
-          name: v1-docker
-          executor: without-less
+      # This job is supposed to fail, do not run it unless for testing purposes.
+      # This job fails with a more useful error message when a user wants to install CLI V1 on an image without python.
+      # - integration-test-install-v1:
+      #     name: v1-docker
+      #     executor: without-less
       - integration-test-skip-install
 
       - orb-tools/dev-promote-prod-from-commit-subject:
