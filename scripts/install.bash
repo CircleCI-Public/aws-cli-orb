@@ -6,7 +6,7 @@ AWS_CLI_VERSION_SELECTED="<<parameters.version>>"
 
 if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-if ! command -v aws --version >/dev/null 2>&1  ; then
+if command -v aws --version >/dev/null 2>&1  ; then
     echo AWS is not installed
 else
     echo AWS is currently installed.

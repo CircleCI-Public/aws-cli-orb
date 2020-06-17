@@ -31,8 +31,7 @@ integration_tests: &integration_tests
   [
     integration-test-install-v2,
     # v1-docker,
-    v1-machine,
-    integration-test-skip-install
+    v1-machine
   ]
 
 jobs:
