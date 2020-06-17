@@ -17,14 +17,14 @@ steps:
       name: Install AWS CLI v<<parameters.version>>
       command: |
         AWS_VER_REGEXP_2='aws-cli\/2.\d*.\d*'
-        AWS_VER_REGEXP_1='aws-cli\/2.\d*.\d*'
+        AWS_VER_REGEXP_1='aws-cli\/1.\d*.\d*'
         #initialize installed version to zero, to signify not installed.
         AWS_CLI_INSTALLED_VERSION="0"
         AWS_CLI_VERSION_SELECTED="<<parameters.version>>"
 
         if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-        if command -v aws --version >/dev/null 2>&1  ; then
+        if ! command -v aws --version >/dev/null 2>&1  ; then
             echo AWS is not installed
         else
             echo AWS is currently installed.
