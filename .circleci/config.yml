@@ -72,13 +72,14 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup:
-          version:
+          version: 1
       - run:
           name: Check latest v1 version is installed.
           command: |
-            aws --version
-            if [ "$(pip list --outdated | grep -c "awscli")" -ge 1 ]; then
-              echo "aws version is outdated"
+            if aws --version 2>&1 | grep -q 'aws-cli\/1.\d*.\d*'; then
+              echo AWS CLI v1 is installed
+            else
+              echo Wrong CLI version.
               exit 1
             fi
 
