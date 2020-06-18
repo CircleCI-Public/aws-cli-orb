@@ -34,6 +34,7 @@ integration_tests: &integration_tests
   [
     integration-test-install-v2,
     # v1-docker,
+    integration-test-skip-install,
     integration-test-install-v1
   ]
 
@@ -89,7 +90,10 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-install:
+          version: "2"
+      - aws-cli/setup:
+          skip-install-check: true
 
 workflows:
   lint-pack_validate_deploy-dev:
@@ -119,6 +123,7 @@ workflows:
           matrix:
             parameters:
               executor: [macos, machine, python]
+      - integration-test-skip-install
       # This job is supposed to fail, do not run it unless for testing purposes.
       # This job fails with a more useful error message when a user wants to install CLI V1 on an image without python.
       # - integration-test-install-v1:
