@@ -11,6 +11,12 @@ parameters:
       Set to false to skip forceful disabling of all AWS CLI output paging.
     type: boolean
     default: true
+  skip-install-check:
+    description: |
+      Set to true to skip checking for existing installations before installing.
+    type: boolean
+    default: false
+
 
 steps:
   - run:
@@ -18,23 +24,25 @@ steps:
       command: |
         AWS_VER_REGEXP_2='aws-cli\/2.\d*.\d*'
         AWS_VER_REGEXP_1='aws-cli\/1.\d*.\d*'
-        #initialize installed version to zero, to signify not installed.
+        # initialize installed version to zero, to signify not installed (Or we want to ignore the installed version and re-install).
         AWS_CLI_INSTALLED_VERSION="0"
         AWS_CLI_VERSION_SELECTED="<<parameters.version>>"
 
         if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-        if ! command -v aws --version >/dev/null 2>&1  ; then
-            echo AWS is not installed
-        else
-            echo AWS is currently installed.
-            if aws --version 2>&1 | grep -q $AWS_VER_REGEXP_2; then
-                echo AWS CLI v2 is installed
-                AWS_CLI_INSTALLED_VERSION="2"
-            fi
-            if aws --version 2>&1 | grep -q $AWS_VER_REGEXP_1; then
-                echo AWS CLI v1 is installed
-                AWS_CLI_INSTALLED_VERSION="1"
+        if "<<parameters.skip-install-check" == "false"; then
+            if ! command -v aws --version >/dev/null 2>&1  ; then
+                echo AWS is not installed
+            else
+                echo AWS is currently installed.
+                if aws --version 2>&1 | grep -q $AWS_VER_REGEXP_2; then
+                    echo AWS CLI v2 is installed
+                    AWS_CLI_INSTALLED_VERSION="2"
+                fi
+                if aws --version 2>&1 | grep -q $AWS_VER_REGEXP_1; then
+                    echo AWS CLI v1 is installed
+                    AWS_CLI_INSTALLED_VERSION="1"
+                fi
             fi
         fi
 
@@ -44,7 +52,7 @@ steps:
             #uninstall AWS CLI if it is installed.
             if which aws; then
                 echo Uninstalling old CLI
-                $SUDO rm -rf /usr/local/aws
+                $SUDO rm -f /usr/local/aws
                 $SUDO rm /usr/local/bin/aws
             fi
 

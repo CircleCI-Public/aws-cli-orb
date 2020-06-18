@@ -49,10 +49,17 @@ parameters:
     type: boolean
     default: true
 
+  skip-install-check:
+    description: |
+      Set to true to skip checking for existing installations before installing.
+    type: boolean
+    default: false
+
 steps:
   - install:
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
+      skip-install-check: <<parameters.skip-install-check>>
 
   - run:
       name: Configure AWS Access Key ID
