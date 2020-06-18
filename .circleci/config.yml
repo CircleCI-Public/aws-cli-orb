@@ -72,7 +72,7 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup:
-          version: 1
+          version: "1"
       - run:
           name: Check latest v1 version is installed.
           command: |
