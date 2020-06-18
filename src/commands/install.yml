@@ -54,7 +54,7 @@ steps:
             #uninstall AWS CLI if it is installed.
             if which aws; then
                 echo Uninstalling old CLI
-                $SUDO rm -f /usr/local/aws
+                $SUDO rm -rf /usr/local/aws
                 $SUDO rm /usr/local/bin/aws
             fi
 
