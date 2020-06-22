@@ -55,7 +55,7 @@ steps:
             if which aws; then
                 echo Uninstalling old CLI
                 $SUDO rm -rf $(which aws)
-
+            fi
             case $AWS_CLI_VERSION_SELECTED in
                 "1")
                     if ! which python; then
