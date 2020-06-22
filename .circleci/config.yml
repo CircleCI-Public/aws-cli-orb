@@ -50,6 +50,7 @@ jobs:
       - run:
           name: Check installed AWS CLI version
           command: |
+            which aws
             echo $(aws --version)
             if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
                 echo "Version 2 installed successfully."
@@ -77,6 +78,7 @@ jobs:
       - run:
           name: Check latest v1 version is installed.
           command: |
+            which aws
             if aws --version 2>&1 | grep -q 'aws-cli\/1.\d*.\d*'; then
               echo AWS CLI v1 is installed
             else
@@ -86,13 +88,16 @@ jobs:
 
   integration-test-skip-install:
     # This image is suitable for the test as it comes with aws preinstalled
-    machine:
-      image: ubuntu-1604:201903-01
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
     steps:
       - checkout
       - aws-cli/install:
           version: "2"
       - aws-cli/setup:
+          version: "1"
           skip-install-check: true
 
 workflows:
@@ -118,12 +123,15 @@ workflows:
       - integration-test-install-v2:
           matrix:
             parameters:
-              executor: [aws-cli/default, without-less, macos, machine]
+              executor: [aws-cli/default, without-less, macos, machine, python]
       - integration-test-install-v1:
           matrix:
             parameters:
               executor: [macos, machine, python]
-      - integration-test-skip-install
+      - integration-test-skip-install:
+          matrix:
+            parameters:
+              executor: [macos, machine, python]
       # This job is supposed to fail, do not run it unless for testing purposes.
       # This job fails with a more useful error message when a user wants to install CLI V1 on an image without python.
       # - integration-test-install-v1:
