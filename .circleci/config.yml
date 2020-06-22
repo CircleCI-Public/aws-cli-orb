@@ -35,7 +35,8 @@ integration_tests: &integration_tests
     integration-test-install-v2,
     # v1-docker,
     integration-test-skip-install,
-    integration-test-install-v1
+    integration-test-install-v1,
+    replace-pip-aws-test
   ]
 
 jobs:
@@ -45,7 +46,6 @@ jobs:
         type: executor
     executor: <<parameters.executor>>
     steps:
-      - checkout
       - aws-cli/setup
       - run:
           name: Check installed AWS CLI version
@@ -93,13 +93,33 @@ jobs:
         type: executor
     executor: <<parameters.executor>>
     steps:
-      - checkout
       - aws-cli/install:
           version: "2"
       - aws-cli/setup:
           version: "1"
           skip-install-check: true
 
+  replace-pip-aws-test:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - run: pip install aws
+      - run: which aws
+      - aws-cli/setup:
+          version: "2"
+          skip-install-check: true
+      - run:
+          name: Check installed AWS CLI version
+          command: |
+            which aws
+            echo $(aws --version)
+            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
+                echo "Version 2 installed successfully."
+            else
+                echo "Incorrect version installed"
+                exit 1
+            fi
+      
 workflows:
   lint-pack_validate_deploy-dev:
     unless: << pipeline.parameters.run-integration-tests >>
@@ -132,6 +152,7 @@ workflows:
           matrix:
             parameters:
               executor: [macos, machine, python]
+      - replace-pip-aws-test
       # This job is supposed to fail, do not run it unless for testing purposes.
       # This job fails with a more useful error message when a user wants to install CLI V1 on an image without python.
       # - integration-test-install-v1:
