@@ -103,7 +103,7 @@ jobs:
     docker:
       - image: cimg/python:3.8
     steps:
-      - run: pip install aws
+      - run: pip install awscli
       - run: which aws
       - aws-cli/setup:
           version: "2"
