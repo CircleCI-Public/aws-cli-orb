@@ -119,7 +119,7 @@ jobs:
                 echo "Incorrect version installed"
                 exit 1
             fi
-      
+
 workflows:
   lint-pack_validate_deploy-dev:
     unless: << pipeline.parameters.run-integration-tests >>
