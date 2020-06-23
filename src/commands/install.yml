@@ -48,6 +48,11 @@ steps:
             echo "Skipping version check. Installing CLI"
         fi
 
+        AWS_V2_UPDATE_PARAM=""
+        if aws --version 2>&1 | grep -q $AWS_VER_REGEXP_2; then
+            AWS_V2_UPDATE_PARAM="--update"
+        fi
+
         #If the desired version of the CLI is not installed, install it.
         if [[ $AWS_CLI_VERSION_SELECTED != $AWS_CLI_INSTALLED_VERSION ]]; then
 
@@ -58,7 +63,7 @@ steps:
             fi
             case $AWS_CLI_VERSION_SELECTED in
                 "1")
-                    if ! which python; then
+                    if ! command -v python >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1 ; then
                         echo "Your environment does not seem to have Python installed, a requirement of the AWS CLI."
                         echo "Please either utilize the AWS CLI v2, or select an envionment with Python installed."
                         echo "Recommended image: cimg:/python:3.8"
@@ -118,7 +123,7 @@ steps:
                         linux)
                             curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
                             unzip awscliv2.zip
-                            $SUDO ./aws/install
+                            $SUDO ./aws/install $AWS_V2_UPDATE_PARAM
                             rm awscliv2.zip
                             ;;
                         darwin)
