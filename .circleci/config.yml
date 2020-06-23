@@ -22,6 +22,9 @@ executors:
   python:
     docker:
       - image: cimg/python:3.8
+  awsv2preinstalled:
+    docker:
+      - image: cibuilds/aws:2.0.6
   macos:
     macos:
       xcode: 11.4
@@ -143,7 +146,7 @@ workflows:
       - integration-test-install-v2:
           matrix:
             parameters:
-              executor: [aws-cli/default, without-less, macos, machine, python]
+              executor: [aws-cli/default, without-less, macos, machine, python, awsv2preinstalled]
       - integration-test-install-v1:
           matrix:
             parameters:
