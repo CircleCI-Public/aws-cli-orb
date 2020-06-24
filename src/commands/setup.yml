@@ -43,23 +43,23 @@ parameters:
     type: boolean
     default: true
 
-  skip-install-check:
-    description: |
-      Set to true to skip checking for existing installations before installing.
-    type: boolean
-    default: false
-
   disable-aws-pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
     type: boolean
     default: true
 
+  skip-install-check:
+    description: |
+      Set to true to skip checking for existing installations before installing.
+    type: boolean
+    default: false
+
 steps:
   - install:
-      skip-install-check: <<parameters.skip-install-check>>
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
+      skip-install-check: <<parameters.skip-install-check>>
 
   - run:
       name: Configure AWS Access Key ID
@@ -81,5 +81,5 @@ steps:
         - run:
             name: Configure AWS default region
             command: |
-              aws configure set region $<<parameters.aws-region>> \
+              aws configure set default.region $<<parameters.aws-region>> \
                 --profile <<parameters.profile-name>>

@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@9.0
-  aws-cli: circleci/aws-cli@dev:alpha
+  aws-cli: circleci/aws-cli@<<pipeline.parameters.dev-orb-version>>
 
 # Pipeline parameters
 parameters:
@@ -18,7 +18,13 @@ parameters:
 executors:
   without-less:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/base:stable
+  python:
+    docker:
+      - image: cimg/python:3.8
+  awsv2preinstalled:
+    docker:
+      - image: cibuilds/aws:2.0.6
   macos:
     macos:
       xcode: 11.4
@@ -30,8 +36,10 @@ executors:
 integration_tests: &integration_tests
   [
     integration-test-install-v2,
+    # v1-docker,
+    integration-test-skip-install,
     integration-test-install-v1,
-    integration-test-skip-install
+    replace-pip-aws-test
   ]
 
 jobs:
@@ -41,8 +49,18 @@ jobs:
         type: executor
     executor: <<parameters.executor>>
     steps:
-      - checkout
       - aws-cli/setup
+      - run:
+          name: Check installed AWS CLI version
+          command: |
+            which aws
+            echo $(aws --version)
+            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
+                echo "Version 2 installed successfully."
+            else
+                echo "Incorrect version installed"
+                exit 1
+            fi
       - run:
           name: Test that paging is disabled
           command: |
@@ -52,7 +70,10 @@ jobs:
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
 
   integration-test-install-v1:
-    executor: aws-cli/default
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
     steps:
       - checkout
       - aws-cli/setup:
@@ -60,20 +81,47 @@ jobs:
       - run:
           name: Check latest v1 version is installed.
           command: |
-            aws --version
-            if [ "$(pip list --outdated | grep -c "awscli")" -ge 1 ]; then
-              echo "aws version is outdated"
+            which aws
+            if aws --version 2>&1 | grep -q 'aws-cli\/1.\d*.\d*'; then
+              echo AWS CLI v1 is installed
+            else
+              echo Wrong CLI version.
               exit 1
             fi
 
   integration-test-skip-install:
     # This image is suitable for the test as it comes with aws preinstalled
-    machine:
-      image: ubuntu-1604:201903-01
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
     steps:
-      - checkout
+      - aws-cli/install:
+          version: "2"
       - aws-cli/setup:
+          version: "1"
           skip-install-check: true
+
+  replace-pip-aws-test:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - run: pip install awscli
+      - run: which aws
+      - aws-cli/setup:
+          version: "2"
+          skip-install-check: true
+      - run:
+          name: Check installed AWS CLI version
+          command: |
+            which aws
+            echo $(aws --version)
+            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
+                echo "Version 2 installed successfully."
+            else
+                echo "Incorrect version installed"
+                exit 1
+            fi
 
 workflows:
   lint-pack_validate_deploy-dev:
@@ -98,9 +146,21 @@ workflows:
       - integration-test-install-v2:
           matrix:
             parameters:
-              executor: [aws-cli/default, without-less, macos, machine]
-      - integration-test-install-v1
-      - integration-test-skip-install
+              executor: [aws-cli/default, without-less, macos, machine, python, awsv2preinstalled]
+      - integration-test-install-v1:
+          matrix:
+            parameters:
+              executor: [macos, machine, python]
+      - integration-test-skip-install:
+          matrix:
+            parameters:
+              executor: [macos, machine, python]
+      - replace-pip-aws-test
+      # This job is supposed to fail, do not run it unless for testing purposes.
+      # This job fails with a more useful error message when a user wants to install CLI V1 on an image without python.
+      # - integration-test-install-v1:
+      #     name: v1-docker
+      #     executor: without-less
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
