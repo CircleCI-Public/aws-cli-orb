@@ -55,6 +55,11 @@ parameters:
     type: boolean
     default: false
 
+  role-arn:
+    description: Role ARN that the profile should take.
+    type: string
+    default: ""
+
 steps:
   - install:
       version: <<parameters.version>>
@@ -82,4 +87,13 @@ steps:
             name: Configure AWS default region
             command: |
               aws configure set default.region $<<parameters.aws-region>> \
+                --profile <<parameters.profile-name>>
+
+  - when:
+      condition: <<parameters.role-arn>>
+      steps:
+        - run:
+            name: Configure AWS profile role
+            command: |
+              aws configure set role_arn <<parameters.role-arn>> \
                 --profile <<parameters.profile-name>>
