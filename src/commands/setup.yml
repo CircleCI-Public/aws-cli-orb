@@ -56,7 +56,12 @@ parameters:
     default: false
 
   role-arn:
-    description: Role ARN that the profile should take.
+    description: Role ARN that the profile should take. (needs source_profile)
+    type: string
+    default: ""
+    
+  source-profile:
+    description: The profile with configured static credentials to assume 'role-arn'
     type: string
     default: ""
 
@@ -66,19 +71,29 @@ steps:
       disable-aws-pager: <<parameters.disable-aws-pager>>
       skip-install-check: <<parameters.skip-install-check>>
 
-  - run:
-      name: Configure AWS Access Key ID
-      command: |
-        aws configure set aws_access_key_id \
-          $<<parameters.aws-access-key-id>> \
-          --profile <<parameters.profile-name>>
+  - when:
+      condition:
+        not:
+          or: [<<parameters.role-arn>>, <<parameters.source-profile>>]
+      steps:
+        - run:
+            name: Configure AWS Access Key ID
+            command: |
+              aws configure set aws_access_key_id \
+                $<<parameters.aws-access-key-id>> \
+                --profile <<parameters.profile-name>>
 
-  - run:
-      name: Configure AWS Secret Access Key
-      command: |
-        aws configure set aws_secret_access_key \
-          $<<parameters.aws-secret-access-key>> \
-          --profile <<parameters.profile-name>>
+  - when:
+      condition:
+        not:
+          or: [<<parameters.role-arn>>, <<parameters.source-profile>>]
+      steps:
+        - run:
+            name: Configure AWS Secret Access Key
+            command: |
+              aws configure set aws_secret_access_key \
+                $<<parameters.aws-secret-access-key>> \
+                --profile <<parameters.profile-name>>
 
   - when:
       condition: <<parameters.configure-default-region>>
@@ -90,10 +105,13 @@ steps:
                 --profile <<parameters.profile-name>>
 
   - when:
-      condition: <<parameters.role-arn>>
+      condition:
+        and: [<<parameters.role-arn>>, <<parameters.source-profile>>]
       steps:
         - run:
             name: Configure AWS profile role
             command: |
               aws configure set role_arn <<parameters.role-arn>> \
+                --profile <<parameters.profile-name>>
+              aws configure set source_profile <<parameters.source-profile>> \
                 --profile <<parameters.profile-name>>

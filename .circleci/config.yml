@@ -39,7 +39,8 @@ integration_tests: &integration_tests
     # v1-docker,
     integration-test-skip-install,
     integration-test-install-v1,
-    replace-pip-aws-test
+    replace-pip-aws-test,
+    use-role-arn
   ]
 
 jobs:
@@ -121,6 +122,31 @@ jobs:
             else
                 echo "Incorrect version installed"
                 exit 1
+            fi
+
+  use-role-arn:
+    parameters:
+      executor:
+        type: executor
+    executor: <<parameters.executor>>
+    steps:
+      - checkout
+      - aws-cli/setup
+      - aws-cli/setup:
+          profile-name: role
+          source-profile: default
+          role-arn: "arn:aws:iam::0123456789:role/circleci"
+      - run:
+          name: Check profiles were created
+          command: |
+            which aws
+            ROLE_ARN=$(aws configure get role_arn --profile role)
+            SOURCE_PROFILE=$(aws configure get source_profile --profile role)
+            if [ "${ROLE_ARN}" == "arn:aws:iam::0123456789:role/circleci" ] && [ "${SOURCE_PROFILE}" == "default" ]  ; then
+              echo configuration is correctly set.
+            else
+              echo Wrong configuration set.
+              exit 1
             fi
 
 workflows:
