@@ -59,7 +59,7 @@ parameters:
     description: Role ARN that the profile should take. (needs source_profile)
     type: string
     default: ""
-    
+
   source-profile:
     description: The profile with configured static credentials to assume 'role-arn'
     type: string
