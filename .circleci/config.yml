@@ -187,6 +187,10 @@ workflows:
       # - integration-test-install-v1:
       #     name: v1-docker
       #     executor: without-less
+      - use-role-arn:
+          matrix:
+            parameters:
+              executor: [macos, machine, python]
 
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
