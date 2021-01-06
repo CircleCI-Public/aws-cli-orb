@@ -158,7 +158,7 @@ steps:
         - run:
             name: Disable AWS pager if not already configured
             command: |
-              if [ -z "${AWS_PAGER:-}" ]; then
+              if [ -z "${AWS_PAGER+x}" ]; then
                 echo 'export AWS_PAGER=""' >> $BASH_ENV
                 echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
                 echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
