@@ -32,3 +32,40 @@ workflows:
       - aws-cli-example:
           context: aws
 ```
+
+## Example with `role-arn`
+To let aws-cli assume a given role, you need 2 profiles:
+- eg. `[default]` with static credentials (see above)
+- eg. `[role]` with `role_arn` and `source_profile` configured
+
+Please note that you have to specify the profile to use on each `aws` command with `--profile role`.
+Alternatively you can configure the `default` profile to ue a `role-arn` and a second profile to have the static credentials.
+
+```yaml
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@x.y
+
+jobs:
+  aws-cli-example:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup  # set up the `default` profile with static credentials
+      - aws-cli/setup: # set up the profile with to be assumed role
+          profile-name: role
+          source-profile: default
+          role-arn: "arn:aws:iam::0123456789:role/circleci"
+      - run:
+          name: "Run your code here"
+          command: aws --profile role s3 ls s3://your-bucket-here
+
+
+workflows:
+  version: 2
+  aws-cli:
+    jobs:
+      - aws-cli-example:
+          context: aws
+```
