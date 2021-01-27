@@ -101,7 +101,7 @@ steps:
         - run:
             name: Configure AWS profile region
             command: |
-              aws configure set <<parameters.profile-name>>.region $<<parameters.aws-region>> \
+              aws configure set region $<<parameters.aws-region>> \
                 --profile <<parameters.profile-name>>
 
   - when:
