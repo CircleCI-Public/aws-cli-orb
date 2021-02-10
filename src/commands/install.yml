@@ -95,7 +95,7 @@ steps:
                         exit 1
                     fi
                     # Installation check
-                    if aws --version &> grep -q "aws-cli/1"; then
+                    if env -u AWS_PROFILE aws --version &> grep -q "aws-cli/1"; then
                         echo "AWS CLI V1 has been installed successfully"
                         exit 0
                     else
