@@ -43,6 +43,12 @@ parameters:
     type: boolean
     default: true
 
+  configure-profile-region:
+    description: |
+      Boolean whether to configure the region for the custom (non-default) profile or not
+    type: boolean
+    default: true
+
   disable-aws-pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
@@ -87,6 +93,15 @@ steps:
             name: Configure AWS default region
             command: |
               aws configure set default.region $<<parameters.aws-region>> \
+                --profile <<parameters.profile-name>>
+
+  - when:
+      condition: <<parameters.configure-profile-region>>
+      steps:
+        - run:
+            name: Configure AWS profile region
+            command: |
+              aws configure set region $<<parameters.aws-region>> \
                 --profile <<parameters.profile-name>>
 
   - when:
