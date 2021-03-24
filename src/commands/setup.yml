@@ -3,6 +3,22 @@ description: |
   ~/.aws/credentials and ~/.aws/config
 
 parameters:
+  version:
+    description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+    default: latest
+    type: string
+  override-installed:
+    type: boolean
+    default: false
+    description: |
+      By default, if the AWS CLI is detected on the system, the install will be skipped.
+      Enable this to override the installed version and install your specified version.
+  disable-aws-pager:
+    description: |
+      Set to false to skip forceful disabling of all AWS CLI output paging.
+    type: boolean
+    default: true
+
   profile-name:
     description: Profile name to be configured.
     type: string
@@ -24,12 +40,6 @@ parameters:
     type: env_var_name
     default: AWS_SECRET_ACCESS_KEY
 
-  version:
-    description: Which version of the CLI to install. Version "1" and "2" are currently available. Will default to "2"
-    type: enum
-    enum: ["1", "2"]
-    default: "2"
-
   aws-region:
     description: |
       Env var of AWS region to operate in
@@ -49,18 +59,6 @@ parameters:
     type: boolean
     default: true
 
-  disable-aws-pager:
-    description: |
-      Set to false to skip forceful disabling of all AWS CLI output paging.
-    type: boolean
-    default: true
-
-  skip-install-check:
-    description: |
-      Set to true to skip checking for existing installations before installing.
-    type: boolean
-    default: false
-
   role-arn:
     description: Role ARN that the profile should take.
     type: string
@@ -70,7 +68,7 @@ steps:
   - install:
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
-      skip-install-check: <<parameters.skip-install-check>>
+      override-installed: <<parameters.override-installed>>
 
   - run:
       name: Configure AWS Access Key ID
