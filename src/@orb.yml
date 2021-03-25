@@ -2,7 +2,7 @@ version: 2.1
 
 description: |
   Install and configure the AWS command-line interface (awscli).
-  Arm64 V8 compatible.
+  Supports Linux x86_64, MacOS, and Arm64 V8.
 
 display:
   source_url: https://github.com/CircleCI-Public/aws-cli-orb
