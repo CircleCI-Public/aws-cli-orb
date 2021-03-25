@@ -73,7 +73,7 @@ workflows:
       # Publish development version(s) of the orb.
       - orb-tools/publish-dev:
           orb-name: circleci/aws-cli
-          context: orb-publishers # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
+          context: orb-publisher # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
           requires:
             - orb-tools/lint
             - orb-tools/pack
@@ -82,7 +82,7 @@ workflows:
       # dev:${CIRCLE_SHA1:0:7} version of your orb
       - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
-          context: orb-publishers
+          context: orb-publisher
           requires:
             - orb-tools/publish-dev
 
@@ -106,7 +106,7 @@ workflows:
       # e.g. [semver:patch] will cause a patch version to be published.
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
-          context: orb-publishers
+          context: orb-publisher
           add-pr-comment: false
           fail-if-semver-not-indicated: true
           publish-version-tag: false
