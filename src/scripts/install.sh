@@ -12,7 +12,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
             echo "Uninstalling ${EXISTING_AWS_VERSION}"
             # shellcheck disable=SC2012
             AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
-            $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH"
+            $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/"
         else
             echo "No AWS install found"
         fi
