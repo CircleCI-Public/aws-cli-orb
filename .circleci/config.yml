@@ -31,6 +31,22 @@ executors:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
+commands:
+  check_aws_version:
+    parameters:
+      version:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: check_aws_version
+          command: |
+            if [ -n "<<parameters.version>>" ]; then
+              INSTALLED_AWS_VERSION="$(aws --version)"
+              aws --version | grep <<parameters.version>>
+            else
+              if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
+            fi
 
 jobs:
   integration-test-install:
@@ -40,17 +56,6 @@ jobs:
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup
-      - run:
-          name: Check installed AWS CLI version
-          command: |
-            which aws
-            echo $(aws --version)
-            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
-                echo "Version 2 installed successfully."
-            else
-                echo "Incorrect version installed"
-                exit 1
-            fi
       - run:
           name: Test that paging is disabled
           command: |
@@ -98,6 +103,15 @@ workflows:
           matrix:
             parameters:
               executor: ["docker-base", "macos", "arm"]
+          post-steps:
+            - check_aws_version
+      - integration-test-install:
+          name: integration-test-install-version
+          executor: docker-base
+          version: "2.1.10"
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
       # as that will determine whether a patch, minor or major
@@ -112,6 +126,7 @@ workflows:
           publish-version-tag: false
           requires:
             - integration-test-install
+            - integration-test-install-version
           filters:
             branches:
               only:
