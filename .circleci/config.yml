@@ -62,7 +62,6 @@ jobs:
     parameters:
       executor:
         type: executor
-      parameters:
       version:
         description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
         default: latest
