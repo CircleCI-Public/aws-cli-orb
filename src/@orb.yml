@@ -1,7 +1,9 @@
 version: 2.1
 
 description: |
-  Install and configure the AWS command-line interface (awscli).
+  Install and configure the AWS command-line interface (awscli) version 2.
+  (To use AWS CLI v1 view version 1.4.1 of this orb)
+  
   Supports Linux x86_64, MacOS, and Arm64 V8.
 
 display:
