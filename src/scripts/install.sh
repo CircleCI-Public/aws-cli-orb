@@ -35,7 +35,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     case $SYS_ENV_PLATFORM in
     linux)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
-        unzip -q awscliv2.zip
+        unzip -q -o awscliv2.zip
         $SUDO ./aws/install
         rm awscliv2.zip
         ;;
@@ -46,7 +46,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         ;;
     arm)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
-        unzip -q awscliv2.zip
+        unzip -q -o awscliv2.zip
         $SUDO ./aws/install
         rm awscliv2.zip
         ;;
