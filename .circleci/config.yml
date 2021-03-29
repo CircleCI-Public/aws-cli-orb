@@ -47,15 +47,8 @@ commands:
             else
               if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
             fi
-
-jobs:
-  integration-test-install:
-    parameters:
-      executor:
-        type: executor
-    executor: <<parameters.executor>>
+  test-paging:
     steps:
-      - aws-cli/setup
       - run:
           name: Test that paging is disabled
           command: |
@@ -63,6 +56,23 @@ jobs:
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
+
+jobs:
+  integration-test-install:
+    parameters:
+      executor:
+        type: executor
+      parameters:
+      version:
+        description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+        default: latest
+        type: string
+    executor: <<parameters.executor>>
+    steps:
+      - aws-cli/setup:
+          version: <<parameters.version>>
+      - test-paging
+
 
 workflows:
   # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
