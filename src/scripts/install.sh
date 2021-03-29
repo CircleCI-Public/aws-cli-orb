@@ -4,6 +4,17 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     # setup
     if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
 
+    # Uninstall existing AWS CLI if override is enabled.
+    if [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+        AWS_CLI_PATH=$(which aws)
+        if [ -n "$AWS_CLI_PATH" ]; then
+            echo "Uninstalling ${(aws --version)}"
+            $SUDO rm -rf "$AWS_CLI_PATH"
+        else
+            echo "No AWS install found"
+        fi
+    fi
+
     echo "Installing AWS CLI v2"
     # Platform check
     if uname -a | grep Darwin; then
