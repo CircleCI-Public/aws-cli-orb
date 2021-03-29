@@ -8,7 +8,8 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     if [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         AWS_CLI_PATH=$(which aws)
         if [ -n "$AWS_CLI_PATH" ]; then
-            echo "Uninstalling ${(aws --version)}"
+            EXISTING_AWS_VERSION=$(aws --version)
+            echo "Uninstalling ${EXISTING_AWS_VERSION}"
             $SUDO rm -rf "$AWS_CLI_PATH"
         else
             echo "No AWS install found"
