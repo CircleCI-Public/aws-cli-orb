@@ -72,41 +72,12 @@ steps:
 
   - run:
       name: Configure AWS Access Key ID
-      command: |
-        aws configure set aws_access_key_id \
-          $<<parameters.aws-access-key-id>> \
-          --profile <<parameters.profile-name>>
-
-  - run:
-      name: Configure AWS Secret Access Key
-      command: |
-        aws configure set aws_secret_access_key \
-          $<<parameters.aws-secret-access-key>> \
-          --profile <<parameters.profile-name>>
-
-  - when:
-      condition: <<parameters.configure-default-region>>
-      steps:
-        - run:
-            name: Configure AWS default region
-            command: |
-              aws configure set default.region $<<parameters.aws-region>> \
-                --profile <<parameters.profile-name>>
-
-  - when:
-      condition: <<parameters.configure-profile-region>>
-      steps:
-        - run:
-            name: Configure AWS profile region
-            command: |
-              aws configure set region $<<parameters.aws-region>> \
-                --profile <<parameters.profile-name>>
-
-  - when:
-      condition: <<parameters.role-arn>>
-      steps:
-        - run:
-            name: Configure AWS profile role
-            command: |
-              aws configure set role_arn <<parameters.role-arn>> \
-                --profile <<parameters.profile-name>>
+      environment:
+        PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws-access-key-id>>
+        PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
+        PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
+        PARAM_AWS_CLI_CONFIG_DEFAULT_REGION: <<parameters.configure-default-region>>
+        PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure-profile-region>>
+        PARAM_AWS_CLI_REGION: <<parameters.aws-region>>
+        PARAM_AWS_CLI_ROLE_ARN: <<parameters.role-arn>>
+      command: <<include(scripts/configure.sh)>>
