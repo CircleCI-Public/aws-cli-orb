@@ -31,6 +31,9 @@ executors:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
+  linuxvm:
+    machine:
+      image: ubuntu-2004:202101-01
 commands:
   check_aws_version:
     parameters:
@@ -114,7 +117,7 @@ workflows:
       - integration-test-install:
           matrix:
             parameters:
-              executor: ["docker-base", "macos", "arm"]
+              executor: ["linuxvm", "docker-base", "macos", "arm"]
           post-steps:
             - check_aws_version
       - integration-test-install:
@@ -156,4 +159,3 @@ workflows:
             branches:
               only:
                 - master
-                - main
