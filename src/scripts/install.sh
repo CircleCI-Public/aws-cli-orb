@@ -20,9 +20,9 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
 
     echo "Installing AWS CLI v2"
     # Platform check
-    if uname -a | grep "x86_64 GNU/Linux"; then
+    if uname -a | grep "Darwin"; then
         export SYS_ENV_PLATFORM=macos
-    elif uname -a | grep Linux; then
+    elif uname -a | grep "x86_64 GNU/Linux"; then
         export SYS_ENV_PLATFORM=linux_x86
     elif uname -a | grep "aarch64 GNU/Linux"; then
         export SYS_ENV_PLATFORM=linux_arm
@@ -31,6 +31,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         uname -a
         exit 1
     fi
+    echo "Platform $SYS_ENV_PLATFORM"
     # Install per platform
     case $SYS_ENV_PLATFORM in
     linux_x86)
