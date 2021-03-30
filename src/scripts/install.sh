@@ -20,12 +20,12 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
 
     echo "Installing AWS CLI v2"
     # Platform check
-    if uname -a | grep Darwin; then
-        export SYS_ENV_PLATFORM=darwin
+    if uname -a | grep "x86_64 GNU/Linux"; then
+        export SYS_ENV_PLATFORM=macos
     elif uname -a | grep Linux; then
-        export SYS_ENV_PLATFORM=linux
-    elif uname -a | grep aarch64; then
-        export SYS_ENV_PLATFORM=arm
+        export SYS_ENV_PLATFORM=linux_x86
+    elif uname -a | grep "aarch64 GNU/Linux"; then
+        export SYS_ENV_PLATFORM=linux_arm
     else
         echo "This platform appears to be unsupported."
         uname -a
@@ -33,18 +33,18 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     fi
     # Install per platform
     case $SYS_ENV_PLATFORM in
-    linux)
+    linux_x86)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
         rm awscliv2.zip
         ;;
-    darwin)
+    macos)
         curl -sSL "https://awscli.amazonaws.com/AWSCLIV2${AWS_CLI_VER_STRING}.pkg" -o "AWSCLIV2.pkg"
         $SUDO installer -pkg AWSCLIV2.pkg -target /
         rm AWSCLIV2.pkg
         ;;
-    arm)
+    linux_arm)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
