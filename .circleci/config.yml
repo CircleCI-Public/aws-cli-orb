@@ -1,66 +1,57 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@9.0
+  orb-tools: circleci/orb-tools@10.0
+  shellcheck: circleci/shellcheck@2.0
   aws-cli: circleci/aws-cli@<<pipeline.parameters.dev-orb-version>>
 
-# Pipeline parameters
+# Pipeline Parameters
+## These parameters are used internally by orb-tools. Skip to the Jobs section.
 parameters:
-  # These pipeline parameters are required by the "trigger-integration-tests-workflow"
-  # job, by default.
   run-integration-tests:
+    description: An internal flag to prevent integration test from running before a development version has been created.
     type: boolean
     default: false
   dev-orb-version:
+    description: >
+      The development version of the orb to test.
+      This value is automatically adjusted by the "trigger-integration-tests-workflow" job to correspond with the specific version created by the commit and should not be edited.
+      A "dev:alpha" version must exist for the initial pipeline run.
     type: string
     default: "dev:alpha"
 
 executors:
-  without-less:
+  docker-base:
     docker:
       - image: cimg/base:stable
-  python:
-    docker:
-      - image: cimg/python:3.8
-  awsv2preinstalled:
-    docker:
-      - image: cibuilds/aws:2.0.6
   macos:
     macos:
-      xcode: 11.4
-  machine:
+      xcode: 12.4.0
+  arm:
     machine:
-      image: ubuntu-1604:202004-01
-
-# Integration tests
-integration_tests: &integration_tests
-  [
-    integration-test-install-v2,
-    # v1-docker,
-    integration-test-skip-install,
-    integration-test-install-v1,
-    replace-pip-aws-test
-  ]
-
-jobs:
-  integration-test-install-v2:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+  linuxvm:
+    machine:
+      image: ubuntu-2004:202101-01
+commands:
+  check_aws_version:
     parameters:
-      executor:
-        type: executor
-    executor: <<parameters.executor>>
+      version:
+        type: string
+        default: ""
     steps:
-      - aws-cli/setup
       - run:
-          name: Check installed AWS CLI version
+          name: check_aws_version
           command: |
-            which aws
-            echo $(aws --version)
-            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
-                echo "Version 2 installed successfully."
+            if [ -n "<<parameters.version>>" ]; then
+              INSTALLED_AWS_VERSION="$(aws --version)"
+              aws --version | grep <<parameters.version>>
             else
-                echo "Incorrect version installed"
-                exit 1
+              if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
             fi
+  test-paging:
+    steps:
       - run:
           name: Test that paging is disabled
           command: |
@@ -69,109 +60,102 @@ jobs:
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
 
-  integration-test-install-v1:
+jobs:
+  integration-test-install:
     parameters:
       executor:
         type: executor
+      version:
+        description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+        default: latest
+        type: string
+      override-installed:
+        type: boolean
+        default: false
     executor: <<parameters.executor>>
     steps:
-      - checkout
       - aws-cli/setup:
-          version: "1"
-      - run:
-          name: Check latest v1 version is installed.
-          command: |
-            which aws
-            if aws --version 2>&1 | grep -q 'aws-cli\/1.\d*.\d*'; then
-              echo AWS CLI v1 is installed
-            else
-              echo Wrong CLI version.
-              exit 1
-            fi
+          version: <<parameters.version>>
+      - test-paging
 
-  integration-test-skip-install:
-    # This image is suitable for the test as it comes with aws preinstalled
-    parameters:
-      executor:
-        type: executor
-    executor: <<parameters.executor>>
-    steps:
-      - aws-cli/install:
-          version: "2"
-      - aws-cli/setup:
-          version: "1"
-          skip-install-check: true
-
-  replace-pip-aws-test:
-    docker:
-      - image: cimg/python:3.8
-    steps:
-      - run: pip install awscli
-      - run: which aws
-      - aws-cli/setup:
-          version: "2"
-          skip-install-check: true
-      - run:
-          name: Check installed AWS CLI version
-          command: |
-            which aws
-            echo $(aws --version)
-            if ! echo "$(aws --version)" | grep -q "(aws-cli/2)"; then
-                echo "Version 2 installed successfully."
-            else
-                echo "Incorrect version installed"
-                exit 1
-            fi
 
 workflows:
-  lint-pack_validate_deploy-dev:
+  # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
+  # This workflow will run on every commit
+  test-pack:
     unless: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - orb-tools/lint
-
-      - orb-tools/pack
-
+      - orb-tools/lint # Lint Yaml files
+      - orb-tools/pack # Pack orb source
+      - shellcheck/check:
+          dir: ./src/scripts
+          exclude: SC2148
+      # Publish development version(s) of the orb.
       - orb-tools/publish-dev:
-          context: orb-publishing
           orb-name: circleci/aws-cli
-          requires: [orb-tools/pack, orb-tools/lint]
-
+          context: orb-publisher # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
+          requires:
+            - orb-tools/lint
+            - orb-tools/pack
+            - shellcheck/check
+      # Trigger an integration workflow to test the
+      # dev:${CIRCLE_SHA1:0:7} version of your orb
       - orb-tools/trigger-integration-tests-workflow:
-          context: orb-publishing
-          requires: [orb-tools/publish-dev]
+          name: trigger-integration-dev
+          context: orb-publisher
+          requires:
+            - orb-tools/publish-dev
 
-  integration-tests_deploy-prod:
+  # This `integration-test_deploy` workflow will only run
+  # when the run-integration-tests pipeline parameter is set to true.
+  # It is meant to be triggered by the "trigger-integration-tests-workflow"
+  # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
+  integration-test_deploy:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-test-install-v2:
+      # Run any integration tests defined within the `jobs` key.
+      - integration-test-install:
           matrix:
             parameters:
-              executor: [aws-cli/default, without-less, macos, machine, python, awsv2preinstalled]
-      - integration-test-install-v1:
-          matrix:
-            parameters:
-              executor: [macos, machine, python]
-      - integration-test-skip-install:
-          matrix:
-            parameters:
-              executor: [macos, machine, python]
-      - replace-pip-aws-test
-      # This job is supposed to fail, do not run it unless for testing purposes.
-      # This job fails with a more useful error message when a user wants to install CLI V1 on an image without python.
-      # - integration-test-install-v1:
-      #     name: v1-docker
-      #     executor: without-less
-
+              executor: ["linuxvm", "docker-base", "macos", "arm"]
+          post-steps:
+            - check_aws_version
+      - integration-test-install:
+          name: integration-test-install-version
+          executor: docker-base
+          version: "2.1.10"
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
+      - integration-test-install:
+          name: integration-test-install-override-version
+          executor: docker-base
+          version: "2.1.10"
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
+            - aws-cli/setup:
+                version: "2.0.20"
+                override-installed: true
+            - check_aws_version:
+                version: "2.0.20"
+      # Publish a semver version of the orb. relies on
+      # the commit subject containing the text "[semver:patch|minor|major|skip]"
+      # as that will determine whether a patch, minor or major
+      # version will be published or if publishing should
+      # be skipped.
+      # e.g. [semver:patch] will cause a patch version to be published.
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: circleci/aws-cli
-          context: orb-publishing
-          add-pr-comment: true
-          bot-token-variable: GHI_TOKEN
-          bot-user: cpe-bot
+          context: orb-publisher
+          add-pr-comment: false
           fail-if-semver-not-indicated: true
-          publish-version-tag: true
-          ssh-fingerprints: ed:dc:9c:fd:ab:7e:16:5b:28:9f:98:68:5f:80:82:dd
+          publish-version-tag: false
+          requires:
+            - integration-test-install
+            - integration-test-install-version
+            - integration-test-install-override-version
           filters:
             branches:
-              only: master
-          requires: *integration_tests
+              only:
+                - master

@@ -3,6 +3,22 @@ description: |
   ~/.aws/credentials and ~/.aws/config
 
 parameters:
+  version:
+    description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+    default: latest
+    type: string
+  override-installed:
+    type: boolean
+    default: false
+    description: |
+      By default, if the AWS CLI is detected on the system, the install will be skipped.
+      Enable this to override the installed version and install your specified version.
+  disable-aws-pager:
+    description: |
+      Set to false to skip forceful disabling of all AWS CLI output paging.
+    type: boolean
+    default: true
+
   profile-name:
     description: Profile name to be configured.
     type: string
@@ -24,12 +40,6 @@ parameters:
     type: env_var_name
     default: AWS_SECRET_ACCESS_KEY
 
-  version:
-    description: Which version of the CLI to install. Version "1" and "2" are currently available. Will default to "2"
-    type: enum
-    enum: ["1", "2"]
-    default: "2"
-
   aws-region:
     description: |
       Env var of AWS region to operate in
@@ -49,18 +59,6 @@ parameters:
     type: boolean
     default: true
 
-  disable-aws-pager:
-    description: |
-      Set to false to skip forceful disabling of all AWS CLI output paging.
-    type: boolean
-    default: true
-
-  skip-install-check:
-    description: |
-      Set to true to skip checking for existing installations before installing.
-    type: boolean
-    default: false
-
   role-arn:
     description: Role ARN that the profile should take.
     type: string
@@ -70,45 +68,16 @@ steps:
   - install:
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
-      skip-install-check: <<parameters.skip-install-check>>
+      override-installed: <<parameters.override-installed>>
 
   - run:
       name: Configure AWS Access Key ID
-      command: |
-        aws configure set aws_access_key_id \
-          $<<parameters.aws-access-key-id>> \
-          --profile <<parameters.profile-name>>
-
-  - run:
-      name: Configure AWS Secret Access Key
-      command: |
-        aws configure set aws_secret_access_key \
-          $<<parameters.aws-secret-access-key>> \
-          --profile <<parameters.profile-name>>
-
-  - when:
-      condition: <<parameters.configure-default-region>>
-      steps:
-        - run:
-            name: Configure AWS default region
-            command: |
-              aws configure set default.region $<<parameters.aws-region>> \
-                --profile <<parameters.profile-name>>
-
-  - when:
-      condition: <<parameters.configure-profile-region>>
-      steps:
-        - run:
-            name: Configure AWS profile region
-            command: |
-              aws configure set region $<<parameters.aws-region>> \
-                --profile <<parameters.profile-name>>
-
-  - when:
-      condition: <<parameters.role-arn>>
-      steps:
-        - run:
-            name: Configure AWS profile role
-            command: |
-              aws configure set role_arn <<parameters.role-arn>> \
-                --profile <<parameters.profile-name>>
+      environment:
+        PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws-access-key-id>>
+        PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
+        PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
+        PARAM_AWS_CLI_CONFIG_DEFAULT_REGION: <<parameters.configure-default-region>>
+        PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure-profile-region>>
+        PARAM_AWS_CLI_REGION: <<parameters.aws-region>>
+        PARAM_AWS_CLI_ROLE_ARN: <<parameters.role-arn>>
+      command: <<include(scripts/configure.sh)>>
