@@ -68,6 +68,6 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         fi
     fi
 else
-    echo "AWS CLI is already installed, skipping isntallation."
+    echo "AWS CLI is already installed, skipping installation."
     aws --version
 fi
