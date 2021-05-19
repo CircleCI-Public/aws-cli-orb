@@ -21,6 +21,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     fi
 
     echo "Installing AWS CLI v2"
+    cd /tmp || exit
     # Platform check
     if uname -a | grep "Darwin"; then
         export SYS_ENV_PLATFORM=macos
