@@ -2,6 +2,7 @@ if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
 if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     # setup
+    export AWS_CLI_VER_STRING=""
     if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
 
     # Uninstall existing AWS CLI if override is enabled.
