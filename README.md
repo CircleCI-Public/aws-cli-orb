@@ -21,6 +21,9 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
+      - aws-cli/install:
+        install-dir: ~/.local/aws
+        binary-dir: ~/.local/bin
       - aws-cli/setup:
           profile-name: example
       - run: echo "Run your code here"

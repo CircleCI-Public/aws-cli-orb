@@ -24,4 +24,6 @@ steps:
         PARAM_AWS_CLI_VERSION: <<parameters.version>>
         PARAM_AWS_CLI_DISABLE_PAGER: <<parameters.disable-aws-pager>>
         PARAM_AWS_CLI_OVERRIDE: <<parameters.override-installed>>
+        PARAM_AWS_CLI_INSTALL_DIR: <<parameters.install-dir>>
+        PARAM_AWS_CLI_BINARY_DIR: <<parameters.binary-dir>>
       command: <<include(scripts/install.sh)>>

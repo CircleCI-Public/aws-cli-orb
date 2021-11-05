@@ -1,3 +1,6 @@
+export PARAM_AWS_CLI_INSTALL_DIR="${PARAM_AWS_CLI_INSTALL_DIR:=/usr/local/aws-cli}"
+export PARAM_AWS_CLI_BINARY_DIR="${PARAM_AWS_CLI_BINARY_DIR:=/usr/local/bin}"
+
 if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
 if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
@@ -40,7 +43,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     linux_x86)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install
+        $SUDO ./aws/install -i $PARAM_AWS_CLI_INSTALL_DIR -b $PARAM_AWS_CLI_BINARY_DIR
         rm awscliv2.zip
         ;;
     macos)
@@ -51,7 +54,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     linux_arm)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install
+        $SUDO ./aws/install -i $PARAM_AWS_CLI_INSTALL_DIR -b $PARAM_AWS_CLI_BINARY_DIR
         rm awscliv2.zip
         ;;
     *)
