@@ -1,4 +1,4 @@
-description: "Install the AWS CLI if not already installed."
+description: "Install the AWS CLI via Pip if not already installed."
 
 parameters:
   version:
