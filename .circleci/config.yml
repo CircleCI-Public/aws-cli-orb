@@ -171,7 +171,7 @@ workflows:
                 version: "2.0.20"
       - integration-test-role-arn-setup:
           name: test-role-arn-config
-          profile-name: "CircleCI Tester"
+          profile-name: "CircleCI-Tester"
           role-arn: "arn:aws:iam::0123456789:role/foo-bar"
 
       # Publish a semver version of the orb. relies on
