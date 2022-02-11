@@ -77,7 +77,7 @@ jobs:
       - aws-cli/setup:
           version: <<parameters.version>>
       - test-paging
-  
+
   integration-test-role-arn-setup:
     executor: docker-base
     parameters:
@@ -88,7 +88,7 @@ jobs:
         description: Role ARN that the profile should take.
         type: string
       source-profile:
-        description: | 
+        description: |
           Source profile containing credentials to assume the role with role-arn.
         type: string
         default: "default"
