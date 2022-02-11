@@ -4,4 +4,4 @@ PARAM_AWS_CLI_SOURCE_PROFILE=$(eval echo "${PARAM_AWS_CLI_SOURCE_PROFILE}")
 PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 
 aws configure set profile."${PARAM_AWS_CLI_PROFILE_NAME}".role_arn "${PARAM_AWS_CLI_ROLE_ARN}"
-aws configure set profile."${PARAM_AWS_CLI_PROFILE_NAME}".source_profile default "${PARAM_AWS_CLI_SOURCE_PROFILE}"
+aws configure set profile."${PARAM_AWS_CLI_PROFILE_NAME}".source_profile "${PARAM_AWS_CLI_SOURCE_PROFILE}"
