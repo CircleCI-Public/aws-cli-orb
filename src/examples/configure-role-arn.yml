@@ -10,7 +10,7 @@ usage:
       executor: aws-cli/default
       steps:
         - checkout
-        - aws-cli/setup: #  Rquired: Run setup command first to configure credentials for source profile 
+        - aws-cli/setup: #  Rquired: Run setup command first to configure credentials for source profile
             profile-name: default
         - aws-cli/role-arn-setup:
             profile-name: new-profile
