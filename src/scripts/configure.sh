@@ -21,6 +21,7 @@ if [ "$PARAM_AWS_CLI_CONFIG_PROFILE_REGION" = "1" ]; then
 fi
 
 if [ -n "$PARAM_AWS_CLI_ROLE_ARN" ]; then
+    echo "The role-arn parameter is deprecated. Please use the role-arn-setup command"
     aws configure set role_arn "$PARAM_AWS_CLI_ROLE_ARN" \
         --profile "$PARAM_AWS_CLI_PROFILE_NAME"
 fi
