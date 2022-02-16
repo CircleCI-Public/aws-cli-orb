@@ -10,13 +10,14 @@ usage:
       executor: aws-cli/default
       steps:
         - checkout
-        - aws-cli/setup: #  Rquired: Run setup command first to configure credentials for source profile
+        - aws-cli/setup: #  Required: Run setup command first to configure credentials for source profile
             profile-name: default
         - aws-cli/role-arn-setup:
             profile-name: new-profile
-            role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+            role-arn: "arn:aws:iam::123456789012:role/example-role"
             source-profile: default # Use profile created from setup command
-        - run: echo "Run your code here"
+        - run: aws sts assume-role --role-arn "arn:aws:iam::123456789012:role/example-role" --role-session-name AWSCLI-Session
+
 
   workflows:
     aws-cli:
