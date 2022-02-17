@@ -28,8 +28,7 @@ parameters:
       type: string
 
   source-profile:
-      description: | 
-        Source profile containing credentials to assume the role with role-arn.
+      description: Source profile containing credentials to assume the role with role-arn.
       type: string
       default: "default"
 

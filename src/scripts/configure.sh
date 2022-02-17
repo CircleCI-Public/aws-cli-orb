@@ -1,6 +1,7 @@
 PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
 PARAM_AWS_CLI_SECRET_ACCESS_KEY=$(eval echo "\$$PARAM_AWS_CLI_SECRET_ACCESS_KEY")
 PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
+PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 
 aws configure set aws_access_key_id \
     "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
@@ -20,6 +21,7 @@ if [ "$PARAM_AWS_CLI_CONFIG_PROFILE_REGION" = "1" ]; then
 fi
 
 if [ -n "$PARAM_AWS_CLI_ROLE_ARN" ]; then
+    echo "The role-arn parameter is deprecated. Please use the role-arn-setup command."
     aws configure set role_arn "$PARAM_AWS_CLI_ROLE_ARN" \
         --profile "$PARAM_AWS_CLI_PROFILE_NAME"
 fi

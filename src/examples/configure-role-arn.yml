@@ -1,0 +1,25 @@
+description: Configure a new profile to assume a role defined by a role-arn.
+usage:
+  version: 2.1
+
+  orbs:
+    aws-cli: circleci/aws-cli@2.0
+
+  jobs:
+    configure-role-arn:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/setup: #  Required: Run setup command first to configure credentials for source profile
+            profile-name: default
+        - aws-cli/role-arn-setup:
+            profile-name: new-profile
+            role-arn: "arn:aws:iam::123456789012:role/example-role"
+            source-profile: default # Use profile created from setup command
+        - run: aws sts assume-role --role-arn "arn:aws:iam::123456789012:role/example-role" --role-session-name AWSCLI-Session
+
+
+  workflows:
+    aws-cli:
+      jobs:
+        -  configure-role-arn
