@@ -4,7 +4,7 @@ PARAM_AWS_CLI_SOURCE_PROFILE=$(eval echo "${PARAM_AWS_CLI_SOURCE_PROFILE}")
 PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 
 if [ ! -f "${HOME}/.aws/credentials" ]; then
-    echo "Credentials not found. Run setup command before role-arn-setup"
+    echo "Credentials not found. Run setup command before role-arn-setup."
     exit 1
 fi
     
