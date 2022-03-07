@@ -42,7 +42,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
-        rm awscliv2.zip
+        rm -r awscliv2.zip ./aws
         ;;
     macos)
         curl -sSL "https://awscli.amazonaws.com/AWSCLIV2${AWS_CLI_VER_STRING}.pkg" -o "AWSCLIV2.pkg"
@@ -53,7 +53,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
-        rm awscliv2.zip
+        rm -r awscliv2.zip ./aws
         ;;
     *)
         echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
