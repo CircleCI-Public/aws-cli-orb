@@ -185,7 +185,7 @@ workflows:
           context: orb-publisher
           add-pr-comment: false
           fail-if-semver-not-indicated: true
-          publish-version-tag: false
+          publish-version-tag: true
           requires:
             - integration-test-install
             - integration-test-install-version
