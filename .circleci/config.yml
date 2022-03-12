@@ -122,7 +122,7 @@ workflows:
       - orb-tools/pack # Pack orb source
       - shellcheck/check:
           dir: ./src/scripts
-          exclude: SC2148
+          exclude: SC2148, SC2002
       # Publish development version(s) of the orb.
       - orb-tools/publish-dev:
           orb-name: circleci/aws-cli
