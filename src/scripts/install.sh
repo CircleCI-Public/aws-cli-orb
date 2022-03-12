@@ -30,6 +30,8 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         export SYS_ENV_PLATFORM=linux_x86
     elif uname -a | grep "aarch64 GNU/Linux"; then
         export SYS_ENV_PLATFORM=linux_arm
+    elif cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+        export SYS_ENV_PLATFORM=linux_alpine
     else
         echo "This platform appears to be unsupported."
         uname -a
@@ -53,6 +55,28 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
+        rm awscliv2.zip
+        ;;
+    linux_alpine)
+        apk --no-cache add \
+        binutils \
+        curl \
+
+        curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub 
+        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk 
+        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk 
+        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk 
+
+        apk add --no-cache \
+        glibc-2.34-r0.apk \
+        glibc-bin-2.34-r0.apk \
+        glibc-i18n-2.34-r0.apk \
+
+        /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
+
+        unzip awscliv2.zip 
+        aws/install 
         rm awscliv2.zip
         ;;
     *)

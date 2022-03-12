@@ -20,17 +20,17 @@ parameters:
     default: true
 
   profile-name:
-      description: Name of new profile associated with role arn.
-      type: string
+    description: Name of new profile associated with role arn.
+    type: string
 
   role-arn:
-      description: Role ARN that the profile should take.
-      type: string
+    description: Role ARN that the profile should take.
+    type: string
 
   source-profile:
-      description: Source profile containing credentials to assume the role with role-arn.
-      type: string
-      default: "default"
+    description: Source profile containing credentials to assume the role with role-arn.
+    type: string
+    default: "default"
 
 steps:
 

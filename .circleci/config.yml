@@ -21,6 +21,9 @@ parameters:
     default: "dev:alpha"
 
 executors:
+  alpine:
+    docker:
+      - image: alpine:latest
   docker-base:
     docker:
       - image: cimg/base:stable
@@ -97,7 +100,7 @@ jobs:
           profile-name: <<parameters.profile-name>>
           role-arn: <<parameters.role-arn>>
       - run:
-          name: Check profiles were created
+          name: Check if profiles were created
           command: |
             which aws
             ROLE_ARN=$(aws configure get role_arn --profile <<parameters.profile-name>>)
@@ -147,19 +150,23 @@ workflows:
       - integration-test-install:
           matrix:
             parameters:
-              executor: ["linuxvm", "docker-base", "macos", "arm"]
+              executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
           post-steps:
             - check_aws_version
       - integration-test-install:
           name: integration-test-install-version
-          executor: docker-base
+          matrix:
+            parameters:
+              executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
           version: "2.1.10"
           post-steps:
             - check_aws_version:
                 version: "2.1.10"
       - integration-test-install:
           name: integration-test-install-override-version
-          executor: docker-base
+          matrix:
+            parameters:
+              executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
           version: "2.1.10"
           post-steps:
             - check_aws_version:
