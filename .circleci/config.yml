@@ -205,7 +205,7 @@ workflows:
             - integration-test-install-version-macos
             - integration-test-install-version-arm
             - integration-test-install-version-alpine
-            - integration-test-install-override-version-linuxvmx
+            - integration-test-install-override-version-linuxvm
             - integration-test-install-override-version-docker-base
             - integration-test-install-override-version-macos
             - integration-test-install-override-version-arm
