@@ -8,3 +8,4 @@ description: |
 
 display:
   source_url: https://github.com/CircleCI-Public/aws-cli-orb
+  home_url: https://aws.amazon.com/cli

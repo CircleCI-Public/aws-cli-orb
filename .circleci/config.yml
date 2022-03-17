@@ -57,6 +57,7 @@ commands:
     steps:
       - run:
           name: Test that paging is disabled
+          no_output_timeout: 20m
           command: |
             # Test with aws command that would require paging if a pager is enabled
             aws ec2 describe-images \
