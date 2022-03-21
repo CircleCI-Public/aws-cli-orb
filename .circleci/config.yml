@@ -60,7 +60,7 @@ commands:
           no_output_timeout: 20m
           command: |
             # Test with aws command that would require paging if a pager is enabled
-            source $BASH_ENV
+            # source $BASH_ENV
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
