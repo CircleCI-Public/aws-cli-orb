@@ -39,7 +39,7 @@ executors:
       image: ubuntu-2004:202101-01
   windows:
     machine:
-      image: windows-server-2022-gui:edge
+      image: windows-server-2019-vs2019:stable
     shell: bash.exe
     resource_class: windows.medium
 commands:
