@@ -39,7 +39,7 @@ executors:
       image: ubuntu-2004:202101-01
   windows:
     machine:
-      image: windows-server-2019-vs2019:stable
+    image: windows-server-2019-vs2019:stable
     resouce_class: windows.medium
     shell: powershell.exe -ExecutionPolicy Bypass
 commands:
