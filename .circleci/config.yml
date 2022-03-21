@@ -40,6 +40,8 @@ executors:
   windows:
     machine:
       image: windows-server-2022-gui:edge
+    shell: powershell.exe -ExecutionPolicy Bypass
+    resource_class: windows.medium
 commands:
   check_aws_version:
     parameters:
