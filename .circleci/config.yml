@@ -40,7 +40,7 @@ executors:
   windows:
     machine:
       image: windows-server-2022-gui:edge
-    shell: bash.exe -ExecutionPolicy Bypass
+    shell: bash.exe
     resource_class: windows.medium
 commands:
   check_aws_version:
