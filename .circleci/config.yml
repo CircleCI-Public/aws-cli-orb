@@ -37,6 +37,10 @@ executors:
   linuxvm:
     machine:
       image: ubuntu-2004:202101-01
+  windows:
+    machine:
+      image: windows-server-2019:stable
+      shell: powershell.exe -ExecutionPolicy Bypass
 commands:
   check_aws_version:
     parameters:
@@ -155,7 +159,8 @@ workflows:
           name: integration-test-install-<<matrix.executor>>
           matrix:
             parameters:
-              executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
+              # executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
+              executor: ["windows"]
           post-steps:
             - check_aws_version
       # - integration-test-install:
