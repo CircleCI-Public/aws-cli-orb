@@ -67,7 +67,12 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk 
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk 
 
-        apk add --no-cache /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 
+        apk add --no-cache \
+        glibc-2.34-r0.apk \
+        glibc-bin-2.34-r0.apk \
+        glibc-i18n-2.34-r0.apk \
+
+        /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
 
         unzip awscliv2.zip 
