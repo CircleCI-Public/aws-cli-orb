@@ -40,7 +40,8 @@ executors:
   windows:
     machine:
       image: windows-server-2019-vs2019:stable
-    shell: powershell.exe -ExecutionPolicy Bypass
+      resouce_class: windows.medium
+      shell: powershell.exe -ExecutionPolicy Bypass
 commands:
   check_aws_version:
     parameters:
