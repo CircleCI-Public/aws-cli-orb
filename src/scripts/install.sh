@@ -87,9 +87,7 @@ if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     esac
     # Toggle AWS Pager
     if [ "$PARAM_AWS_CLI_DISABLE_PAGER" = 1 ]; then
-        echo "Getting to line 90"
         if [ -z "${AWS_PAGER+x}" ]; then
-            echo "Getting to line 92"
             echo 'export AWS_PAGER=""' >> "$BASH_ENV"
             echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
             echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."

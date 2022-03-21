@@ -60,7 +60,9 @@ commands:
           no_output_timeout: 20m
           command: |
             # Test with aws command that would require paging if a pager is enabled
-            # source $BASH_ENV
+            if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+            source $BASH_ENV
+            fi
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
@@ -153,8 +155,7 @@ workflows:
           name: integration-test-install-<<matrix.executor>>
           matrix:
             parameters:
-              # executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
-              executor: ["alpine"]
+              executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
           post-steps:
             - check_aws_version
       # - integration-test-install:
@@ -198,10 +199,10 @@ workflows:
           fail-if-semver-not-indicated: true
           publish-version-tag: false
           requires:
-            # - integration-test-install-linuxvm
-            # - integration-test-install-docker-base
-            # - integration-test-install-macos
-            # - integration-test-install-arm
+            - integration-test-install-linuxvm
+            - integration-test-install-docker-base
+            - integration-test-install-macos
+            - integration-test-install-arm
             - integration-test-install-alpine
           #   - integration-test-install-version-linuxvm
           #   - integration-test-install-version-docker-base
