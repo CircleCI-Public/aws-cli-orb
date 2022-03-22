@@ -34,7 +34,7 @@ if true; then
         export SYS_ENV_PLATFORM=linux_x86
     elif uname -a | grep "aarch64 GNU/Linux"; then
         export SYS_ENV_PLATFORM=linux_arm
-    elif cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+    elif type /etc/issue | grep "Alpine" > /dev/null 2>&1; then
         export SYS_ENV_PLATFORM=linux_alpine
     else
         echo "This platform appears to be unsupported."
