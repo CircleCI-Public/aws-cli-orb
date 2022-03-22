@@ -178,7 +178,7 @@ workflows:
           matrix:
             parameters:
               # executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
-              executor: ["windows"]
+              executor: ["linuxvm", "windows"]
           version: "2.1.10"
           post-steps:
             - check_aws_version:
