@@ -1,4 +1,4 @@
-if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+# if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
 # if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
 if true; then
