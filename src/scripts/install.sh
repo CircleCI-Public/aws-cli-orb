@@ -1,10 +1,10 @@
-# if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-# if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-if true; then
+if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+# if true; then
     # setup
     command -v aws 
-    echo "$PARAM_AWS_CLI_OVERRIDE"
+    echo "override: $PARAM_AWS_CLI_OVERRIDE"
     export AWS_CLI_VER_STRING=""
 
     if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
@@ -34,7 +34,9 @@ if true; then
         export SYS_ENV_PLATFORM=linux_x86
     elif uname -a | grep "aarch64 GNU/Linux"; then
         export SYS_ENV_PLATFORM=linux_arm
-    elif type /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+    elif uname -a | grep "x86_64 Msys"; then
+        export SYS_ENV_PLATFORM=windows
+    elif cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
         export SYS_ENV_PLATFORM=linux_alpine
     else
         echo "This platform appears to be unsupported."
@@ -48,6 +50,12 @@ if true; then
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
+        rm awscliv2.zip
+        ;;
+    windows)
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
+        unzip -q -o awscliv2.zip
+        ./aws/install
         rm awscliv2.zip
         ;;
     macos)
