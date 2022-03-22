@@ -1,10 +1,9 @@
 if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
-
+echo "override: $PARAM_AWS_CLI_OVERRIDE"
 if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
 # if true; then
     # setup
     command -v aws 
-    echo "override: $PARAM_AWS_CLI_OVERRIDE"
     export AWS_CLI_VER_STRING=""
 
     if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
