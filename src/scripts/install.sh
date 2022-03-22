@@ -1,13 +1,14 @@
 if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-if [ ! "$(which aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     # setup
     export AWS_CLI_VER_STRING=""
-    if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
 
+    if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
+    echo "first if"
     # Uninstall existing AWS CLI if override is enabled.
-    if [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-        AWS_CLI_PATH=$(which aws)
+    if [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ] || aws --version | grep aws-cli/1.; then
+        AWS_CLI_PATH=$(command -v aws)
         if [ -n "$AWS_CLI_PATH" ]; then
             EXISTING_AWS_VERSION=$(aws --version)
             echo "Uninstalling ${EXISTING_AWS_VERSION}"
