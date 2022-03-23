@@ -156,38 +156,39 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       # Testing executors that do not AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["docker-base", "macos", "alpine"]
-          post-steps:
-            - check_aws_version
-      # Test installing specific versions on executors without AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-version-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["docker-base", "macos", "alpine"]
-          version: "2.1.10"
-          post-steps:
-            - check_aws_version:
-                version: "2.1.10"
+      # - integration-test-install:
+      #     name: integration-test-install-<<matrix.executor>>
+      #     matrix:
+      #       parameters:
+      #         executor: ["docker-base", "macos", "alpine"]
+      #     post-steps:
+      #       - check_aws_version
+      # # Test installing specific versions on executors without AWS pre-installed
+      # - integration-test-install:
+      #     name: integration-test-install-version-<<matrix.executor>>
+      #     matrix:
+      #       parameters:
+      #         executor: ["docker-base", "macos", "alpine"]
+      #     version: "2.1.10"
+      #     post-steps:
+      #       - check_aws_version:
+      #           version: "2.1.10"
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
           matrix:
             parameters:
-              executor: ["linuxvm", "windows", "arm"]
-          # version: "2.1.10"
+              # executor: ["linuxvm", "windows", "arm"]
+              executor: ["windows"]
+          version: "2.1.10"
           override-installed: true
           post-steps:
             - check_aws_version:
                 version: "2.1.10"
-      - integration-test-role-arn-setup:
-          name: test-role-arn-config
-          profile-name: "CircleCI-Tester"
-          role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+      # - integration-test-role-arn-setup:
+      #     name: test-role-arn-config
+      #     profile-name: "CircleCI-Tester"
+      #     role-arn: "arn:aws:iam::0123456789:role/foo-bar"
 
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
