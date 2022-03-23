@@ -22,4 +22,4 @@ usage:
   workflows:
     aws-cli:
       jobs:
-        -  configure-role-arn
+        - configure-role-arn

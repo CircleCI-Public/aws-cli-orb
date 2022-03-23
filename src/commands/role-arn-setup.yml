@@ -41,6 +41,3 @@ steps:
         PARAM_AWS_CLI_SOURCE_PROFILE: <<parameters.source-profile>>
         PARAM_AWS_CLI_ROLE_ARN: <<parameters.role-arn>>
       command: <<include(scripts/role-arn-setup.sh)>>
-
-
-

@@ -102,12 +102,11 @@ Uninstall_AWS_CLI () {
 export AWS_CLI_VER_STRING=""
 if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
 
-# If aws is not installed
 if [ ! "$(command -v aws)" ]; then
     Install_AWS_CLI "${AWS_CLI_VER_STRING}"
-# elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-#     Uninstall_AWS_CLI
-#     Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+    Uninstall_AWS_CLI
+    Install_AWS_CLI "${AWS_CLI_VER_STRING}"
 else 
     echo "AWS CLI is already installed, skipping installation."
     aws --version
