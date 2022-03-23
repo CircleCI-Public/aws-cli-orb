@@ -10,7 +10,7 @@ if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
 
     if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
     # Uninstall existing AWS CLI if override is enabled.
-    if [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ] || aws --version | grep aws-cli/1. > /dev/null 2>&1; then
+    if [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         AWS_CLI_PATH=$(command -v aws)
         if [ -n "$AWS_CLI_PATH" ]; then
             EXISTING_AWS_VERSION=$(aws --version)
@@ -47,24 +47,24 @@ if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     # Install per platform
     case $SYS_ENV_PLATFORM in
     linux_x86)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
         rm awscliv2.zip
         ;;
     windows)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         ./aws/install
         rm awscliv2.zip
         ;;
     macos)
-        curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$1.pkg" -o "AWSCLIV2.pkg"
+        curl -sSL "https://awscli.amazonaws.com/AWSCLIV2${AWS_CLI_VER_STRING}.pkg" -o "AWSCLIV2.pkg"
         $SUDO installer -pkg AWSCLIV2.pkg -target /
         rm AWSCLIV2.pkg
         ;;
     linux_arm)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$1.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install
         rm awscliv2.zip
@@ -85,7 +85,7 @@ if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
         glibc-i18n-2.34-r0.apk \
 
         /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64${AWS_CLI_VER_STRING}.zip" -o "awscliv2.zip"
 
         unzip awscliv2.zip 
         aws/install 
