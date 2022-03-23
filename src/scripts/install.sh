@@ -73,6 +73,30 @@ Install_AWS_CLI (){
         exit 1
     ;;
     esac
+    # Toggle AWS Pager
+    if [ "$PARAM_AWS_CLI_DISABLE_PAGER" = 1 ]; then
+        if [ -z "${AWS_PAGER+x}" ]; then
+            echo 'export AWS_PAGER=""' >> "$BASH_ENV"
+            echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
+            echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
+        fi
+    fi
+}
+
+Uninstall_AWS_CLI () {
+    AWS_CLI_PATH=$(command -v aws)
+    if [ -n "$AWS_CLI_PATH" ]; then
+        EXISTING_AWS_VERSION=$(aws --version)
+        echo "Uninstalling ${EXISTING_AWS_VERSION}"
+        # shellcheck disable=SC2012
+        if [ -L "$AWS_CLI_PATH" ]; then
+            AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
+        fi
+        if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
+        $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
+    else
+        echo "No AWS install found"
+    fi
 }
 
 export AWS_CLI_VER_STRING=""
@@ -81,6 +105,12 @@ if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$
 # If aws is not installed
 if [ ! "$(command -v aws)" ]; then
     Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+# elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+#     Uninstall_AWS_CLI
+#     Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+else 
+    echo "AWS CLI is already installed, skipping installation."
+    aws --version
 fi
 
 
