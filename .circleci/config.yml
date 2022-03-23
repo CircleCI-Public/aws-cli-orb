@@ -208,23 +208,18 @@ workflows:
           fail-if-semver-not-indicated: true
           publish-version-tag: false
           requires:
-            # - integration-test-install-linuxvm
-            # - integration-test-install-docker-base
-            # - integration-test-install-macos
-            # - integration-test-install-arm
-            # - integration-test-install-alpine
-            - integration-test-install-windows
-          #   - integration-test-install-version-linuxvm
-          #   - integration-test-install-version-docker-base
-          #   - integration-test-install-version-macos
-          #   - integration-test-install-version-arm
-          #   - integration-test-install-version-alpine
+            - integration-test-install-docker-base
+            - integration-test-install-alpine
+            - integration-test-install-macos
+            - integration-test-install-version-docker-base
+            - integration-test-install-version-macos
+            - integration-test-install-version-alpine
           #   - integration-test-install-override-version-linuxvm
           #   - integration-test-install-override-version-docker-base
           #   - integration-test-install-override-version-macos
           #   - integration-test-install-override-version-arm
           #   - integration-test-install-override-version-alpine
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
+          filters:
+            branches:
+              only:
+                - master
