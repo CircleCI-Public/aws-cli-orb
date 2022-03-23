@@ -3,9 +3,6 @@ echo "override: $PARAM_AWS_CLI_OVERRIDE"
 #check to see version of cli
 #compare installed version to parameter
 if [ ! "$(command -v aws)" ] || [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-# if true; then
-    # setup
-    command -v aws 
     export AWS_CLI_VER_STRING=""
 
     if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; fi
