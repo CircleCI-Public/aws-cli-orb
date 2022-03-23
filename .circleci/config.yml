@@ -179,7 +179,7 @@ workflows:
           matrix:
             parameters:
               executor: ["linuxvm", "windows", "arm"]
-          version: "2.1.10"
+          # version: "2.1.10"
           override-installed: true
           post-steps:
             - check_aws_version:
@@ -205,12 +205,12 @@ workflows:
             - integration-test-install-docker-base
             - integration-test-install-alpine
             - integration-test-install-macos
-            # - integration-test-install-version-docker-base
-            # - integration-test-install-version-macos
-            # - integration-test-install-version-alpine
-            # - integration-test-install-override-version-linuxvm
-            # - integration-test-install-override-version-windows
-            # - integration-test-install-override-version-arm
+            - integration-test-install-version-docker-base
+            - integration-test-install-version-macos
+            - integration-test-install-version-alpine
+            - integration-test-install-override-version-linuxvm
+            - integration-test-install-override-version-windows
+            - integration-test-install-override-version-arm
           filters:
             branches:
               only:

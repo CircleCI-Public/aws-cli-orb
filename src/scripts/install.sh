@@ -19,7 +19,7 @@ Install_AWS_CLI (){
         uname -a
         exit 1
     fi
-    echo "Platform $SYS_ENV_PLATFORM"
+
     # Install per platform
     case $SYS_ENV_PLATFORM in
     linux_x86)
