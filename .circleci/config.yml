@@ -157,24 +157,24 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       # Run any integration tests defined within the `jobs` key.
+      # Testing executors that do not AWS pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
           matrix:
             parameters:
-              executor: ["linuxvm", "docker-base", "macos", "arm", "alpine", "windows"]
-              # executor: ["windows"]
+              executor: ["docker-base", "macos", "alpine"]
           post-steps:
             - check_aws_version
-      # - integration-test-install:
-      #     name: integration-test-install-version-<<matrix.executor>>
-      #     matrix:
-      #       parameters:
-              # executor: ["linuxvm", "docker-base", "macos", "arm", "alpine"]
-              # executor: ["linuxvm", "windows"]
-          # version: "2.1.10"
-          # post-steps:
-          #   - check_aws_version:
-          #       version: "2.1.10"
+      # Test installing specific versions on executors without AWS pre-installed     
+      - integration-test-install:
+          name: integration-test-install-version-<<matrix.executor>>
+          matrix:
+            parameters:
+              executor: ["docker-base", "macos", "alpine"]
+          version: "2.1.10"
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
       # - integration-test-install:
       #     name: integration-test-install-override-version-<<matrix.executor>>
       #     matrix:
