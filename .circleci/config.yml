@@ -165,7 +165,7 @@ workflows:
               executor: ["docker-base", "macos", "alpine"]
           post-steps:
             - check_aws_version
-      # Test installing specific versions on executors without AWS pre-installed     
+      # Test installing specific versions on executors without AWS pre-installed
       - integration-test-install:
           name: integration-test-install-version-<<matrix.executor>>
           matrix:
