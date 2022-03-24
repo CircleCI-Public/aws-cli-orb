@@ -29,12 +29,11 @@ Install_AWS_CLI (){
         rm awscliv2.zip
         ;;
     windows)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
-        echo "cul worked"
-        unzip -o awscliv2.zip
-        echo "unzip worked"
-        ./aws/install
-        rm awscliv2.zip
+        if [ ! "$(command -v choco)" ]; then
+            echo "Chocolatey is required to uninstall AWS"
+            exit 1
+        fi
+        choco install awscli --version="$1"
         ;;
     macos)
         curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$1.pkg" -o "AWSCLIV2.pkg"
@@ -86,20 +85,28 @@ Install_AWS_CLI (){
 }
 
 Uninstall_AWS_CLI () {
-    AWS_CLI_PATH=$(command -v aws)
-    echo "$AWS_CLI_PATH"
-    if [ -n "$AWS_CLI_PATH" ]; then
-        EXISTING_AWS_VERSION=$(aws --version)
-        echo "Uninstalling ${EXISTING_AWS_VERSION}"
-        # shellcheck disable=SC2012
-        if [ -L "$AWS_CLI_PATH" ]; then
-            AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
-            echo "$AWS_SYMLINK_PATH"
+    if uname -a | grep "x86_64 Msys"; then
+        if [ ! "$(command -v choco)" ]; then
+            echo "Chocolatey is required to uninstall AWS"
+            exit 1
         fi
-        if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
-        $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
-    else
-        echo "No AWS install found"
+        choco uninstall awscli
+    else 
+        AWS_CLI_PATH=$(command -v aws)
+        echo "$AWS_CLI_PATH"
+        if [ -n "$AWS_CLI_PATH" ]; then
+            EXISTING_AWS_VERSION=$(aws --version)
+            echo "Uninstalling ${EXISTING_AWS_VERSION}"
+            # shellcheck disable=SC2012
+            if [ -L "$AWS_CLI_PATH" ]; then
+                AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
+                echo "$AWS_SYMLINK_PATH"
+            fi
+            if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
+            $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
+        else
+            echo "No AWS install found"
+        fi
     fi
 }
 
@@ -109,8 +116,8 @@ if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="-$
 if [ ! "$(command -v aws)" ]; then
     Install_AWS_CLI "${AWS_CLI_VER_STRING}"
 elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-    # Uninstall_AWS_CLI
-    # Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+    Uninstall_AWS_CLI
+    Install_AWS_CLI "${AWS_CLI_VER_STRING}"
     aws --version
 else 
     echo "AWS CLI is already installed, skipping installation."
