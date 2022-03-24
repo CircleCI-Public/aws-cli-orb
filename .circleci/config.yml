@@ -52,6 +52,9 @@ commands:
       - run:
           name: check_aws_version
           command: |
+            if uname -a | grep "x86_64 Msys"; then
+            PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+            fi
             if [ -n "<<parameters.version>>" ]; then
               INSTALLED_AWS_VERSION="$(aws --version)"
               aws --version | grep <<parameters.version>>
@@ -66,6 +69,9 @@ commands:
             # Test with aws command that would require paging if a pager is enabled
             if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
             source $BASH_ENV
+            fi
+            if uname -a | grep "x86_64 Msys"; then
+            PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
             fi
             aws ec2 describe-images \
               --owners amazon \
