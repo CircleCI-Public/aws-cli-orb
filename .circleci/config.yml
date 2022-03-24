@@ -69,6 +69,7 @@ commands:
             # source $BASH_ENV
             # fi
             echo "$PATH"
+            aws --version
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
