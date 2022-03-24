@@ -34,7 +34,7 @@ Install_AWS_CLI (){
             exit 1
         fi
         choco install awscli --version="$1"
-        PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+        setx PATH "${PATH}:/c/Program Files/Amazon/AWSCLIV2"
         ;;
     macos)
         curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$1.pkg" -o "AWSCLIV2.pkg"
