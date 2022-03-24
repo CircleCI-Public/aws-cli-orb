@@ -64,9 +64,9 @@ commands:
           name: Test that paging is disabled
           command: |
             # Test with aws command that would require paging if a pager is enabled
-            if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
-            source $BASH_ENV
-            fi
+            # if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+            # source $BASH_ENV
+            # fi
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
@@ -156,13 +156,14 @@ workflows:
     when: << pipeline.parameters.run-integration-tests >>
     jobs:
       # Testing executors that do not AWS pre-installed
-      # - integration-test-install:
-      #     name: integration-test-install-<<matrix.executor>>
-      #     matrix:
-      #       parameters:
-      #         executor: ["docker-base", "macos", "alpine"]
-      #     post-steps:
-      #       - check_aws_version
+      - integration-test-install:
+          name: integration-test-install-<<matrix.executor>>
+          matrix:
+            parameters:
+              # executor: ["docker-base", "macos", "alpine"]
+              executor: ["alpine"]
+          post-steps:
+            - check_aws_version
       # # Test installing specific versions on executors without AWS pre-installed
       # - integration-test-install:
       #     name: integration-test-install-version-<<matrix.executor>>
@@ -204,7 +205,7 @@ workflows:
           publish-version-tag: false
           requires:
             # - integration-test-install-docker-base
-            # - integration-test-install-alpine
+            - integration-test-install-alpine
             # - integration-test-install-macos
             # - integration-test-install-version-docker-base
             # - integration-test-install-version-macos
