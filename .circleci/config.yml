@@ -53,7 +53,7 @@ commands:
           name: check_aws_version
           command: |
             if uname -a | grep "x86_64 Msys"; then
-            PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+            # PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
             fi
             if [ -n "<<parameters.version>>" ]; then
               INSTALLED_AWS_VERSION="$(aws --version)"
@@ -71,7 +71,7 @@ commands:
             source $BASH_ENV
             fi
             if uname -a | grep "x86_64 Msys"; then
-            PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+            # PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
             fi
             aws ec2 describe-images \
               --owners amazon \

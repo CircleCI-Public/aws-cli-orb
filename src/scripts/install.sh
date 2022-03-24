@@ -35,7 +35,9 @@ Install_AWS_CLI (){
         fi
         choco install awscli --version="$1"
         if [ "${1:1}" == '2' ]; then
-         PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+         export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+        else
+         export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"
         fi
 
         ;;
@@ -116,14 +118,13 @@ Uninstall_AWS_CLI () {
 
 export AWS_CLI_VER_STRING=""
 if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="$PARAM_AWS_CLI_VERSION"; fi
-
-if [ ! "$(command -v aws)" ]; then
-    Install_AWS_CLI "-${AWS_CLI_VER_STRING}"
-elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-    aws --version
-else 
-    echo "AWS CLI is already installed, skipping installation."
-    aws --version
+    if [ ! "$(command -v aws)" ]; then
+        Install_AWS_CLI "-${AWS_CLI_VER_STRING}"
+    elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+        aws --version
+    else 
+        echo "AWS CLI is already installed, skipping installation."
+        aws --version
 fi
 
 
