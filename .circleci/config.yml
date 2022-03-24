@@ -52,6 +52,7 @@ commands:
       - run:
           name: check_aws_version
           command: |
+            command -v aws
             if [ -n "<<parameters.version>>" ]; then
               INSTALLED_AWS_VERSION="$(aws --version)"
               aws --version | grep <<parameters.version>>
@@ -67,6 +68,7 @@ commands:
             # if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
             # source $BASH_ENV
             # fi
+            echo "$PATH"
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"

@@ -34,11 +34,11 @@ Install_AWS_CLI (){
             exit 1
         fi
         choco install awscli --version="$1"
-        if [ "${1:1}" == '2' ]; then
-         export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
-        else
-         export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"
-        fi
+        # if [ "${1:1}" == '2' ]; then
+        #  export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+        # else
+        #  export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"
+        # fi
 
         ;;
     macos)
@@ -70,6 +70,7 @@ Install_AWS_CLI (){
         /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
 
+        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip"
         unzip awscliv2.zip 
         aws/install 
         rm awscliv2.zip
