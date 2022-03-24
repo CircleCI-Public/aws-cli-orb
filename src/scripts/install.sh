@@ -84,8 +84,7 @@ Install_AWS_CLI (){
     # Toggle AWS Pager
     if [ "$PARAM_AWS_CLI_DISABLE_PAGER" = 1 ]; then
         if [ -z "${AWS_PAGER+x}" ]; then
-            # echo 'export AWS_PAGER=""' >> "$BASH_ENV"
-            export AWS_PAGER=""
+            echo 'export AWS_PAGER=""' >> "$BASH_ENV"
             echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
             echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
         fi
@@ -119,17 +118,20 @@ Uninstall_AWS_CLI () {
 }
 
 
+export AWS_CLI_VER_STRING="";
 if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then 
-    export AWS_CLI_VER_STRING="-$PARAM_AWS_CLI_VERSION"; 
-else
-    export AWS_CLI_VER_STRING="";
+    export AWS_CLI_VER_STRING="$PARAM_AWS_CLI_VERSION";
 fi
 
 if [ ! "$(command -v aws)" ]; then
-    Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+    Install_AWS_CLI
 elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     Uninstall_AWS_CLI
-    Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+    if uname -a | grep "x86_64 Msys"; then
+        Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+    else 
+        Install_AWS_CLI "-${AWS_CLI_VER_STRING}"
+    fi
 else 
     echo "AWS CLI is already installed, skipping installation."
     aws --version
