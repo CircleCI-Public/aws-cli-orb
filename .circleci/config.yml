@@ -70,9 +70,9 @@ commands:
             if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
             source $BASH_ENV
             fi
-            if uname -a | grep "x86_64 Msys"; then
+            # if uname -a | grep "x86_64 Msys"; then
             # PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
-            fi
+            # fi
             aws ec2 describe-images \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
