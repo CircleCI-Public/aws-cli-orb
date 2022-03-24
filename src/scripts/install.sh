@@ -34,7 +34,10 @@ Install_AWS_CLI (){
             exit 1
         fi
         choco install awscli --version="$1"
-        PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+        if [ ${1:1} == '2' ]; then
+         PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
+        fi
+
         ;;
     macos)
         curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$1.pkg" -o "AWSCLIV2.pkg"
@@ -117,8 +120,6 @@ if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then export AWS_CLI_VER_STRING="$P
 if [ ! "$(command -v aws)" ]; then
     Install_AWS_CLI "-${AWS_CLI_VER_STRING}"
 elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
-    Uninstall_AWS_CLI
-    Install_AWS_CLI "${AWS_CLI_VER_STRING}"
     aws --version
 else 
     echo "AWS CLI is already installed, skipping installation."
