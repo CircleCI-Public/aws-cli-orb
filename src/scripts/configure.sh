@@ -6,7 +6,7 @@ PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 #     PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
 # fi
 source "$BASH_ENV"
-echo "$BASH_ENV"
+echo "${PATH}"
 aws configure set aws_access_key_id \
     "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
