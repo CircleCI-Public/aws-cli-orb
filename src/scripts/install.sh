@@ -35,7 +35,7 @@ Install_AWS_CLI (){
         fi
         choco install awscli --version="$1"
         if [ "${1:1}" == '2' ]; then
-         echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"' >> $BASH_ENV
+         echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"' >> "$BASH_ENV"
         else
          export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"
         fi
