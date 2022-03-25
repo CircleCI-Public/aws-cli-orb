@@ -1,10 +1,7 @@
 PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
 PARAM_AWS_CLI_SECRET_ACCESS_KEY=$(eval echo "\$$PARAM_AWS_CLI_SECRET_ACCESS_KEY")
 PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
-PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
-# if uname -a | grep "x86_64 Msys"; then
-#     PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"
-# fi
+
 source "$BASH_ENV"
 echo "${PATH}"
 aws configure set aws_access_key_id \
