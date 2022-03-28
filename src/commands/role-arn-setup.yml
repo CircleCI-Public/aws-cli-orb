@@ -33,7 +33,6 @@ parameters:
     default: "default"
 
 steps:
-
   - run:
       name: Configure role arn for profie <<parameters.profile-name>>
       environment:

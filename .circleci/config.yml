@@ -163,36 +163,34 @@ workflows:
           name: integration-test-install-<<matrix.executor>>
           matrix:
             parameters:
-              # executor: ["docker-base", "macos", "alpine"]
-              executor: ["alpine"]
+              executor: ["docker-base", "macos", "alpine"]
           post-steps:
             - check_aws_version
-      # # Test installing specific versions on executors without AWS pre-installed
-      # - integration-test-install:
-      #     name: integration-test-install-version-<<matrix.executor>>
-      #     matrix:
-      #       parameters:
-      #         executor: ["docker-base", "macos", "alpine"]
-      #     version: "2.1.10"
-      #     post-steps:
-      #       - check_aws_version:
-      #           version: "2.1.10"
+      # Test installing specific versions on executors without AWS pre-installed
+      - integration-test-install:
+          name: integration-test-install-version-<<matrix.executor>>
+          matrix:
+            parameters:
+              executor: ["docker-base", "macos", "alpine"]
+          version: "2.1.10"
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
           matrix:
             parameters:
-              # executor: ["linuxvm", "windows", "arm"]
-              executor: ["windows"]
+              executor: ["linuxvm", "windows", "arm"]
           version: "2.1.10"
           override-installed: true
           post-steps:
             - check_aws_version:
                 version: "2.1.10"
-      # - integration-test-role-arn-setup:
-      #     name: test-role-arn-config
-      #     profile-name: "CircleCI-Tester"
-      #     role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+      - integration-test-role-arn-setup:
+          name: test-role-arn-config
+          profile-name: "CircleCI-Tester"
+          role-arn: "arn:aws:iam::0123456789:role/foo-bar"
 
       # Publish a semver version of the orb. relies on
       # the commit subject containing the text "[semver:patch|minor|major|skip]"
@@ -207,15 +205,15 @@ workflows:
           fail-if-semver-not-indicated: true
           publish-version-tag: false
           requires:
-            # - integration-test-install-docker-base
+            - integration-test-install-docker-base
             - integration-test-install-alpine
-            # - integration-test-install-macos
-            # - integration-test-install-version-docker-base
-            # - integration-test-install-version-macos
-            # - integration-test-install-version-alpine
-            # - integration-test-install-override-version-linuxvm
+            - integration-test-install-macos
+            - integration-test-install-version-docker-base
+            - integration-test-install-version-macos
+            - integration-test-install-version-alpine
+            - integration-test-install-override-version-linuxvm
             - integration-test-install-override-version-windows
-            # - integration-test-install-override-version-arm
+            - integration-test-install-override-version-arm
           filters:
             branches:
               only:

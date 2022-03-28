@@ -1,6 +1,6 @@
 if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-Install_AWS_CLI (){
+Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
     cd /tmp || exit
     # Platform check
@@ -12,7 +12,7 @@ Install_AWS_CLI (){
         export SYS_ENV_PLATFORM=linux_arm
     elif uname -a | grep "x86_64 Msys"; then
         export SYS_ENV_PLATFORM=windows
-    elif cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+    elif cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
         export SYS_ENV_PLATFORM=linux_alpine
     else
         echo "This platform appears to be unsupported."
@@ -34,14 +34,11 @@ Install_AWS_CLI (){
             exit 1
         fi
         choco install awscli --version="$1"
-        aws --version
         echo "$1"
         if echo "$1" | grep "2."; then
-            echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"' >> "$BASH_ENV"
-            echo "HHERE"
-            echo "${PATH}"
+            echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"' >>"$BASH_ENV"
         else
-            echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"' >> "$BASH_ENV"
+            echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"' >>"$BASH_ENV"
         fi
         ;;
     macos)
@@ -57,51 +54,51 @@ Install_AWS_CLI (){
         ;;
     linux_alpine)
         apk --no-cache add \
-        binutils \
-        curl \
+            binutils \
+            curl
 
-        curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub 
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk 
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk 
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk 
+        curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
+        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
+        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
+        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk
 
         apk add --no-cache \
-        glibc-2.34-r0.apk \
-        glibc-bin-2.34-r0.apk \
-        glibc-i18n-2.34-r0.apk \
+            glibc-2.34-r0.apk \
+            glibc-bin-2.34-r0.apk \
+            glibc-i18n-2.34-r0.apk
 
-        /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 
+        /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
 
         echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip"
-        unzip awscliv2.zip 
-        aws/install 
+        unzip awscliv2.zip
+        aws/install
         rm awscliv2.zip
         ;;
     *)
         echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
         echo "https://github.com/CircleCI-Public/aws-cli-orb/issues/new"
         exit 1
-    ;;
+        ;;
     esac
     # Toggle AWS Pager
     if [ "$PARAM_AWS_CLI_DISABLE_PAGER" = 1 ]; then
         if [ -z "${AWS_PAGER+x}" ]; then
-            echo 'export AWS_PAGER=""' >> "$BASH_ENV"
+            echo 'export AWS_PAGER=""' >>"$BASH_ENV"
             echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
             echo "You can set the 'disable-aws-pager' parameter to 'false' to disable this behavior."
         fi
     fi
 }
 
-Uninstall_AWS_CLI () {
+Uninstall_AWS_CLI() {
     if uname -a | grep "x86_64 Msys"; then
         if [ ! "$(command -v choco)" ]; then
             echo "Chocolatey is required to uninstall AWS"
             exit 1
         fi
         choco uninstall awscli
-    else 
+    else
         AWS_CLI_PATH=$(command -v aws)
         echo "$AWS_CLI_PATH"
         if [ -n "$AWS_CLI_PATH" ]; then
@@ -119,10 +116,9 @@ Uninstall_AWS_CLI () {
     fi
 }
 
-
-export AWS_CLI_VER_STRING="";
-if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then 
-    export AWS_CLI_VER_STRING="$PARAM_AWS_CLI_VERSION";
+export AWS_CLI_VER_STRING=""
+if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then
+    export AWS_CLI_VER_STRING="$PARAM_AWS_CLI_VERSION"
 fi
 
 if [ ! "$(command -v aws)" ]; then
@@ -131,28 +127,10 @@ elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     Uninstall_AWS_CLI
     if uname -a | grep "x86_64 Msys"; then
         Install_AWS_CLI "${AWS_CLI_VER_STRING}"
-    else 
+    else
         Install_AWS_CLI "-${AWS_CLI_VER_STRING}"
     fi
-else 
+else
     echo "AWS CLI is already installed, skipping installation."
     aws --version
 fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
