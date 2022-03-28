@@ -52,7 +52,8 @@ commands:
       - run:
           name: check_aws_version
           command: |
-            command -v aws
+            source $BASH_ENV
+            aws --version
             if [ -n "<<parameters.version>>" ]; then
               INSTALLED_AWS_VERSION="$(aws --version)"
               aws --version | grep <<parameters.version>>
@@ -66,9 +67,7 @@ commands:
           command: |
             # Test with aws command that would require paging if a pager is enabled
             if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
-              source $BASH_ENV
-            fi
-            echo "$PATH"
+            source $BASH_ENV
             aws --version
             aws ec2 describe-images \
               --owners amazon \
