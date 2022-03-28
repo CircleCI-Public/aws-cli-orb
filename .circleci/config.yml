@@ -57,7 +57,7 @@ commands:
               INSTALLED_AWS_VERSION="$(aws --version)"
               aws --version | grep <<parameters.version>>
             else
-              if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
+              if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi 
             fi
   test-paging:
     steps:
@@ -65,7 +65,6 @@ commands:
           name: Test that paging is disabled
           command: |
             # Test with aws command that would require paging if a pager is enabled
-            if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then fi
             source $BASH_ENV
             aws --version
             aws ec2 describe-images \
