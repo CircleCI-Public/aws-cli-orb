@@ -65,7 +65,7 @@ commands:
           name: Test that paging is disabled
           command: |
             # Test with aws command that would require paging if a pager is enabled
-            if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then
+            if cat /etc/issue | grep "Alpine" > /dev/null 2>&1; then fi
             source $BASH_ENV
             aws --version
             aws ec2 describe-images \
