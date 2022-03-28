@@ -52,7 +52,6 @@ commands:
       - run:
           name: check_aws_version
           command: |
-            source $BASH_ENV
             aws --version
             if [ -n "<<parameters.version>>" ]; then
               INSTALLED_AWS_VERSION="$(aws --version)"
