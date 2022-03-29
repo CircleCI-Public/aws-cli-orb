@@ -85,11 +85,24 @@ jobs:
       override-installed:
         type: boolean
         default: false
+      binary-dir:
+        type: string
+        default: "/usr/local/bin"
+        description: |
+          Specify the binary directory
+      install-dir:
+        type: string
+        default: "/usr/local/aws-cli"
+        description: |
+          Specify the installation directory
+
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
           version: <<parameters.version>>
           override-installed: <<parameters.override-installed>>
+          install-dir: <<parameters.install-dir>>
+          binary-dir: <<parameters.binary-dir>>
       - test-paging
 
   integration-test-role-arn-setup:
