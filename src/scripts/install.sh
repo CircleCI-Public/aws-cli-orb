@@ -25,8 +25,8 @@ Install_AWS_CLI() {
     linux_x86)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install
-        rm awscliv2.zip
+        $SUDO ./aws/install -i "${PARAM_AWS_CLI_INSTALL_DIR}" -b "${PARAM_AWS_CLI_BINARY_DIR}"
+        rm -r awscliv2.zip ./aws
         ;;
     windows)
         if [ ! "$(command -v choco)" ]; then
@@ -49,8 +49,8 @@ Install_AWS_CLI() {
     linux_arm)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install
-        rm awscliv2.zip
+        $SUDO ./aws/install -i "${PARAM_AWS_CLI_INSTALL_DIR}" -b "${PARAM_AWS_CLI_BINARY_DIR}"
+        rm -r awscliv2.zip ./aws
         ;;
     linux_alpine)
         apk --no-cache add \
@@ -73,7 +73,7 @@ Install_AWS_CLI() {
         echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip"
         unzip awscliv2.zip
         aws/install
-        rm awscliv2.zip
+        rm -r awscliv2.zip ./aws
         ;;
     *)
         echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"

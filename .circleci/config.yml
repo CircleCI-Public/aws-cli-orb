@@ -182,6 +182,8 @@ workflows:
             parameters:
               executor: ["linuxvm", "windows", "arm"]
           version: "2.1.10"
+          install-dir: "/usr/local/aws-cli"
+          binary-dir: ""
           override-installed: true
           post-steps:
             - check_aws_version:

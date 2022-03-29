@@ -16,7 +16,16 @@ parameters:
       Set to false to skip forceful disabling of all AWS CLI output paging.
     type: boolean
     default: true
-
+  install-dir:
+    type: string
+    default: /usr/local/aws-cli
+    description: |
+      Specify the installation dirertory of AWS CLI. Defaults to /usr/local/aws-cli
+  binary-dir:
+    type: string
+    default: /usr/local/bin
+    description: |
+      The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
 steps:
   - run:
       name: Install AWS CLI - <<parameters.version>>
@@ -24,4 +33,6 @@ steps:
         PARAM_AWS_CLI_VERSION: <<parameters.version>>
         PARAM_AWS_CLI_DISABLE_PAGER: <<parameters.disable-aws-pager>>
         PARAM_AWS_CLI_OVERRIDE: <<parameters.override-installed>>
+        PARAM_AWS_CLI_INSTALL_DIR: <<parameters.install-dir>>
+        PARAM_AWS_CLI_BINARY_DIR: <<parameters.binary-dir>>
       command: <<include(scripts/install.sh)>>
