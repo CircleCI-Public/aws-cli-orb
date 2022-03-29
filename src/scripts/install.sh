@@ -122,7 +122,15 @@ if [ ! "$PARAM_AWS_CLI_VERSION" = "latest" ]; then
 fi
 
 if [ ! "$(command -v aws)" ]; then
-    Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+    if [ "$PARAM_AWS_CLI_VERSION" = "latest" ]; then
+        Install_AWS_CLI
+    else 
+        if uname -a | grep "x86_64 Msys"; then
+            Install_AWS_CLI "${AWS_CLI_VER_STRING}"
+        else
+            Install_AWS_CLI "-${AWS_CLI_VER_STRING}"
+        fi
+    fi
 elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
     Uninstall_AWS_CLI
     if uname -a | grep "x86_64 Msys"; then
