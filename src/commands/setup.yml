@@ -59,12 +59,25 @@ parameters:
     type: boolean
     default: true
 
+  install-dir:
+    type: string
+    default: /usr/local/aws-cli
+    description: |
+      Specify the installation dirertory of AWS CLI. Defaults to /usr/local/aws-cli
+
+  binary-dir:
+    type: string
+    default: /usr/local/bin
+    description: |
+      The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
+
 steps:
   - install:
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
       override-installed: <<parameters.override-installed>>
-
+      install-dir: <<parameters.install-dir>>
+      binary-dir: <<parameters.binary-dir>>
   - run:
       name: Configure AWS Access Key ID
       environment:
