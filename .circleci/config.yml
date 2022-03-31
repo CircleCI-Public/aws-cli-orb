@@ -1,233 +1,36 @@
 version: 2.1
-
+setup: true
 orbs:
-  orb-tools: circleci/orb-tools@10.0
-  shellcheck: circleci/shellcheck@2.0
-  aws-cli: circleci/aws-cli@<<pipeline.parameters.dev-orb-version>>
-# Pipeline Parameters
-## These parameters are used internally by orb-tools. Skip to the Jobs section.
-parameters:
-  run-integration-tests:
-    description: An internal flag to prevent integration test from running before a development version has been created.
-    type: boolean
-    default: false
-  dev-orb-version:
-    description: >
-      The development version of the orb to test.
-      This value is automatically adjusted by the "trigger-integration-tests-workflow" job to correspond with the specific version created by the commit and should not be edited.
-      A "dev:alpha" version must exist for the initial pipeline run.
-    type: string
-    default: "dev:alpha"
+  orb-tools: circleci/orb-tools@11.1
+  shellcheck: circleci/shellcheck@3.1
 
-executors:
-  alpine:
-    docker:
-      - image: alpine:latest
-  docker-base:
-    docker:
-      - image: cimg/base:stable
-  macos:
-    macos:
-      xcode: 13.3.0
-  arm:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
-  linuxvm:
-    machine:
-      image: ubuntu-2004:202101-01
-  windows:
-    machine:
-      image: windows-server-2019-vs2019:stable
-    shell: bash.exe
-    resource_class: windows.medium
-commands:
-  check_aws_version:
-    parameters:
-      version:
-        type: string
-        default: ""
-    steps:
-      - run:
-          name: check_aws_version
-          command: |
-            aws --version
-            if [ -n "<<parameters.version>>" ]; then
-              INSTALLED_AWS_VERSION="$(aws --version)"
-              aws --version | grep <<parameters.version>>
-            else
-              if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
-            fi
-  test-paging:
-    steps:
-      - run:
-          name: Test that paging is disabled
-          command: |
-            # Test with aws command that would require paging if a pager is enabled
-            if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
-              source $BASH_ENV
-            fi
-            aws --version
-            aws ec2 describe-images \
-              --owners amazon \
-              --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
-
-jobs:
-  integration-test-install:
-    parameters:
-      executor:
-        type: executor
-      version:
-        description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
-        default: latest
-        type: string
-      override-installed:
-        type: boolean
-        default: false
-      binary-dir:
-        type: string
-        default: "/usr/local/bin"
-        description: |
-          Specify the binary directory
-      install-dir:
-        type: string
-        default: "/usr/local/aws-cli"
-        description: |
-          Specify the installation directory
-
-    executor: <<parameters.executor>>
-    steps:
-      - aws-cli/setup:
-          version: <<parameters.version>>
-          override-installed: <<parameters.override-installed>>
-          install-dir: <<parameters.install-dir>>
-          binary-dir: <<parameters.binary-dir>>
-      - test-paging
-
-  integration-test-role-arn-setup:
-    executor: docker-base
-    parameters:
-      profile-name:
-        description: Name of new profile associated with role arn.
-        type: string
-      role-arn:
-        description: Role ARN that the profile should take.
-        type: string
-      source-profile:
-        description: Source profile containing credentials to assume the role with role-arn.
-        type: string
-        default: "default"
-    steps:
-      - aws-cli/setup
-      - aws-cli/role-arn-setup:
-          profile-name: <<parameters.profile-name>>
-          role-arn: <<parameters.role-arn>>
-      - run:
-          name: Check if profiles were created
-          command: |
-            which aws
-            ROLE_ARN=$(aws configure get role_arn --profile <<parameters.profile-name>>)
-            SOURCE_PROFILE=$(aws configure get source_profile --profile <<parameters.profile-name>>)
-            if [ "${ROLE_ARN}" == "<<parameters.role-arn>>" ] && [ "${SOURCE_PROFILE}" == "<<parameters.source-profile>>" ]; then
-              echo configuration is correctly set.
-            else
-              echo Wrong configuration set.
-              exit 1
-            fi
+filters: &filters
+  tags:
+    only: /.*/
 
 workflows:
-  # Prior to producing a development orb (which requires credentials) basic validation, linting, and even unit testing can be performed.
-  # This workflow will run on every commit
-  test-pack:
-    unless: << pipeline.parameters.run-integration-tests >>
+  lint-pack:
     jobs:
-      - orb-tools/lint # Lint Yaml files
-      - orb-tools/pack # Pack orb source
+      - orb-tools/lint:
+          filters: *filters
+      - orb-tools/pack:
+          filters: *filters
+      - orb-tools/review:
+          filters: *filters
       - shellcheck/check:
-          dir: ./src/scripts
-          exclude: SC2148,SC2002,SC2016,SC1090
-      # Publish development version(s) of the orb.
-      - orb-tools/publish-dev:
+          exclude: SC2148,SC2038,SC2086,SC2002,SC2016
+          filters: *filters
+      - orb-tools/publish:
           orb-name: circleci/aws-cli
-          context: orb-publisher # A restricted context containing your private publishing credentials. Will only execute if approved by an authorized user.
+          vcs-type: << pipeline.project.type >>
           requires:
-            - orb-tools/lint
-            - orb-tools/pack
-            - shellcheck/check
-      # Trigger an integration workflow to test the
-      # dev:${CIRCLE_SHA1:0:7} version of your orb
-      - orb-tools/trigger-integration-tests-workflow:
-          name: trigger-integration-dev
+            [orb-tools/lint, orb-tools/review, orb-tools/pack, shellcheck/check]
+          # Use a context to hold your publishing token.
           context: orb-publisher
-          requires:
-            - orb-tools/publish-dev
-
-  # This `integration-test_deploy` workflow will only run
-  # when the run-integration-tests pipeline parameter is set to true.
-  # It is meant to be triggered by the "trigger-integration-tests-workflow"
-  # job, and run tests on <your orb>@dev:${CIRCLE_SHA1:0:7}.
-  integration-test_deploy:
-    when: << pipeline.parameters.run-integration-tests >>
-    jobs:
-      # Testing executors that do not AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["docker-base", "macos", "alpine"]
-          post-steps:
-            - check_aws_version
-      # Test installing specific versions on executors without AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-version-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["docker-base", "macos", "alpine"]
-          version: "2.1.10"
-          post-steps:
-            - check_aws_version:
-                version: "2.1.10"
-      # Test overriding existing version of AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-override-version-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["linuxvm", "windows", "arm"]
-          version: "2.1.10"
-          install-dir: "/usr/local/aws-cli"
-          binary-dir: ""
-          override-installed: true
-          post-steps:
-            - check_aws_version:
-                version: "2.1.10"
-      - integration-test-role-arn-setup:
-          name: test-role-arn-config
-          profile-name: "CircleCI-Tester"
-          role-arn: "arn:aws:iam::0123456789:role/foo-bar"
-
-      # Publish a semver version of the orb. relies on
-      # the commit subject containing the text "[semver:patch|minor|major|skip]"
-      # as that will determine whether a patch, minor or major
-      # version will be published or if publishing should
-      # be skipped.
-      # e.g. [semver:patch] will cause a patch version to be published.
-      - orb-tools/dev-promote-prod-from-commit-subject:
-          orb-name: circleci/aws-cli
-          context: orb-publisher
-          add-pr-comment: false
-          fail-if-semver-not-indicated: true
-          publish-version-tag: false
-          requires:
-            - integration-test-install-docker-base
-            - integration-test-install-alpine
-            - integration-test-install-macos
-            - integration-test-install-version-docker-base
-            - integration-test-install-version-macos
-            - integration-test-install-version-alpine
-            - integration-test-install-override-version-linuxvm
-            - integration-test-install-override-version-windows
-            - integration-test-install-override-version-arm
-          filters:
-            branches:
-              only:
-                - master
+          filters: *filters
+      # Triggers the next workflow in the Orb Development Kit.
+      - orb-tools/continue:
+          pipeline-number: << pipeline.number >>
+          vcs-type: << pipeline.project.type >>
+          requires: [orb-tools/publish]
+          filters: *filters
