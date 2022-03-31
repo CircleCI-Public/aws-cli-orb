@@ -107,8 +107,8 @@ workflows:
           name: test-role-arn-config
           profile-name: "CircleCI-Tester"
           role-arn: "arn:aws:iam::0123456789:role/foo-bar"
-      - command-tests:
-          filters: *filters
+      # - command-tests:
+      #     filters: *filters
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
