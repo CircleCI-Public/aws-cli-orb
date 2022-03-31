@@ -68,7 +68,6 @@ jobs:
 workflows:
   test-deploy:
     jobs:
-      # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       # Testing executors that do not AWS pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
@@ -107,8 +106,6 @@ workflows:
           name: test-role-arn-config
           profile-name: "CircleCI-Tester"
           role-arn: "arn:aws:iam::0123456789:role/foo-bar"
-      # - command-tests:
-      #     filters: *filters
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
