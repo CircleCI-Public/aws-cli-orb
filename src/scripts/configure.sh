@@ -1,6 +1,7 @@
 PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
 PARAM_AWS_CLI_SECRET_ACCESS_KEY=$(eval echo "\$$PARAM_AWS_CLI_SECRET_ACCESS_KEY")
 PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
+PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 
 if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
     source "$BASH_ENV"
