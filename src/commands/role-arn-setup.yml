@@ -20,27 +20,23 @@ parameters:
     default: true
 
   profile-name:
-      description: Name of new profile associated with role arn.
-      type: string
+    description: Name of new profile associated with role arn.
+    type: string
 
   role-arn:
-      description: Role ARN that the profile should take.
-      type: string
+    description: Role ARN that the profile should take.
+    type: string
 
   source-profile:
-      description: Source profile containing credentials to assume the role with role-arn.
-      type: string
-      default: "default"
+    description: Source profile containing credentials to assume the role with role-arn.
+    type: string
+    default: "default"
 
 steps:
-
   - run:
-      name: Configure role arn for profie <<parameters.profile-name>>
+      name: Configure role arn for profile <<parameters.profile-name>>
       environment:
         PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
         PARAM_AWS_CLI_SOURCE_PROFILE: <<parameters.source-profile>>
         PARAM_AWS_CLI_ROLE_ARN: <<parameters.role-arn>>
       command: <<include(scripts/role-arn-setup.sh)>>
-
-
-
