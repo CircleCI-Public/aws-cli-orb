@@ -1,4 +1,4 @@
-PARAM_ROLE_SESSION_NAME=$(eval echo "\$$PARAM_ROLE_SESSION_NAME")
+PARAM_ROLE_SESSION_NAME=$(eval echo "${!PARAM_ROLE_SESSION_NAME}")
 
 echo "${PARAM_ROLE_SESSION_NAME}" >> test.txt
 echo "${PARAM_AWS_CLI_ROLE_ARN}" >> test.txt
