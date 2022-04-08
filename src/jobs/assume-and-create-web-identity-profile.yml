@@ -111,4 +111,4 @@ steps:
       configure-profile-region: <<parameters.configure-profile-region>>
       aws-region: <<parameters.aws-region>>
   - store_artifacts:
-    path: test.txt
+      path: test.txt
