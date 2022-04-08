@@ -1,7 +1,4 @@
 PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
-# export AWS_ACCESS_KEY_ID=""
-# export AWS_SECRET_ACCESS_KEY=""
-# export AWS_SESSION_TOKEN=""
 
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 $(aws sts assume-role-with-web-identity \
