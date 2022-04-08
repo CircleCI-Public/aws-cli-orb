@@ -72,7 +72,7 @@ workflows:
           name: Creating profile with shortlived genereated keys
           role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile-name: "OIDC User"
-
+          executor: arm
       # Testing executors that do not AWS pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
