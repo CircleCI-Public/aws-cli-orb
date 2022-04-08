@@ -1,0 +1,109 @@
+description: | 
+  This job creates new shortlived AWS web identity based keys using a the $CIRCLE_OIDC_TOKEN and
+  creates a new AWS profile with these keys. Use the new profile to run AWS commands with the --profile flag. 
+  A properly configured web identity based ARN is also required for configuration.
+
+executor: <<parameters.executor>>
+parameters:   
+  executor:
+    type: executor
+  role-arn:  
+    description: |
+      The Amazon Resource Name (ARN) of the role that the caller is assuming.
+      Role ARN must be configured for web identity.
+    type: string
+  
+  role-session-name:
+    description: An identifier for the assumed role session
+    type: string
+    default: "CircleCi-${CIRCLE_JOB}"
+
+  session-duration:
+    description: The duration of the session in seconds
+    default: "3600"    
+    type: string
+  version:
+    description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+    default: latest
+    type: string
+  override-installed:
+    type: boolean
+    default: false
+    description: |
+      By default, if the AWS CLI is detected on the system, the install will be skipped.
+      Enable this to override the installed version and install your specified version.
+  disable-aws-pager:
+    description: |
+      Set to false to skip forceful disabling of all AWS CLI output paging.
+    type: boolean
+    default: true
+
+  profile-name:
+    description: Profile name to be configured.
+    type: string
+    default: "default"
+
+  aws-access-key-id:
+    description: |
+      AWS access key id for IAM role. Set this to the name of
+      the environment variable you will use to hold this
+      value, i.e. AWS_ACCESS_KEY.
+    type: env_var_name
+    default: AWS_ACCESS_KEY_ID
+
+  aws-secret-access-key:
+    description: |
+      AWS secret key for IAM role. Set this to the name of
+      the environment variable you will use to hold this
+      value, i.e. $AWS_SECRET_ACCESS_KEY.
+    type: env_var_name
+    default: AWS_SECRET_ACCESS_KEY
+
+  aws-region:
+    description: |
+      Env var of AWS region to operate in
+      (defaults to AWS_DEFAULT_REGION)
+    type: env_var_name
+    default: AWS_DEFAULT_REGION
+
+  configure-default-region:
+    description: |
+      Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
+    type: boolean
+    default: true
+
+  configure-profile-region:
+    description: |
+      Boolean whether to configure the region for the custom (non-default) profile or not
+    type: boolean
+    default: true
+
+  install-dir:
+    type: string
+    default: /usr/local/aws-cli
+    description: |
+      Specify the installation dirertory of AWS CLI. Defaults to /usr/local/aws-cli
+
+  binary-dir:
+    type: string
+    default: /usr/local/bin
+    description: |
+      The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
+
+steps:
+  - aws-cli/assume-role-with-web-identity:
+      role-arn: <<parameters.role-arn>>
+      role-session-name: <<role-session-name>>
+      session-duration: <<session-duration>>
+  - aws-cli/setup:
+      version: <<parameters.version>>
+      disable-aws-pager: <<parameters.disable-aws-pager>>
+      override-installed: <<parameters.override-installed>>
+      install-dir: <<parameters.install-dir>>
+      binary-dir: <<parameters.binary-dir>>
+      aws-access-key-id: <<parameters.aws-access-key-id>>
+      aws-secret-access-key: <<parameters.aws-secret-access-key>>
+      profile-name: <<parameters.profile-name>>
+      configure-default-region : <<parameters.configure-default-region>>
+      configure-profile-region : <<parameters.configure-profile-region>>
+      aws-region: <<parameters.aws-region>>
