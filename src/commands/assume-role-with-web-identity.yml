@@ -1,7 +1,7 @@
-# description: |
-#   Generate a shortlived AWS_ACCESS_KEY_ID, AWS_ACCESS_KEY_ID and AWS_SESSION_TOKEN using a the $CIRCLE_OIDC_TOKEN.
-#   A properly configured web identity based ARN is also required for configuration.
-#   Use these keys and create a profile the aws-cli/setup command
+description: |
+  Generate a shortlived AWS_ACCESS_KEY_ID, AWS_ACCESS_KEY_ID and AWS_SESSION_TOKEN using a the $CIRCLE_OIDC_TOKEN.
+  A properly configured web identity based ARN is also required for configuration.
+  Use these keys and create a profile the aws-cli/setup command
 
 parameters:
   role-arn:

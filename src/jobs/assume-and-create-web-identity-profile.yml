@@ -1,4 +1,4 @@
-description: | 
+description: |
   This job creates new shortlived AWS web identity based keys using a the $CIRCLE_OIDC_TOKEN and
   creates a new AWS profile with these keys. Use the new profile to run AWS commands with the --profile flag.
   A properly configured web identity based ARN is also required for configuration.
