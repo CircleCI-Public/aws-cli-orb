@@ -1,18 +1,18 @@
 description: | 
   This job creates new shortlived AWS web identity based keys using a the $CIRCLE_OIDC_TOKEN and
-  creates a new AWS profile with these keys. Use the new profile to run AWS commands with the --profile flag. 
+  creates a new AWS profile with these keys. Use the new profile to run AWS commands with the --profile flag.
   A properly configured web identity based ARN is also required for configuration.
 
 executor: <<parameters.executor>>
-parameters:   
+parameters:
   executor:
     type: executor
-  role-arn:  
+  role-arn:
     description: |
       The Amazon Resource Name (ARN) of the role that the caller is assuming.
       Role ARN must be configured for web identity.
     type: string
-  
+
   role-session-name:
     description: An identifier for the assumed role session
     type: string
@@ -20,7 +20,7 @@ parameters:
 
   session-duration:
     description: The duration of the session in seconds
-    default: "3600"    
+    default: "3600"
     type: string
   version:
     description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
@@ -104,6 +104,6 @@ steps:
       aws-access-key-id: <<parameters.aws-access-key-id>>
       aws-secret-access-key: <<parameters.aws-secret-access-key>>
       profile-name: <<parameters.profile-name>>
-      configure-default-region : <<parameters.configure-default-region>>
-      configure-profile-region : <<parameters.configure-profile-region>>
+      configure-default-region: <<parameters.configure-default-region>>
+      configure-profile-region: <<parameters.configure-profile-region>>
       aws-region: <<parameters.aws-region>>

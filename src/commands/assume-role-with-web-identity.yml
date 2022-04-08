@@ -10,7 +10,7 @@ parameters:
       The Amazon Resource Name (ARN) of the role that the caller is assuming.
       Role ARN must be configured for web identity.
     type: string
-  
+
   role-session-name:
     description: An identifier for the assumed role session
     type: string
