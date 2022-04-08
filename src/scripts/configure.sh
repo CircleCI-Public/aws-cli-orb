@@ -1,14 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
 PARAM_AWS_CLI_SECRET_ACCESS_KEY=$(eval echo "\$$PARAM_AWS_CLI_SECRET_ACCESS_KEY")
 PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
 
 if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
-    ./"$BASH_ENV"
+    source "$BASH_ENV"
 fi
 
 if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
-    ./"$BASH_ENV"
+    source "$BASH_ENV"
 fi
 echo "${PATH}"
 aws configure set aws_access_key_id \
