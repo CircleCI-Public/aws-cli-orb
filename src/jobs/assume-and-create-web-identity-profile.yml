@@ -22,16 +22,19 @@ parameters:
     description: The duration of the session in seconds
     default: "3600"
     type: string
+
   version:
     description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
     default: latest
     type: string
+
   override-installed:
     type: boolean
     default: false
     description: |
       By default, if the AWS CLI is detected on the system, the install will be skipped.
       Enable this to override the installed version and install your specified version.
+
   disable-aws-pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
