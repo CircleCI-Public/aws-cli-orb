@@ -1,4 +1,5 @@
-if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+#!/bin/sh
+if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
 
 Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
