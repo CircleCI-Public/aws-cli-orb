@@ -98,15 +98,15 @@ steps:
       role-arn: <<parameters.role-arn>>
       role-session-name: <<parameters.role-session-name>>
       session-duration: <<parameters.session-duration>>
-  - setup:
-      version: <<parameters.version>>
-      disable-aws-pager: <<parameters.disable-aws-pager>>
-      override-installed: <<parameters.override-installed>>
-      install-dir: <<parameters.install-dir>>
-      binary-dir: <<parameters.binary-dir>>
-      aws-access-key-id: <<parameters.aws-access-key-id>>
-      aws-secret-access-key: <<parameters.aws-secret-access-key>>
-      profile-name: <<parameters.profile-name>>
-      configure-default-region: <<parameters.configure-default-region>>
-      configure-profile-region: <<parameters.configure-profile-region>>
-      aws-region: <<parameters.aws-region>>
+  # - setup:
+  #     version: <<parameters.version>>
+  #     disable-aws-pager: <<parameters.disable-aws-pager>>
+  #     override-installed: <<parameters.override-installed>>
+  #     install-dir: <<parameters.install-dir>>
+  #     binary-dir: <<parameters.binary-dir>>
+  #     aws-access-key-id: <<parameters.aws-access-key-id>>
+  #     aws-secret-access-key: <<parameters.aws-secret-access-key>>
+  #     profile-name: <<parameters.profile-name>>
+  #     configure-default-region: <<parameters.configure-default-region>>
+  #     configure-profile-region: <<parameters.configure-profile-region>>
+  #     aws-region: <<parameters.aws-region>>
