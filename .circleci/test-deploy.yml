@@ -71,7 +71,7 @@ workflows:
       - aws-cli/assume-and-create-web-identity-profile:
           name: Creating <<parameters.profile-name>> profile with shortlived genereated keys
           role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
-          profile-name: OIDC User
+          profile-name: "OIDC User"
 
       # Testing executors that do not AWS pre-installed
       - integration-test-install:
