@@ -6,6 +6,10 @@ if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
     source "$BASH_ENV"
 fi
 
+if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
+    source "$BASH_ENV"
+fi
+echo "${PATH}"
 aws configure set aws_access_key_id \
     "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
