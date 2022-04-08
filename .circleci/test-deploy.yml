@@ -69,48 +69,48 @@ workflows:
   test-deploy:
     jobs:
       - aws-cli/assume-and-create-web-identity-profile:
-          name: Creating profile with shortlived genereated keys
+          name: integration-test-web-identity-profile
           role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile-name: "OIDC User"
           executor: arm
       # Testing executors that do not AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["docker-base", "macos", "alpine"]
-          filters: *filters
-          post-steps:
-            - check_aws_version
-      # Test installing specific versions on executors without AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-version-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["docker-base", "macos", "alpine"]
-          version: "2.1.10"
-          filters: *filters
-          post-steps:
-            - check_aws_version:
-                version: "2.1.10"
-      # Test overriding existing version of AWS pre-installed
-      - integration-test-install:
-          name: integration-test-install-override-version-<<matrix.executor>>
-          matrix:
-            parameters:
-              executor: ["linuxvm", "windows", "arm"]
-          version: "2.1.10"
-          install-dir: "/usr/local/aws-cli"
-          binary-dir: ""
-          override-installed: true
-          filters: *filters
-          post-steps:
-            - check_aws_version:
-                version: "2.1.10"
-      - integration-test-role-arn-setup:
-          name: test-role-arn-config
-          profile-name: "CircleCI-Tester"
-          role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+      # - integration-test-install:
+      #     name: integration-test-install-<<matrix.executor>>
+      #     matrix:
+      #       parameters:
+      #         executor: ["docker-base", "macos", "alpine"]
+      #     filters: *filters
+      #     post-steps:
+      #       - check_aws_version
+      # # Test installing specific versions on executors without AWS pre-installed
+      # - integration-test-install:
+      #     name: integration-test-install-version-<<matrix.executor>>
+      #     matrix:
+      #       parameters:
+      #         executor: ["docker-base", "macos", "alpine"]
+      #     version: "2.1.10"
+      #     filters: *filters
+      #     post-steps:
+      #       - check_aws_version:
+      #           version: "2.1.10"
+      # # Test overriding existing version of AWS pre-installed
+      # - integration-test-install:
+      #     name: integration-test-install-override-version-<<matrix.executor>>
+      #     matrix:
+      #       parameters:
+      #         executor: ["linuxvm", "windows", "arm"]
+      #     version: "2.1.10"
+      #     install-dir: "/usr/local/aws-cli"
+      #     binary-dir: ""
+      #     override-installed: true
+      #     filters: *filters
+      #     post-steps:
+      #       - check_aws_version:
+      #           version: "2.1.10"
+      # - integration-test-role-arn-setup:
+      #     name: test-role-arn-config
+      #     profile-name: "CircleCI-Tester"
+      #     role-arn: "arn:aws:iam::0123456789:role/foo-bar"
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
