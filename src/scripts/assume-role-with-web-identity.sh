@@ -12,7 +12,7 @@ $(aws sts assume-role-with-web-identity \
 --duration-seconds "${PARAM_SESSION_DURATION}" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
 --output text)
-# aws sts get-caller-identity
+aws sts get-caller-identity
 
 echo "this works" >> test.txt
 
