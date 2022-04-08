@@ -18,7 +18,7 @@ workflows:
       - orb-tools/review:
           filters: *filters
       - shellcheck/check:
-          exclude: SC2148,SC2038,SC2086,SC2002,SC2016,SC1090,SC2046
+          exclude: SC2148,SC2038,SC2086,SC2002,SC2016,SC1090,SC2046,SC2129
           filters: *filters
       - orb-tools/publish:
           orb-name: circleci/aws-cli
