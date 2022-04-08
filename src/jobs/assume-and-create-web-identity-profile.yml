@@ -91,11 +91,11 @@ parameters:
       The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
 
 steps:
-  - aws-cli/assume-role-with-web-identity:
+  - assume-role-with-web-identity:
       role-arn: <<parameters.role-arn>>
-      role-session-name: <<role-session-name>>
-      session-duration: <<session-duration>>
-  - aws-cli/setup:
+      role-session-name: <<parameters.role-session-name>>
+      session-duration: <<parameters.session-duration>>
+  - setup:
       version: <<parameters.version>>
       disable-aws-pager: <<parameters.disable-aws-pager>>
       override-installed: <<parameters.override-installed>>
