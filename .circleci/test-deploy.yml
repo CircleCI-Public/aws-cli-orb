@@ -48,6 +48,10 @@ jobs:
           override-installed: <<parameters.override-installed>>
           install-dir: <<parameters.install-dir>>
           binary-dir: <<parameters.binary-dir>>
+          role-arn: <<parameters.role-arn>>
+          profile-name: <<parameters.profile-name>>
+          session-duration: <<parameters.session-duration>>
+          role-session-name: <<parameters.role-session-name>>
       - test-paging
   integration-test-role-arn-setup:
     executor: docker-base
