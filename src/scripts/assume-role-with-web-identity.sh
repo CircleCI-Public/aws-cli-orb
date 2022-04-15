@@ -14,7 +14,7 @@ aws sts get-caller-identity
 
 echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> "$BASH_ENV"
 echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> "$BASH_ENV"
-echo "export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> "$BASH_ENV"
+# echo "export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> "$BASH_ENV"
 
 
 
