@@ -96,7 +96,7 @@ steps:
       override-installed: <<parameters.override-installed>>
       install-dir: <<parameters.install-dir>>
       binary-dir: <<parameters.binary-dir>>
-  - when: 
+  - when:
       condition:
         and:
           - <<parameters.role-session-name>>
