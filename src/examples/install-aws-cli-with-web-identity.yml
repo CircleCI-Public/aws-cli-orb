@@ -1,0 +1,23 @@
+description: A usage expample that installs and configures a profile with Web Identity in the AWS CLI.
+usage:
+  version: 2.1
+
+  orbs:
+    aws-cli: circleci/aws-cli@2.0
+
+  jobs:
+    aws-cli-example:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/setup:
+            profile-name: WEB IDENTITY PROFILE
+            role-arn: arn:aws:iam::123456789012:role/WEB-IDENTITY-ROLE
+            session-duration: example-session
+        - run: echo "Run your code here"
+
+  workflows:
+    aws-cli:
+      jobs:
+        - aws-cli-example:
+            context: aws
