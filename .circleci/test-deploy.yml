@@ -27,6 +27,20 @@ jobs:
         default: "/usr/local/aws-cli"
         description: |
           Specify the installation directory
+      role-arn:
+        type: string
+      role-session-name:
+        description: An identifier for the assumed role session
+        type: string
+        default: ${CIRCLE_JOB}
+      session-duration:
+        description: The duration of the session in seconds
+        type: string
+        default: '3600'
+      profile-name:
+        description: Profile name to be configured.
+        type: string
+        default: "default"
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
@@ -68,7 +82,7 @@ jobs:
 workflows:
   test-deploy:
     jobs:
-      - aws-cli/assume-and-create-web-identity-profile:
+      -  integration-test-install:
           name: integration-test-web-identity-profile
           role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile-name: "OIDC User"
