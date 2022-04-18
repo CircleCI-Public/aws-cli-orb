@@ -16,11 +16,11 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 aws sts get-caller-identity
 
 aws configure set aws_access_key_id \
-    "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
+    "$AWS_ACCESS_KEY_ID" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
 
 aws configure set aws_secret_access_key \
-    "$PARAM_AWS_CLI_SECRET_ACCESS_KEY" \
+    "$AWS_SECRET_ACCESS_KEY" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
 
 aws configure set aws_session_token \
