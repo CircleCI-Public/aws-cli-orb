@@ -106,13 +106,19 @@ steps:
             role-arn: <<parameters.role-arn>>
             role-session-name: <<parameters.role-session-name>>
             session-duration: <<parameters.session-duration>>
-  - run:
-      name: Configure AWS Access Key ID
-      environment:
-        PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws-access-key-id>>
-        PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
-        PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
-        PARAM_AWS_CLI_CONFIG_DEFAULT_REGION: <<parameters.configure-default-region>>
-        PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure-profile-region>>
-        PARAM_AWS_CLI_REGION: <<parameters.aws-region>>
-      command: <<include(scripts/configure.sh)>>
+  - when:
+      condition:
+        and:
+          - not: <<parameters.role-arn>>
+          - not: <<parameters.role-session-name>>
+      steps:
+        - run:
+            name: Configure AWS Access Key ID
+            environment:
+              PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws-access-key-id>>
+              PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
+              PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
+              PARAM_AWS_CLI_CONFIG_DEFAULT_REGION: <<parameters.configure-default-region>>
+              PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure-profile-region>>
+              PARAM_AWS_CLI_REGION: <<parameters.aws-region>>
+            command: <<include(scripts/configure.sh)>>

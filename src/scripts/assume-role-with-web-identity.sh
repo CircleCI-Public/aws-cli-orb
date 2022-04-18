@@ -4,7 +4,7 @@ PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
 # echo 'export AWS_ACCESS_KEY_ID=""' >> "$BASH_ENV"
 # echo 'export AWS_SECRET_ACCESS_KEY=""' >> "$BASH_ENV"
 
-read -r AWS_ACCESS_KEY_ID_OIDC AWS_SECRET_ACCESS_KEY_OIDC AWS_SESSION_TOKEN_OIDC <<< \
+read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 "$(aws sts assume-role-with-web-identity \
 --role-arn "${PARAM_AWS_CLI_ROLE_ARN}" \
 --role-session-name "${PARAM_ROLE_SESSION_NAME}" \
@@ -15,22 +15,20 @@ read -r AWS_ACCESS_KEY_ID_OIDC AWS_SECRET_ACCESS_KEY_OIDC AWS_SESSION_TOKEN_OIDC
 
 aws sts get-caller-identity
 
-# echo 'export AWS_ACCESS_KEY_ID_OIDC="${AWS_ACCESS_KEY_ID_OIDC}"' >> "$BASH_ENV"
-# echo 'export AWS_SECRET_ACCESS_KEY_OIDC="${AWS_SECRET_ACCESS_KEY_OIDC}"' >> "$BASH_ENV"
-# echo 'export AWS_SESSION_TOKEN_OIDC="${AWS_SESSION_TOKEN_OIDC}"' >> "$BASH_ENV"
-if [ -z "${TEST+x}" ]; then
-    echo 'export AWS_ACCESS_KEY_ID_OIDC=""' >> "$BASH_ENV"
-    echo 'export AWS_SECRET_ACCESS_KEY_OIDC=""' >> "$BASH_ENV"
-    echo 'export AWS_SESSION_TOKEN_OIDC=""' >> "$BASH_ENV"
-    echo 'export TEST=""' >> "$BASH_ENV"
-    echo "ALL SET"
-fi    
-export AWS_ACCESS_KEY_ID_OIDC="${AWS_ACCESS_KEY_ID}"
-export AWS_SECRET_ACCESS_KEY_OIDC="${AWS_SECRET_ACCESS_KEY}"
-export AWS_SESSION_TOKEN_OIDC="${AWS_SESSION_TOKEN}"
-# echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> "$BASH_ENV"
-# echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"" >> "$BASH_ENV"
-# echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\"" >> "$BASH_ENV"
+aws configure set aws_access_key_id \
+    "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
+    --profile "$PARAM_AWS_CLI_PROFILE_NAME"
+
+aws configure set aws_secret_access_key \
+    "$PARAM_AWS_CLI_SECRET_ACCESS_KEY" \
+    --profile "$PARAM_AWS_CLI_PROFILE_NAME"
+
+aws configure set aws_session_token \
+    "${AWS_SESSION_TOKEN}" \
+     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
+
+echo "Web Identity prolie configured for profile name: ${PARAM_AWS_CLI_PROFILE_NAME}"
+
 
 
 

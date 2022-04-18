@@ -92,6 +92,10 @@ workflows:
           profile-name: "OIDC User"
           context: [CPE_ORBS_AWS] 
           executor: arm
+          post-steps:
+            - run:
+                name: Web Identity Test - Log into ECR
+                command: aws ecr get-login-password --region us-west-2 --profile <<parameters.profile-name>> | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
           # aws-access-key-id: ${}
       # Testing executors that do not AWS pre-installed
       # - integration-test-install:
