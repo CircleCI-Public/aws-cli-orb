@@ -12,6 +12,7 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 --duration-seconds "${PARAM_SESSION_DURATION}" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
 --output text)"
+export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
 
 aws sts get-caller-identity
 
