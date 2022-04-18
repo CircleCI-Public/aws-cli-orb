@@ -1,8 +1,12 @@
 #!/bin/bash
 PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
 
-echo 'export AWS_ACCESS_KEY_ID=""' >> "$BASH_ENV"
-echo 'export AWS_SECRET_ACCESS_KEY=""' >> "$BASH_ENV"
+# echo 'export AWS_ACCESS_KEY_ID=""' >> "$BASH_ENV"
+# echo 'export AWS_SECRET_ACCESS_KEY=""' >> "$BASH_ENV"
+
+export AWS_ACCESS_KEY_ID="" >> $BASH_ENV
+export AWS_SECRET_ACCESS_KEY="" >> $BASH_ENV
+export AWS_SESSION_TOKEN="" >> $BASH_ENV
 
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 "$(aws sts assume-role-with-web-identity \
@@ -14,9 +18,9 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 --output text)"
 
 aws sts get-caller-identity
-export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-export AWS_SESSION_TOKEN="${AWS_SESSION_TOKEN}"
+# export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+# export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+# export AWS_SESSION_TOKEN="${AWS_SESSION_TOKEN}"
 # echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" >> "$BASH_ENV"
 # echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"" >> "$BASH_ENV"
 # echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\"" >> "$BASH_ENV"
