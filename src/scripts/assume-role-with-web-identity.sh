@@ -18,10 +18,13 @@ aws sts get-caller-identity
 # echo 'export AWS_ACCESS_KEY_ID_OIDC="${AWS_ACCESS_KEY_ID_OIDC}"' >> "$BASH_ENV"
 # echo 'export AWS_SECRET_ACCESS_KEY_OIDC="${AWS_SECRET_ACCESS_KEY_OIDC}"' >> "$BASH_ENV"
 # echo 'export AWS_SESSION_TOKEN_OIDC="${AWS_SESSION_TOKEN_OIDC}"' >> "$BASH_ENV"
-echo 'export AWS_ACCESS_KEY_ID_OIDC=""' >> "$BASH_ENV"
-echo 'export AWS_SECRET_ACCESS_KEY_OIDC=""' >> "$BASH_ENV"
-echo 'export AWS_SESSION_TOKEN_OIDC=""' >> "$BASH_ENV"
-echo 'export TEST=""' >> "$BASH_ENV"
+if [ -z "${TEST+x}" ]; then
+    echo 'export AWS_ACCESS_KEY_ID_OIDC=""' >> "$BASH_ENV"
+    echo 'export AWS_SECRET_ACCESS_KEY_OIDC=""' >> "$BASH_ENV"
+    echo 'export AWS_SESSION_TOKEN_OIDC=""' >> "$BASH_ENV"
+    echo 'export TEST=""' >> "$BASH_ENV"
+    echo "ALL SET"
+fi    
 export AWS_ACCESS_KEY_ID_OIDC="${AWS_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY_OIDC="${AWS_SECRET_ACCESS_KEY}"
 export AWS_SESSION_TOKEN_OIDC="${AWS_SESSION_TOKEN}"
