@@ -22,6 +22,7 @@ parameters:
 
   profile-name:
     description: Profile name for web identity role assumption
+    type: string
     default: "default"
 
 steps:
