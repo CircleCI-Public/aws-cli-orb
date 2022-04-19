@@ -110,8 +110,6 @@ steps:
             profile-name: <<parameters.profile-name>>
   - when:
       condition:
-        and:
-          - not: <<parameters.role-arn>>
           - not: <<parameters.role-session-name>>
       steps:
         - run:
