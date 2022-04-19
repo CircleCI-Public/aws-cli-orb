@@ -91,7 +91,7 @@ workflows:
           name: integration-test-web-identity-profile
           role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile-name: "OIDC-User"
-          context: [CPE_ORBS_AWS] 
+          context: [CPE-OIDC] 
           executor: arm
           post-steps:
             - run:
