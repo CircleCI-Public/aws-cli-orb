@@ -1,9 +1,6 @@
 #!/bin/bash
 PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
 
-# echo 'export AWS_ACCESS_KEY_ID=""' >> "$BASH_ENV"
-# echo 'export AWS_SECRET_ACCESS_KEY=""' >> "$BASH_ENV"
-
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< \
 "$(aws sts assume-role-with-web-identity \
 --role-arn "${PARAM_AWS_CLI_ROLE_ARN}" \
