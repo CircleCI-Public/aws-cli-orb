@@ -5,6 +5,7 @@ PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
 
 if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
     source >>"$BASH_ENV"
+    echo "it gets here"
 fi
 
 aws configure set aws_access_key_id \
