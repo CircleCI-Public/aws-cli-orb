@@ -16,7 +16,7 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< "$(aws sts
     echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"" 
  }  >> "$BASH_ENV"
 
-aws sts get-caller-identity
+# aws sts get-caller-identity
 
 # aws configure set aws_access_key_id \
 #     "$AWS_ACCESS_KEY_ID" \
