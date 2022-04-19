@@ -1,4 +1,3 @@
-#!/bin/sh
 if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
 
 Install_AWS_CLI() {

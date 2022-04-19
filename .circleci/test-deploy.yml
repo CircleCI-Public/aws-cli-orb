@@ -100,6 +100,7 @@ workflows:
       # Testing executors that do not AWS pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             parameters:
               executor: ["docker-base", "macos", "alpine"]
@@ -109,6 +110,7 @@ workflows:
       # Test installing specific versions on executors without AWS pre-installed
       - integration-test-install:
           name: integration-test-install-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             parameters:
               executor: ["docker-base", "macos", "alpine"]
@@ -120,6 +122,7 @@ workflows:
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             parameters:
               executor: ["linuxvm", "windows", "arm"]
@@ -135,6 +138,7 @@ workflows:
           name: integration-test-role-arn-config
           profile-name: "CircleCI-Tester"
           role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+          context: [CPE_ORBS_AWS]
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
