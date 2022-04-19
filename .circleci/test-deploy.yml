@@ -29,6 +29,7 @@ jobs:
           Specify the installation directory
       role-arn:
         type: string
+        default: ""
       role-session-name:
         description: An identifier for the assumed role session
         type: string
