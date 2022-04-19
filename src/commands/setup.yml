@@ -110,7 +110,7 @@ steps:
             profile-name: <<parameters.profile-name>>
   - when:
       condition:
-        - not: <<parameters.role-session-name>>
+        not: <<parameters.role-session-name>>
       steps:
         - run:
             name: Configure AWS Access Key ID
