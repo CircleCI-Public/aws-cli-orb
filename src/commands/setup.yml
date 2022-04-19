@@ -108,7 +108,7 @@ steps:
             role-session-name: <<parameters.role-session-name>>
             session-duration: <<parameters.session-duration>>
             profile-name: <<parameters.profile-name>>
-  - unless:
+  - when:
       condition:
         not: <<parameters.role-session-name>>
       steps:
