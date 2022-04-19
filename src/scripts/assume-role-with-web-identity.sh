@@ -10,8 +10,11 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<< "$(aws sts
     --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
     --output text)"
 
-export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
-echo 'export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN' >> "$BASH_ENV" 
+ { 
+    echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
+    echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
+    echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}" 
+ }  >> "$BASH_ENV"
 
 aws sts get-caller-identity
 
