@@ -11,6 +11,7 @@ else
         export SUDO="sudo"; 
     fi
 fi
+
 Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
     cd /tmp || exit
