@@ -118,3 +118,4 @@ steps:
         PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure-profile-region>>
         PARAM_AWS_CLI_REGION: <<parameters.aws-region>>
       command: <<include(scripts/configure.sh)>>
+
