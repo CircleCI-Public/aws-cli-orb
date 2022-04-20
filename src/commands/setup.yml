@@ -88,7 +88,7 @@ parameters:
   session-duration:
     description: The duration of the session in seconds
     type: string
-    default: '3600'
+    default: "3600"
 
 steps:
   - install:
@@ -103,15 +103,11 @@ steps:
           - <<parameters.role-session-name>>
           - <<parameters.role-arn>>
       steps:
-        -  assume-role-with-web-identity:
+        - assume-role-with-web-identity:
             role-arn: <<parameters.role-arn>>
             role-session-name: <<parameters.role-session-name>>
             session-duration: <<parameters.session-duration>>
             profile-name: <<parameters.profile-name>>
-  # - when:
-  #     condition:
-  #       not: <<parameters.role-arn>>
-      # steps:
   - run:
       name: Configure AWS Access Key ID
       environment:

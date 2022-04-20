@@ -18,7 +18,7 @@ parameters:
   session-duration:
     description: The duration of the session in seconds
     type: string
-    default: '3600'
+    default: "3600"
 
   profile-name:
     description: Profile name for web identity role assumption

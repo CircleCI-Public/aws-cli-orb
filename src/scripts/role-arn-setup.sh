@@ -1,4 +1,3 @@
-#!/bin/sh
 if [ ! -f "${HOME}/.aws/credentials" ]; then
     echo "Credentials not found. Run setup command before role-arn-setup."
     exit 1
