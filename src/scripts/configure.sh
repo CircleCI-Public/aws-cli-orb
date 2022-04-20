@@ -14,7 +14,7 @@ aws configure set aws_secret_access_key \
 if [ -n "${AWS_SESSION_TOKEN}" ]; then
     aws configure set aws_session_token \
         "${AWS_SESSION_TOKEN}" \
-        --profile "$PARAM_AWS_CLI_PROFILE_NAME"
+        --profile "$PARAM_AWS_CLI_PROFILE_NAME" 
 fi
 
 if [ "$PARAM_AWS_CLI_CONFIG_DEFAULT_REGION" = "1" ]; then
