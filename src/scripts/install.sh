@@ -1,5 +1,16 @@
-if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
-
+if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
+    if [ "$ID" = 0 ]; then 
+        export SUDO=""; 
+    else 
+        export SUDO="sudo"; 
+    fi
+else 
+    if [[ $EUID == 0 ]]; then 
+        export SUDO=""; 
+    else 
+        export SUDO="sudo"; 
+    fi
+fi
 Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
     cd /tmp || exit

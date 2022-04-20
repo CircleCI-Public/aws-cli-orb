@@ -1,4 +1,7 @@
-description: A usage expample that installs and configures a profile with Web Identity in the AWS CLI.
+description: |
+  Setup the AWS CLI and configure with Web Identity. 
+  Assume roles on AWS without storing keys on CircleCI and utilize short-term credentials instead.
+  For more information, see the CircleCI OIDC docs: https://circleci.com/docs/2.0/openid-connect-tokens/
 usage:
   version: 2.1
 
