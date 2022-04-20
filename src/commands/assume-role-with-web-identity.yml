@@ -33,8 +33,5 @@ steps:
         PARAM_AWS_CLI_ROLE_ARN: <<parameters.role-arn>>
         PARAM_ROLE_SESSION_NAME: <<parameters.role-session-name>>
         PARAM_SESSION_DURATION: <<parameters.session-duration>>
-<<<<<<< HEAD
         PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
-=======
->>>>>>> c232dfa (fix: addressed packing errors)
       command: <<include(scripts/assume-role-with-web-identity.sh)>>
