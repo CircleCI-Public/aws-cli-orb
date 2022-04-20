@@ -9,7 +9,6 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts 
     --duration-seconds ${PARAM_SESSION_DURATION} \
     --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
     --output text)"
-
 {
     echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
     echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
