@@ -27,6 +27,21 @@ jobs:
         default: "/usr/local/aws-cli"
         description: |
           Specify the installation directory
+      role-arn:
+        type: string
+        default: ""
+      role-session-name:
+        description: An identifier for the assumed role session
+        type: string
+        default: ${CIRCLE_JOB}
+      session-duration:
+        description: The duration of the session in seconds
+        type: string
+        default: '3600'
+      profile-name:
+        description: Profile name to be configured.
+        type: string
+        default: "default"
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
@@ -34,6 +49,10 @@ jobs:
           override-installed: <<parameters.override-installed>>
           install-dir: <<parameters.install-dir>>
           binary-dir: <<parameters.binary-dir>>
+          role-arn: <<parameters.role-arn>>
+          profile-name: <<parameters.profile-name>>
+          session-duration: <<parameters.session-duration>>
+          role-session-name: <<parameters.role-session-name>>
       - test-paging
   integration-test-role-arn-setup:
     executor: docker-base
