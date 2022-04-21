@@ -7,17 +7,31 @@ parameters:
     description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
     default: latest
     type: string
+
   override-installed:
     type: boolean
     default: false
     description: |
       By default, if the AWS CLI is detected on the system, the install will be skipped.
       Enable this to override the installed version and install your specified version.
+
   disable-aws-pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
     type: boolean
     default: true
+
+  install-dir:
+    type: string
+    default: /usr/local/aws-cli
+    description: |
+      Specify the installation dirertory of AWS CLI. Defaults to /usr/local/aws-cli
+
+  binary-dir:
+    type: string
+    default: /usr/local/bin
+    description: |
+      The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
 
   profile-name:
     description: Profile name to be configured.
@@ -59,17 +73,22 @@ parameters:
     type: boolean
     default: true
 
-  install-dir:
-    type: string
-    default: /usr/local/aws-cli
+  role-arn:
     description: |
-      Specify the installation dirertory of AWS CLI. Defaults to /usr/local/aws-cli
+      The Amazon Resource Name (ARN) of the role that the caller is assuming.
+      Role ARN must be configured for web identity.
+    type: string
+    default: ""
 
-  binary-dir:
+  role-session-name:
+    description: An identifier for the assumed role session
     type: string
-    default: /usr/local/bin
-    description: |
-      The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
+    default: ${CIRCLE_JOB}
+
+  session-duration:
+    description: The duration of the session in seconds
+    type: string
+    default: "3600"
 
 steps:
   - install:
@@ -78,6 +97,17 @@ steps:
       override-installed: <<parameters.override-installed>>
       install-dir: <<parameters.install-dir>>
       binary-dir: <<parameters.binary-dir>>
+  - when:
+      condition:
+        and:
+          - <<parameters.role-session-name>>
+          - <<parameters.role-arn>>
+      steps:
+        - assume-role-with-web-identity:
+            role-arn: <<parameters.role-arn>>
+            role-session-name: <<parameters.role-session-name>>
+            session-duration: <<parameters.session-duration>>
+            profile-name: <<parameters.profile-name>>
   - run:
       name: Configure AWS Access Key ID
       environment:
