@@ -27,6 +27,21 @@ jobs:
         default: "/usr/local/aws-cli"
         description: |
           Specify the installation directory
+      role-arn:
+        type: string
+        default: ""
+      role-session-name:
+        description: An identifier for the assumed role session
+        type: string
+        default: ${CIRCLE_JOB}
+      session-duration:
+        description: The duration of the session in seconds
+        type: string
+        default: '3600'
+      profile-name:
+        description: Profile name to be configured.
+        type: string
+        default: "default"
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
@@ -34,6 +49,10 @@ jobs:
           override-installed: <<parameters.override-installed>>
           install-dir: <<parameters.install-dir>>
           binary-dir: <<parameters.binary-dir>>
+          role-arn: <<parameters.role-arn>>
+          profile-name: <<parameters.profile-name>>
+          session-duration: <<parameters.session-duration>>
+          role-session-name: <<parameters.role-session-name>>
       - test-paging
   integration-test-role-arn-setup:
     executor: docker-base
@@ -68,9 +87,20 @@ jobs:
 workflows:
   test-deploy:
     jobs:
+      -  integration-test-install:
+          name: integration-test-web-identity-profile
+          role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile-name: "OIDC-User"
+          context: [CPE-OIDC] 
+          executor: arm
+          post-steps:
+            - run:
+                name: Web Identity Test - Logging into ECR
+                command: aws ecr get-login-password --region us-west-2 --profile "OIDC-User" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
       # Testing executors that do not AWS pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             parameters:
               executor: ["docker-base", "macos", "alpine"]
@@ -80,6 +110,7 @@ workflows:
       # Test installing specific versions on executors without AWS pre-installed
       - integration-test-install:
           name: integration-test-install-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             parameters:
               executor: ["docker-base", "macos", "alpine"]
@@ -91,6 +122,7 @@ workflows:
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             parameters:
               executor: ["linuxvm", "windows", "arm"]
@@ -103,9 +135,10 @@ workflows:
             - check_aws_version:
                 version: "2.1.10"
       - integration-test-role-arn-setup:
-          name: test-role-arn-config
+          name: integration-test-role-arn-config
           profile-name: "CircleCI-Tester"
           role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+          context: [CPE_ORBS_AWS]
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -123,6 +156,8 @@ workflows:
             - integration-test-install-override-version-linuxvm
             - integration-test-install-override-version-windows
             - integration-test-install-override-version-arm
+            - integration-test-web-identity-profile
+            - integration-test-role-arn-config
           context: orb-publisher
           filters:
             branches:
