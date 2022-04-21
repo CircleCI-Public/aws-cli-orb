@@ -5,6 +5,7 @@ PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
 aws configure set aws_access_key_id \
     "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
+
 aws configure set aws_secret_access_key \
     "$PARAM_AWS_CLI_SECRET_ACCESS_KEY" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
