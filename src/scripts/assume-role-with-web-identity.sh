@@ -1,15 +1,15 @@
 PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
 
-# if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
-#     echo "Role session name is required"
-#     exit 1
-# fi
+if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
+    echo "Role session name is required"
+    exit 1
+fi
 # shellcheck disable=SC2034
 AWS_STS_COMMAND=$(aws sts assume-role-with-web-identity \
     --role-arn "${PARAM_AWS_CLI_ROLE_ARN}" \
     --role-session-name "${PARAM_ROLE_SESSION_NAME}" \
     --web-identity-token "${CIRCLE_OIDC_TOKEN}" \
-    --duration-seconds "${PARAM_SESSION_DURATION}" \
+    --duration-seconds "3700" \
     --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
     --output text; exit "${PIPESTATUS[0]}")
 
