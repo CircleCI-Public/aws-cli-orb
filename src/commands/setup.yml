@@ -25,7 +25,7 @@ parameters:
     type: string
     default: /usr/local/aws-cli
     description: |
-      Specify the installation dirertory of AWS CLI. Defaults to /usr/local/aws-cli
+      Specify the installation directory of AWS CLI. Defaults to /usr/local/aws-cli
 
   binary-dir:
     type: string
