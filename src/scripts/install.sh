@@ -1,6 +1,6 @@
 if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
     if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
-else 
+else
     if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 fi
 
