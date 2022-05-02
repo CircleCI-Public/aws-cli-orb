@@ -1,9 +1,9 @@
 PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
 
-# if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
-#     echo "Role session name is required"
-#     exit 1
-# fi
+if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
+    echo "Role session name is required"
+    exit 1
+fi
 
 # shellcheck disable=SC2086,SC2034
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts assume-role-with-web-identity \
@@ -19,9 +19,10 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts 
     echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
 } >>"$BASH_ENV"
 
-if echo "$?" | grep -q "0"; then
-    echo "Successfully assumed role"
-else
+if [ -z "${AWS_SESSION_TOKEN}" ]; then
     echo "Failed to assume role"
     exit 1
+else
+    echo "Successfully assumed role"
+    exit 0
 fi
