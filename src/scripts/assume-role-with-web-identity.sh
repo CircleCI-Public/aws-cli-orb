@@ -1,4 +1,5 @@
 PARAM_ROLE_SESSION_NAME=$(eval echo "${PARAM_ROLE_SESSION_NAME}")
+PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 
 if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
