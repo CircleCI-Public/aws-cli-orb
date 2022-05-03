@@ -13,7 +13,8 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts 
     --web-identity-token ${CIRCLE_OIDC_TOKEN} \
     --duration-seconds ${PARAM_SESSION_DURATION} \
     --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
-    --output text); if ! echo $? | grep 0; then exit 1 fi"
+    --output text; exit "${PIPESTATUS[0]}")"
+    # ; if ! echo $? | grep 0; then exit 1 fi"
 {
     echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
     echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
