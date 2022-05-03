@@ -93,6 +93,7 @@ workflows:
           profile-name: "OIDC-User"
           context: [CPE-OIDC] 
           executor: arm
+          session-duration: "3700"
           post-steps:
             - run:
                 name: Web Identity Test - Logging into ECR
