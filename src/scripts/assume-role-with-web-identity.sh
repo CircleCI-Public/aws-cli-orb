@@ -13,12 +13,16 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts 
     --web-identity-token ${CIRCLE_OIDC_TOKEN} \
     --duration-seconds ${PARAM_SESSION_DURATION} \
     --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
-    --output text; exit "${PIPESTATUS[0]}")"
-    # ; if ! echo $? | grep 0; then exit 1 fi"
-{
-    echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
-    echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
-    echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
-} >>"$BASH_ENV"
+    --output text)"
 
+if [ -z "${AWS_ACCESS_KEY_ID}" ] && [ -z "${AWS_SECRET_ACCESS_KEY}" ] && [ -z "${AWS_SESSION_TOKEN}" ]; then
+    {
+        echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
+        echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
+        echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
+    } >>"$BASH_ENV"
+else 
+    echo "Failed to assume role";
+    exit 1
+fi
 echo "Assume role with web identity succeeded"
