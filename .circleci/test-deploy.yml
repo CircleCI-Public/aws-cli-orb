@@ -137,7 +137,7 @@ workflows:
       - integration-test-role-arn-setup:
           name: integration-test-role-arn-config
           profile-name: "CircleCI-Tester"
-          role-arn: "arn:aws:iam::0123456789:role/foo-bar"
+          role-arn: ${ROLE_ARN}
           context: [CPE_ORBS_AWS]
       - orb-tools/pack:
           filters: *filters

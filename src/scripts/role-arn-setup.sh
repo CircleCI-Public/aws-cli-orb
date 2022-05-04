@@ -1,3 +1,4 @@
+PARAM_AWS_CLI_ROLE_ARN=$(eval echo "${PARAM_AWS_CLI_ROLE_ARN}")
 if [ ! -f "${HOME}/.aws/credentials" ]; then
     echo "Credentials not found. Run setup command before role-arn-setup."
     exit 1
