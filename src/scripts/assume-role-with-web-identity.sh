@@ -16,13 +16,13 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts 
     --output text)"
 
 if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ] || [ -z "${AWS_SESSION_TOKEN}" ]; then
+    echo "Failed to assume role";
+    exit 1
+else 
     {
         echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
         echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
         echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
     } >>"$BASH_ENV"
-else 
-    echo "Failed to assume role";
-    exit 1
+    echo "Assume role with web identity succeeded"
 fi
-echo "Assume role with web identity succeeded"
