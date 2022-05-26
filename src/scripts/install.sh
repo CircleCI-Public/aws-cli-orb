@@ -121,7 +121,7 @@ Uninstall_AWS_CLI() {
 }
 
 if [ ! "$(command -v aws)" ]; then
-    if [ "$PARAM_AWS_CLI_VERSION" = "latest" ]; then
+    if [ -n "$PARAM_AWS_CLI_VERSION" ] || [ "$PARAM_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI
     else
         if uname -a | grep "x86_64 Msys"; then
