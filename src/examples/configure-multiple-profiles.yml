@@ -1,0 +1,36 @@
+description: Configure multiple AWS profiles and use them for different steps.
+usage:
+  version: 2.1
+
+  orbs:
+    aws-cli: circleci/aws-cli@3.1
+
+  jobs:
+    configure-multiple-profiles:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/install
+        - aws-cli/setup:
+            profile-name: primary
+            aws-access-key-id: PRIMARY_AWS_ACCESS_KEY_ID
+            aws-secret-access-key: PRIMARY_AWS_SECRET_ACCESS_KEY
+            aws-region: PRIMARY_AWS_REGION
+        # And the same for secondary
+        - aws-cli/setup:
+            profile-name: secondary
+            aws-access-key-id: SECONDARY_AWS_ACCESS_KEY_ID
+            aws-secret-access-key: SECONDARY_AWS_SECRET_ACCESS_KEY
+            aws-region: SECONDARY_AWS_REGION
+        # Now you can select which profile to use by default
+        - aws-cli/set-profile:
+            profile-name: primary
+        - run: aws sts get-caller-identity
+        - aws-cli/set-profile:
+            profile-name: secondary
+        - run: aws sts get-caller-identity
+
+  workflows:
+    aws-cli:
+      jobs:
+        - configure-multiple-profiles

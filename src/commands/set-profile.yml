@@ -1,0 +1,15 @@
+description: |
+  Activate a specific AWS profile.
+
+parameters:
+  profile-name:
+    description: Profile name to activate
+    type: string
+
+steps:
+  - run:
+      name: Set AWS_PROFILE to <<parameters.profile-name>>
+      environment:
+        PROFILE_NAME: <<parameters.profile-name>>
+      command: |
+        echo "export AWS_PROFILE=\"${PROFILE_NAME}\"" >> "$BASH_ENV"
