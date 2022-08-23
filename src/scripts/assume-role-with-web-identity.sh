@@ -7,13 +7,15 @@ if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
 fi
 
 # shellcheck disable=SC2086,SC2034
-read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<<"$(aws sts assume-role-with-web-identity \
-    --role-arn ${PARAM_AWS_CLI_ROLE_ARN} \
-    --role-session-name ${PARAM_ROLE_SESSION_NAME} \
-    --web-identity-token ${CIRCLE_OIDC_TOKEN} \
-    --duration-seconds ${PARAM_SESSION_DURATION} \
-    --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
-    --output text)"
+read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<EOF
+$(aws sts assume-role-with-web-identity \
+--role-arn ${PARAM_AWS_CLI_ROLE_ARN} \
+--role-session-name ${PARAM_ROLE_SESSION_NAME} \
+--web-identity-token ${CIRCLE_OIDC_TOKEN} \
+--duration-seconds ${PARAM_SESSION_DURATION} \
+--query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+--output text)
+EOF
 
 if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ] || [ -z "${AWS_SESSION_TOKEN}" ]; then
     echo "Failed to assume role";
