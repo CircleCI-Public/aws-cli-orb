@@ -6,6 +6,16 @@ if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
     exit 1
 fi
 
+if [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
+    echo "OIDC Token cannot be found. A CircleCI context must be specified."
+    exit 1
+fi
+
+if [ ! "$(command -v aws)" ]; then
+    echo "AWS CLI is not installed. Please run the setup or install command first."
+    exit 1
+fi
+
 # shellcheck disable=SC2086,SC2034
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<EOF
 $(aws sts assume-role-with-web-identity \
