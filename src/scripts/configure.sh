@@ -2,6 +2,9 @@ PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
 PARAM_AWS_CLI_SECRET_ACCESS_KEY=$(eval echo "\$$PARAM_AWS_CLI_SECRET_ACCESS_KEY")
 PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
 
+if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
+    source $BASH_ENV
+fi
 aws configure set aws_access_key_id \
     "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
     --profile "$PARAM_AWS_CLI_PROFILE_NAME"
