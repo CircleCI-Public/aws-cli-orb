@@ -1,4 +1,3 @@
-#!/bin/sh
 {
     echo "${PARAM_AWS_CLI_ACCESS_KEY_ID}"
     echo "${PARAM_AWS_CLI_SECRET_ACCESS_KEY}"
