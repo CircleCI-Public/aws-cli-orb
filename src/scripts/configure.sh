@@ -1,6 +1,16 @@
+#!/bin/sh
+if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
+    . $BASH_ENV
+fi
+
 PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
 PARAM_AWS_CLI_SECRET_ACCESS_KEY=$(eval echo "\$$PARAM_AWS_CLI_SECRET_ACCESS_KEY")
 PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
+
+if [ -z "$PARAM_AWS_CLI_ACCESS_KEY_ID" ] || [ -z "${PARAM_AWS_CLI_SECRET_ACCESS_KEY}" ]; then 
+    echo "Cannot configure profile. AWS access key id and AWS secret access key must be provided."
+    exit 1
+fi
 
 aws configure set aws_access_key_id \
     "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
