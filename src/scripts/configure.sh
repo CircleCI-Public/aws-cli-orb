@@ -1,6 +1,6 @@
-
+#!/bin/sh
 if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
-    source $BASH_ENV
+    . $BASH_ENV
 fi
 
 PARAM_AWS_CLI_ACCESS_KEY_ID=$(eval echo "\$$PARAM_AWS_CLI_ACCESS_KEY_ID")
