@@ -22,7 +22,7 @@ parameters:
     default: "3600"
 
   profile-name:
-    description: Profile name for web identity role assumption
+    description: Profile name for web identity role assumption - you can supply an env variable here too
     type: string
     default: "default"
 
