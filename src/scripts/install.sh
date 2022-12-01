@@ -66,7 +66,7 @@ Install_AWS_CLI() {
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk
 
-        apk add --no-cache \
+        apk add --force-overwrite --no-cache \
             glibc-2.34-r0.apk \
             glibc-bin-2.34-r0.apk \
             glibc-i18n-2.34-r0.apk
