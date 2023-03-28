@@ -6,7 +6,7 @@ if [ -z "${PARAM_ROLE_SESSION_NAME}" ]; then
     exit 1
 fi
 
-if [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
+if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ]; then
     echo "OIDC Token cannot be found. A CircleCI context must be specified."
     exit 1
 fi
@@ -20,7 +20,7 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<EOF
 $(aws sts assume-role-with-web-identity \
 --role-arn "${PARAM_AWS_CLI_ROLE_ARN}" \
 --role-session-name "${PARAM_ROLE_SESSION_NAME}" \
---web-identity-token "${CIRCLE_OIDC_TOKEN}" \
+--web-identity-token "${CIRCLE_OIDC_TOKEN_V2}" \
 --duration-seconds "${PARAM_SESSION_DURATION}" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
 --output text)
