@@ -30,9 +30,9 @@ steps:
   - run:
       name: Install AWS CLI - <<parameters.version>>
       environment:
-        PARAM_AWS_CLI_VERSION: <<parameters.version>>
-        PARAM_AWS_CLI_DISABLE_PAGER: <<parameters.disable_aws_pager>>
-        PARAM_AWS_CLI_OVERRIDE: <<parameters.override_installed>>
-        PARAM_AWS_CLI_INSTALL_DIR: <<parameters.install_dir>>
-        PARAM_AWS_CLI_BINARY_DIR: <<parameters.binary_dir>>
+        ORB_VAL_AWS_CLI_VERSION: <<parameters.version>>
+        ORB_VAL_DISABLE_PAGER: <<parameters.disable-aws-pager>>
+        ORB_VAL_OVERRIDE: <<parameters.override-installed>>
+        ORB_VAL_INSTALL_DIR: <<parameters.install-dir>>
+        ORB_VAL_BINARY_DIR: <<parameters.binary-dir>>
       command: <<include(scripts/install.sh)>>
