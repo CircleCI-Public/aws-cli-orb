@@ -1,6 +1,6 @@
-ORB_EVAL_ROLE_ARN=$(eval echo "${ORB_EVAL_ROLE_ARN}")
-ORB_EVAL_PROFILE_NAME=$(eval echo "${ORB_EVAL_PROFILE_NAME}")
-ORB_EVAL_SOURCE_PROFILE=$(eval echo "${ORB_EVAL_SOURCE_PROFILE}")
+ORB_EVAL_ROLE_ARN=$(circleci env subst "${ORB_EVAL_ROLE_ARN}")
+ORB_EVAL_PROFILE_NAME=$(circleci env subst "${ORB_EVAL_PROFILE_NAME}")
+ORB_EVAL_SOURCE_PROFILE=$(circleci env subst "${ORB_EVAL_SOURCE_PROFILE}")
 if [ ! -f "${HOME}/.aws/credentials" ]; then
     echo "Credentials not found. Run setup command before role-arn-setup."
     exit 1

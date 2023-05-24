@@ -3,10 +3,10 @@ if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
     . $BASH_ENV
 fi
 
-ORB_ENV_ACCESS_KEY_ID=$(eval echo "\$$ORB_ENV_ACCESS_KEY_ID")
-ORB_ENV_SECRET_ACCESS_KEY=$(eval echo "\$$ORB_ENV_SECRET_ACCESS_KEY")
-ORB_EVAL_AWS_CLI_REGION=$(eval echo "\$$ORB_EVAL_AWS_CLI_REGION")
-ORB_EVAL_PROFILE_NAME=$(eval echo "$ORB_EVAL_PROFILE_NAME")
+ORB_ENV_ACCESS_KEY_ID=$(circleci env subst "\$$ORB_ENV_ACCESS_KEY_ID")
+ORB_ENV_SECRET_ACCESS_KEY=$(circleci env subst "\$$ORB_ENV_SECRET_ACCESS_KEY")
+ORB_EVAL_AWS_CLI_REGION=$(circleci env subst "\$$ORB_EVAL_AWS_CLI_REGION")
+ORB_EVAL_PROFILE_NAME=$(circleci env subst "$ORB_EVAL_PROFILE_NAME")
 
 if [ -z "$ORB_ENV_ACCESS_KEY_ID" ] || [ -z "${ORB_ENV_SECRET_ACCESS_KEY}" ]; then 
     echo "Cannot configure profile. AWS access key id and AWS secret access key must be provided."

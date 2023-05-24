@@ -1,5 +1,5 @@
-ORB_EVAL_ROLE_SESSION_NAME=$(eval echo "${ORB_EVAL_ROLE_SESSION_NAME}")
-ORB_EVAL_ROLE_ARN=$(eval echo "${ORB_EVAL_ROLE_ARN}")
+ORB_EVAL_ROLE_SESSION_NAME=$(circleci env subst "${ORB_EVAL_ROLE_SESSION_NAME}")
+ORB_EVAL_ROLE_ARN=$(circleci env subst "${ORB_EVAL_ROLE_ARN}")
 
 
 if [ -z "${ORB_EVAL_ROLE_SESSION_NAME}" ]; then
