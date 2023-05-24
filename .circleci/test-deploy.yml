@@ -115,6 +115,7 @@ workflows:
       # Test installing specific versions on executors without AWS pre-installed
       - integration-test-install:
           name: integration-test-install-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
           matrix:
             alias: test-install-version
             parameters:
