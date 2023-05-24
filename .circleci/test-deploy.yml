@@ -58,8 +58,8 @@ jobs:
           profile_name: <<parameters.profile_name>>
           session_duration: <<parameters.session_duration>>
           role_session_name: <<parameters.role_session_name>>
-      - test-paging
-  integration-test-role_arn_setup:
+      - test_paging
+  integration-test-role-arn-setup:
     executor: docker-base
     parameters:
       profile_name:
@@ -142,7 +142,7 @@ workflows:
           post-steps:
             - check_aws_version:
                 version: "2.1.10"
-      - integration-test-role_arn_setup:
+      - integration-test-role-arn-setup:
           name: integration-test-role_arn-config
           profile_name: "CircleCI-Tester"
           role_arn: ${ROLE_ARN}
@@ -196,7 +196,7 @@ commands:
             else
               if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
             fi
-  test-paging:
+  test_paging:
     steps:
       - run:
           name: Test that paging is disabled
