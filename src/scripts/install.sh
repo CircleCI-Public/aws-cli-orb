@@ -29,7 +29,7 @@ Install_AWS_CLI() {
     linux_x86)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install -i "${PARAM_AWS_CLI_INSTALL_DIR}" -b "${PARAM_AWS_CLI_BINARY_DIR}"
+        $SUDO ./aws/install -i "${ORB_VAL_INSTALL_DIR}" -b "${ORB_VAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
         ;;
     windows)
@@ -53,7 +53,7 @@ Install_AWS_CLI() {
     linux_arm)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install -i "${PARAM_AWS_CLI_INSTALL_DIR}" -b "${PARAM_AWS_CLI_BINARY_DIR}"
+        $SUDO ./aws/install -i "${ORB_VAL_INSTALL_DIR}" -b "${ORB_VAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
         ;;
     linux_alpine)
@@ -86,7 +86,7 @@ Install_AWS_CLI() {
         ;;
     esac
     # Toggle AWS Pager
-    if [ "$PARAM_AWS_CLI_DISABLE_PAGER" = 1 ]; then
+    if [ "$ORB_VAL_DISABLE_PAGER" = 1 ]; then
         if [ -z "${AWS_PAGER+x}" ]; then
             echo 'export AWS_PAGER=""' >>"$BASH_ENV"
             echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
@@ -121,21 +121,21 @@ Uninstall_AWS_CLI() {
 }
 
 if [ ! "$(command -v aws)" ]; then
-    if [ "$PARAM_AWS_CLI_VERSION" = "latest" ]; then
+    if [ "$ORB_VAL_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI
     else
         if uname -a | grep "x86_64 Msys"; then
-            Install_AWS_CLI "${PARAM_AWS_CLI_VERSION}"
+            Install_AWS_CLI "${ORB_VAL_AWS_CLI_VERSION}"
         else
-            Install_AWS_CLI "-${PARAM_AWS_CLI_VERSION}"
+            Install_AWS_CLI "-${ORB_VAL_AWS_CLI_VERSION}"
         fi
     fi
-elif [ "$PARAM_AWS_CLI_OVERRIDE" = 1 ]; then
+elif [ "$ORB_VAL_OVERRIDE" = 1 ]; then
     Uninstall_AWS_CLI
     if uname -a | grep "x86_64 Msys"; then
-        Install_AWS_CLI "${PARAM_AWS_CLI_VERSION}"
+        Install_AWS_CLI "${ORB_VAL_AWS_CLI_VERSION}"
     else
-        Install_AWS_CLI "-${PARAM_AWS_CLI_VERSION}"
+        Install_AWS_CLI "-${ORB_VAL_AWS_CLI_VERSION}"
     fi
 else
     echo "AWS CLI is already installed, skipping installation."
