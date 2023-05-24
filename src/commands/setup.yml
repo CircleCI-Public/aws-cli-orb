@@ -8,37 +8,37 @@ parameters:
     default: latest
     type: string
 
-  override-installed:
+  override_installed:
     type: boolean
     default: false
     description: |
       By default, if the AWS CLI is detected on the system, the install will be skipped.
       Enable this to override the installed version and install your specified version.
 
-  disable-aws-pager:
+  disable_aws_pager:
     description: |
       Set to false to skip forceful disabling of all AWS CLI output paging.
     type: boolean
     default: true
 
-  install-dir:
+  install_dir:
     type: string
     default: /usr/local/aws-cli
     description: |
       Specify the installation directory of AWS CLI. Defaults to /usr/local/aws-cli
 
-  binary-dir:
+  binary_dir:
     type: string
     default: /usr/local/bin
     description: |
       The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
 
-  profile-name:
+  profile_name:
     description: Profile name to be configured.
     type: string
     default: "default"
 
-  aws-access-key-id:
+  aws_access_key_id:
     description: |
       AWS access key id for IAM role. Set this to the name of
       the environment variable you will use to hold this
@@ -46,7 +46,7 @@ parameters:
     type: env_var_name
     default: AWS_ACCESS_KEY_ID
 
-  aws-secret-access-key:
+  aws_secret_access_key:
     description: |
       AWS secret key for IAM role. Set this to the name of
       the environment variable you will use to hold this
@@ -54,38 +54,38 @@ parameters:
     type: env_var_name
     default: AWS_SECRET_ACCESS_KEY
 
-  aws-region:
+  aws_region:
     description: |
       Env var of AWS region to operate in
       (defaults to AWS_DEFAULT_REGION)
     type: env_var_name
     default: AWS_DEFAULT_REGION
 
-  configure-default-region:
+  configure_default_region:
     description: |
       Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
     type: boolean
     default: true
 
-  configure-profile-region:
+  configure_profile_region:
     description: |
       Boolean whether to configure the region for the custom (non-default) profile or not
     type: boolean
     default: true
 
-  role-arn:
+  role_arn:
     description: |
       The Amazon Resource Name (ARN) of the role that the caller is assuming.
       Role ARN must be configured for web identity.
     type: string
     default: ""
 
-  role-session-name:
+  role_session_name:
     description: An identifier for the assumed role session
     type: string
     default: ${CIRCLE_JOB}
 
-  session-duration:
+  session_duration:
     description: The duration of the session in seconds
     type: string
     default: "3600"
@@ -93,28 +93,28 @@ parameters:
 steps:
   - install:
       version: <<parameters.version>>
-      disable-aws-pager: <<parameters.disable-aws-pager>>
-      override-installed: <<parameters.override-installed>>
-      install-dir: <<parameters.install-dir>>
-      binary-dir: <<parameters.binary-dir>>
+      disable_aws_pager: <<parameters.disable_aws_pager>>
+      override_installed: <<parameters.override_installed>>
+      install_dir: <<parameters.install_dir>>
+      binary_dir: <<parameters.binary_dir>>
   - when:
       condition:
         and:
-          - <<parameters.role-session-name>>
-          - <<parameters.role-arn>>
+          - <<parameters.role_session_name>>
+          - <<parameters.role_arn>>
       steps:
-        - assume-role-with-web-identity:
-            role-arn: <<parameters.role-arn>>
-            role-session-name: <<parameters.role-session-name>>
-            session-duration: <<parameters.session-duration>>
-            profile-name: <<parameters.profile-name>>
+        - assume_role_with_web_identity:
+            role_arn: <<parameters.role_arn>>
+            role_session_name: <<parameters.role_session_name>>
+            session_duration: <<parameters.session_duration>>
+            profile_name: <<parameters.profile_name>>
   - run:
       name: Configure AWS Access Key ID
       environment:
-        PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws-access-key-id>>
-        PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
-        PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile-name>>
-        PARAM_AWS_CLI_CONFIG_DEFAULT_REGION: <<parameters.configure-default-region>>
-        PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure-profile-region>>
-        PARAM_AWS_CLI_REGION: <<parameters.aws-region>>
+        PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
+        PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
+        PARAM_AWS_CLI_PROFILE_NAME: <<parameters.profile_name>>
+        PARAM_AWS_CLI_CONFIG_DEFAULT_REGION: <<parameters.configure_default_region>>
+        PARAM_AWS_CLI_CONFIG_PROFILE_REGION: <<parameters.configure_profile_region>>
+        PARAM_AWS_CLI_REGION: <<parameters.aws_region>>
       command: <<include(scripts/configure.sh)>>

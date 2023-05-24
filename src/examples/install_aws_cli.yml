@@ -11,7 +11,7 @@ usage:
       steps:
         - checkout
         - aws-cli/setup:
-            profile-name: example
+            profile_name: example
         - run: echo "Run your code here"
 
   workflows:
