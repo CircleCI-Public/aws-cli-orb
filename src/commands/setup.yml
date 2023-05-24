@@ -115,6 +115,6 @@ steps:
         ORB_ENV_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
         ORB_EVAL_PROFILE_NAME: <<parameters.profile_name>>
         ORB_VAL_CONFIG_DEFAULT_REGION: <<parameters.configure_default_region>>
-        ORB_VAL_CONFIG_PROFILE_REGION: <<parameters.configure_profile—region>>
+        ORB_VAL_CONFIG_PROFILE_REGION: <<parameters.configure_profile_region>>
         ORB_EVAL_AWS_CLI_REGION: <<parameters.region>>
       command: <<include(scripts/configure.sh)>>
