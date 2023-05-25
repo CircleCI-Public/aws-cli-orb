@@ -1,11 +1,11 @@
 description: |
   Highly cached minimal Ubuntu docker designed for CircleCI with Python and NodeJS installed.
 parameters:
-  python_version:
+  tag:
     description: >
       Select your python version or any of the available tags here: https://hub.docker.com/r/cimg/python.
     type: string
-    default: "3.9-node"
+    default: "current"
 
 docker:
-  - image: cimg/python:<<parameters.python_version>>
+  - image: cimg/base:<<parameters.tag>>
