@@ -1,24 +1,6 @@
 description: |
   Create a new profile with role arn and source profile
 parameters:
-  version:
-    description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
-    default: latest
-    type: string
-
-  override_installed:
-    type: boolean
-    default: false
-    description: |
-      By default, if the AWS CLI is detected on the system, the install will be skipped.
-      Enable this to override the installed version and install your specified version.
-
-  disable_aws_pager:
-    description: |
-      Set to false to skip forceful disabling of all AWS CLI output paging.
-    type: boolean
-    default: true
-
   profile_name:
     description: Name of new profile associated with role arn.
     type: string
