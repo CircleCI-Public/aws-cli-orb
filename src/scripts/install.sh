@@ -17,7 +17,7 @@ Install_AWS_CLI() {
         export SYS_ENV_PLATFORM=linux_arm
     elif uname -a | grep "x86_64 Msys"; then
         export SYS_ENV_PLATFORM=windows
-    elif cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
+    elif grep "Alpine" /etc/issue >/dev/null 2>&1; then
         export SYS_ENV_PLATFORM=linux_alpine
     else
         echo "This platform appears to be unsupported."
@@ -41,9 +41,10 @@ Install_AWS_CLI() {
         choco install awscli --version="$1"
         echo "$1"
         if echo "$1" | grep "2."; then
-            echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLIV2"' >>"$BASH_ENV"
+            echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLIV2\"" >> "$BASH_ENV"
+
         else
-            echo 'export PATH="${PATH}:/c/Program Files/Amazon/AWSCLI/bin"' >>"$BASH_ENV"
+            echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLI/bin\"" >>"$BASH_ENV"
         fi
         ;;
     macos)
