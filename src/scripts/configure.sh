@@ -1,6 +1,6 @@
 #!/bin/sh
-if cat /etc/issue | grep "Alpine" >/dev/null 2>&1; then
-    . $BASH_ENV
+if grep "Alpine" /etc/issue > /dev/null 2>&1; then
+    . "$BASH_ENV"
 fi
 
 ORB_ENV_ACCESS_KEY_ID=$(circleci env subst "\$$ORB_ENV_ACCESS_KEY_ID")
