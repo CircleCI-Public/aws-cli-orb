@@ -18,7 +18,6 @@ workflows:
       - orb-tools/review:
           filters: *filters
       - shellcheck/check:
-          exclude: SC2148, SC1090
           filters: *filters
       - orb-tools/continue:
           orb_name: aws-cli

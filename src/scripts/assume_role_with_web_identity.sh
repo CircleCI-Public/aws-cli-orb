@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 ORB_EVAL_ROLE_SESSION_NAME=$(circleci env subst "${ORB_EVAL_ROLE_SESSION_NAME}")
 ORB_EVAL_ROLE_ARN=$(circleci env subst "${ORB_EVAL_ROLE_ARN}")
 ORB_EVAL_PROFILE_NAME=$(circleci env subst "$ORB_EVAL_PROFILE_NAME")
