@@ -14,9 +14,9 @@ usage:
       steps:
         - checkout
         - aws-cli/setup:
-            profile-name: WEB IDENTITY PROFILE
-            role-arn: arn:aws:iam::123456789012:role/WEB-IDENTITY-ROLE
-            role-session-name: example-session
+            profile_name: WEB IDENTITY PROFILE
+            role_arn: arn:aws:iam::123456789012:role/WEB-IDENTITY-ROLE
+            role_session_name: example-session
         - run: echo "Run your code here"
 
   workflows:

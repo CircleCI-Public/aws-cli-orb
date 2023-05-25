@@ -1,7 +1,7 @@
 version: 2.1
 setup: true
 orbs:
-  orb-tools: circleci/orb-tools@11.6
+  orb-tools: circleci/orb-tools@12.0
   shellcheck: circleci/shellcheck@3.1
 
 filters: &filters
@@ -18,19 +18,10 @@ workflows:
       - orb-tools/review:
           filters: *filters
       - shellcheck/check:
-          exclude: SC2148,SC2038,SC2086,SC2002,SC2016,SC1090
           filters: *filters
-      - orb-tools/publish:
-          orb-name: circleci/aws-cli
-          vcs-type: << pipeline.project.type >>
-          requires:
-            [orb-tools/lint, orb-tools/review, orb-tools/pack, shellcheck/check]
-          # Use a context to hold your publishing token.
-          context: orb-publisher
-          filters: *filters
-      # Triggers the next workflow in the Orb Development Kit.
       - orb-tools/continue:
-          pipeline-number: << pipeline.number >>
-          vcs-type: << pipeline.project.type >>
-          requires: [orb-tools/publish]
+          orb_name: aws-cli
+          pipeline_number: << pipeline.number >>
+          vcs_type: << pipeline.project.type >>
+          requires: [orb-tools/lint, orb-tools/review, orb-tools/pack, shellcheck/check]
           filters: *filters

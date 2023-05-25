@@ -1,0 +1,24 @@
+description: |
+  Create a new profile with role arn and source profile
+parameters:
+  profile_name:
+    description: Name of new profile associated with role arn.
+    type: string
+
+  role_arn:
+    description: Role ARN that the profile should take.
+    type: string
+
+  source_profile:
+    description: Source profile containing credentials to assume the role with role_arn.
+    type: string
+    default: "default"
+
+steps:
+  - run:
+      name: Configure role arn for profile <<parameters.profile_name>>
+      environment:
+        ORB_EVAL_PROFILE_NAME: <<parameters.profile_name>>
+        ORB_EVAL_SOURCE_PROFILE: <<parameters.source_profile>>
+        ORB_EVAL_ROLE_ARN: <<parameters.role_arn>>
+      command: <<include(scripts/role_arn_setup.sh)>>

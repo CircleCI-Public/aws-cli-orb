@@ -1,10 +1,15 @@
 version: 2.1
 orbs:
-  aws-cli: circleci/aws-cli@dev:<<pipeline.git.revision>>
-  orb-tools: circleci/orb-tools@11.6
+  orb-tools: circleci/orb-tools@12.0
+  aws-cli: {}
 filters: &filters
   tags:
     only: /.*/
+release-filters: &release-filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 jobs:
   integration-test-install:
     parameters:
@@ -14,31 +19,31 @@ jobs:
         description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
         default: latest
         type: string
-      override-installed:
+      override_installed:
         type: boolean
         default: false
-      binary-dir:
+      binary_dir:
         type: string
         default: "/usr/local/bin"
         description: |
           Specify the binary directory
-      install-dir:
+      install_dir:
         type: string
         default: "/usr/local/aws-cli"
         description: |
           Specify the installation directory
-      role-arn:
+      role_arn:
         type: string
         default: ""
-      role-session-name:
+      role_session_name:
         description: An identifier for the assumed role session
         type: string
         default: ${CIRCLE_JOB}
-      session-duration:
+      session_duration:
         description: The duration of the session in seconds
         type: string
         default: '3600'
-      profile-name:
+      profile_name:
         description: Profile name to be configured.
         type: string
         default: "default"
@@ -46,39 +51,39 @@ jobs:
     steps:
       - aws-cli/setup:
           version: <<parameters.version>>
-          override-installed: <<parameters.override-installed>>
-          install-dir: <<parameters.install-dir>>
-          binary-dir: <<parameters.binary-dir>>
-          role-arn: <<parameters.role-arn>>
-          profile-name: <<parameters.profile-name>>
-          session-duration: <<parameters.session-duration>>
-          role-session-name: <<parameters.role-session-name>>
-      - test-paging
+          override_installed: <<parameters.override_installed>>
+          install_dir: <<parameters.install_dir>>
+          binary_dir: <<parameters.binary_dir>>
+          role_arn: <<parameters.role_arn>>
+          profile_name: <<parameters.profile_name>>
+          session_duration: <<parameters.session_duration>>
+          role_session_name: <<parameters.role_session_name>>
+      - test_paging
   integration-test-role-arn-setup:
     executor: docker-base
     parameters:
-      profile-name:
+      profile_name:
         description: Name of new profile associated with role arn.
         type: string
-      role-arn:
+      role_arn:
         description: Role ARN that the profile should take.
         type: string
-      source-profile:
-        description: Source profile containing credentials to assume the role with role-arn.
+      source_profile:
+        description: Source profile containing credentials to assume the role with role_arn.
         type: string
         default: "default"
     steps:
       - aws-cli/setup
-      - aws-cli/role-arn-setup:
-          profile-name: <<parameters.profile-name>>
-          role-arn: <<parameters.role-arn>>
+      - aws-cli/role_arn_setup:
+          profile_name: <<parameters.profile_name>>
+          role_arn: <<parameters.role_arn>>
       - run:
           name: Check if profiles were created
           command: |-
             which aws
-            ROLE_ARN=$(aws configure get role_arn --profile <<parameters.profile-name>>)
-            SOURCE_PROFILE=$(aws configure get source_profile --profile <<parameters.profile-name>>)
-            if [ "${ROLE_ARN}" == "<<parameters.role-arn>>" ] && [ "${SOURCE_PROFILE}" == "<<parameters.source-profile>>" ]; then
+            ROLE_ARN=$(aws configure get role_arn --profile <<parameters.profile_name>>)
+            SOURCE_PROFILE=$(aws configure get source_profile --profile <<parameters.profile_name>>)
+            if [ "${ROLE_ARN}" == "<<parameters.role_arn>>" ] && [ "${SOURCE_PROFILE}" == "<<parameters.source_profile>>" ]; then
               echo configuration is correctly set.
             else
               echo Wrong configuration set.
@@ -87,11 +92,11 @@ jobs:
 workflows:
   test-deploy:
     jobs:
-      -  integration-test-install:
+      - integration-test-install:
           name: integration-test-web-identity-profile
-          role-arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
-          profile-name: "OIDC-User"
-          context: [CPE-OIDC] 
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile_name: "OIDC-User"
+          context: [CPE-OIDC]
           executor: arm
           post-steps:
             - run:
@@ -102,6 +107,7 @@ workflows:
           name: integration-test-install-<<matrix.executor>>
           context: [CPE_ORBS_AWS]
           matrix:
+            alias: test-install
             parameters:
               executor: ["docker-base", "macos", "alpine"]
           filters: *filters
@@ -112,6 +118,7 @@ workflows:
           name: integration-test-install-version-<<matrix.executor>>
           context: [CPE_ORBS_AWS]
           matrix:
+            alias: test-install-version
             parameters:
               executor: ["docker-base", "macos", "alpine"]
           version: "2.1.10"
@@ -124,46 +131,32 @@ workflows:
           name: integration-test-install-override-version-<<matrix.executor>>
           context: [CPE_ORBS_AWS]
           matrix:
+            alias: test-install-override-version
             parameters:
               executor: ["linuxvm", "windows", "arm"]
           version: "2.1.10"
-          install-dir: "/usr/local/aws-cli"
-          binary-dir: ""
-          override-installed: true
+          install_dir: "/usr/local/aws-cli"
+          binary_dir: ""
+          override_installed: true
           filters: *filters
           post-steps:
             - check_aws_version:
                 version: "2.1.10"
       - integration-test-role-arn-setup:
-          name: integration-test-role-arn-config
-          profile-name: "CircleCI-Tester"
-          role-arn: ${ROLE_ARN}
+          name: integration-test-role_arn-config
+          profile_name: "CircleCI-Tester"
+          role_arn: ${ROLE_ARN}
           context: [CPE_ORBS_AWS]
       - orb-tools/pack:
-          filters: *filters
+          filters: *release-filters
       - orb-tools/publish:
-          orb-name: circleci/aws-cli
-          vcs-type: << pipeline.project.type >>
-          pub-type: production
-          requires:
-            - orb-tools/pack
-            - integration-test-install-docker-base
-            - integration-test-install-alpine
-            - integration-test-install-macos
-            - integration-test-install-version-docker-base
-            - integration-test-install-version-macos
-            - integration-test-install-version-alpine
-            - integration-test-install-override-version-linuxvm
-            - integration-test-install-override-version-windows
-            - integration-test-install-override-version-arm
-            - integration-test-web-identity-profile
-            - integration-test-role-arn-config
+          orb_name: circleci/aws-cli
+          vcs_type: << pipeline.project.type >>
+          pub_type: production
+          enable_pr_comment: true
           context: orb-publisher
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-profile, integration-test-role_arn-config]
+          filters: *release-filters
 executors:
   alpine:
     docker:
@@ -203,7 +196,7 @@ commands:
             else
               if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
             fi
-  test-paging:
+  test_paging:
     steps:
       - run:
           name: Test that paging is disabled

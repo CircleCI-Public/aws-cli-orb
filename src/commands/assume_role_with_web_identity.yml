@@ -5,23 +5,23 @@ description: |
   For more information, see the CircleCI OIDC docs: https://circleci.com/docs/2.0/openid-connect-tokens/
 
 parameters:
-  role-arn:
+  role_arn:
     description: |
       The Amazon Resource Name (ARN) of the role that the caller is assuming.
       Role ARN must be configured for web identity.
     type: string
 
-  role-session-name:
+  role_session_name:
     description: An identifier for the assumed role session
     type: string
     default: ${CIRCLE_JOB}
 
-  session-duration:
+  session_duration:
     description: The duration of the session in seconds
     type: string
     default: "3600"
 
-  profile-name:
+  profile_name:
     description: Profile name for web identity role assumption
     type: string
     default: "default"
@@ -30,8 +30,8 @@ steps:
   - run:
       name: Generate shortlived AWS Keys using CircleCI OIDC token.
       environment:
-        ORB_EVAL_ROLE_ARN: <<parameters.role-arn>>
-        ORB_EVAL_ROLE_SESSION_NAME: <<parameters.role-session-name>>
-        ORB_VAL_SESSION_DURATION: <<parameters.session-duration>>
-        ORB_EVAL_PROFILE_NAME: <<parameters.profile-name>>
-      command: <<include(scripts/assume-role-with-web-identity.sh)>>
+        ORB_EVAL_ROLE_ARN: <<parameters.role_arn>>
+        ORB_EVAL_ROLE_SESSION_NAME: <<parameters.role_session_name>>
+        ORB_VAL_SESSION_DURATION: <<parameters.session_duration>>
+        ORB_EVAL_PROFILE_NAME: <<parameters.profile_name>>
+      command: <<include(scripts/assume_role_with_web_identity.sh)>>
