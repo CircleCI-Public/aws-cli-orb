@@ -56,8 +56,8 @@ parameters:
 
   region:
     description: |
-      Env var of AWS region to operate in
-      (defaults to AWS_DEFAULT_REGION)
+      AWS region to operate in
+      (defaults to env var of ${AWS_DEFAULT_REGION})
     type: string
     default: ${AWS_DEFAULT_REGION}
 
