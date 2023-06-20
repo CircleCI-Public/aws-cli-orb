@@ -1,7 +1,10 @@
-# shellcheck disable=SC2148
+#!/bin/sh
 ORB_EVAL_ROLE_SESSION_NAME=$(circleci env subst "${ORB_EVAL_ROLE_SESSION_NAME}")
 ORB_EVAL_ROLE_ARN=$(circleci env subst "${ORB_EVAL_ROLE_ARN}")
 ORB_EVAL_PROFILE_NAME=$(circleci env subst "$ORB_EVAL_PROFILE_NAME")
+
+# Replaces white spaces role session name with dashes
+ORB_EVAL_ROLE_SESSION_NAME=$(echo "${ORB_EVAL_ROLE_SESSION_NAME}" | tr ' ' '-')
 
 if [ -z "${ORB_EVAL_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
