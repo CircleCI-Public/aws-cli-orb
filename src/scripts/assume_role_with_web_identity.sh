@@ -1,9 +1,9 @@
 # shellcheck disable=SC2148
-ORB_EVAL_ROLE_SESSION_NAME=$(circleci env subst "${ORB_EVAL_ROLE_SESSION_NAME}")
-ORB_EVAL_ROLE_ARN=$(circleci env subst "${ORB_EVAL_ROLE_ARN}")
-ORB_EVAL_PROFILE_NAME=$(circleci env subst "$ORB_EVAL_PROFILE_NAME")
+ORB_STR_ROLE_SESSION_NAME=$(circleci env subst "${ORB_STR_ROLE_SESSION_NAME}")
+ORB_STR_ROLE_ARN=$(circleci env subst "${ORB_STR_ROLE_ARN}")
+ORB_STR_PROFILE_NAME=$(circleci env subst "$ORB_STR_PROFILE_NAME")
 
-if [ -z "${ORB_EVAL_ROLE_SESSION_NAME}" ]; then
+if [ -z "${ORB_STR_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
     exit 1
 fi
@@ -20,10 +20,10 @@ fi
 
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<EOF
 $(aws sts assume-role-with-web-identity \
---role-arn "${ORB_EVAL_ROLE_ARN}" \
---role-session-name "${ORB_EVAL_ROLE_SESSION_NAME}" \
+--role-arn "${ORB_STR_ROLE_ARN}" \
+--role-session-name "${ORB_STR_ROLE_SESSION_NAME}" \
 --web-identity-token "${CIRCLE_OIDC_TOKEN_V2}" \
---duration-seconds "${ORB_VAL_SESSION_DURATION}" \
+--duration-seconds "${ORB_INT_SESSION_DURATION}" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
 --output text)
 EOF
