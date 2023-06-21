@@ -95,7 +95,7 @@ Install_AWS_CLI() {
         ;;
     esac
     # Toggle AWS Pager
-    if [ "$ORB_BOOL_DISABLE_PAGER" = 1 ]; then
+    if [ "$ORB_BOOL_DISABLE_PAGER" -eq 1 ]; then
         if [ -z "${AWS_PAGER+x}" ]; then
             echo 'export AWS_PAGER=""' >>"$BASH_ENV"
             echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
