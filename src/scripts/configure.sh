@@ -7,7 +7,7 @@ fi
 
 ORB_ENV_ACCESS_KEY_ID=$(circleci env subst "\$$ORB_ENV_ACCESS_KEY_ID")
 ORB_ENV_SECRET_ACCESS_KEY=$(circleci env subst "\$$ORB_ENV_SECRET_ACCESS_KEY")
-ORB_EVAL_AWS_CLI_REGION=$(circleci env subst "\$$ORB_EVAL_AWS_CLI_REGION")
+ORB_EVAL_AWS_CLI_REGION=$(circleci env subst "$ORB_EVAL_AWS_CLI_REGION")
 ORB_EVAL_PROFILE_NAME=$(circleci env subst "$ORB_EVAL_PROFILE_NAME")
 
 if [ -z "$ORB_ENV_ACCESS_KEY_ID" ] || [ -z "${ORB_ENV_SECRET_ACCESS_KEY}" ]; then 
