@@ -30,8 +30,7 @@ if [ -n "${AWS_SESSION_TOKEN}" ]; then
 fi
 
 if [ "$ORB_VAL_CONFIG_DEFAULT_REGION" = "1" ]; then
-    aws configure set default.region "$ORB_EVAL_AWS_CLI_REGION" \
-        --profile "$ORB_EVAL_PROFILE_NAME"
+    aws configure set default.region "$ORB_EVAL_AWS_CLI_REGION"
 fi
 
 if [ "$ORB_VAL_CONFIG_PROFILE_REGION" = "1" ]; then
