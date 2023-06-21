@@ -19,6 +19,12 @@ jobs:
         description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
         default: latest
         type: string
+      configure_default_region:
+        type: boolean
+        default: true
+      configure_profile_region:
+        type: boolean
+        default: true
       override_installed:
         type: boolean
         default: false
@@ -47,6 +53,9 @@ jobs:
         description: Profile name to be configured.
         type: string
         default: "default"
+      region:
+        type: string
+        default: ${AWS_DEFAULT_REGION}
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
@@ -58,6 +67,9 @@ jobs:
           profile_name: <<parameters.profile_name>>
           session_duration: <<parameters.session_duration>>
           role_session_name: <<parameters.role_session_name>>
+          configure_default_region: <<parameters.configure_default_region>>
+          configure_profile_region: <<parameters.configure_profile_region>>
+          region: <<parameters.region>>
       - test_paging
   integration-test-role-arn-setup:
     executor: docker-base
@@ -93,6 +105,25 @@ workflows:
   test-deploy:
     jobs:
       - integration-test-install:
+          name: integration-test-configure-profile-region
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile_name: "OIDC-User"
+          context: [CPE-OIDC]
+          configure_default_region: false
+          region: us-west-2
+          executor: docker-base
+          post-steps:
+            - run:
+                name: Checking ~/.aws/config for profile region
+                command: |
+                  if grep "\[profile OIDC-User\]" ~/.aws/config && grep "us-west-2" ~/.aws/config;then 
+                    echo "Profile region properly configured"
+                    exit 0
+                  else
+                    echo "Profile region not properly configured"
+                    exit 1
+                  fi
+      - integration-test-install:
           name: integration-test-configure-default-region
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile_name: "OIDC-User"
@@ -102,7 +133,7 @@ workflows:
           executor: docker-base
           post-steps:
             - run:
-                name: Checking ~/.aws/config for default region << parameters.region >>
+                name: Checking ~/.aws/config for default region
                 command: |
                   if grep "\[default\]" ~/.aws/config && grep "us-west-1" ~/.aws/config;then 
                     echo "Default region properly configured"
@@ -111,7 +142,7 @@ workflows:
                     echo "Default region not properly configured"
                     exit 1
                   fi
-      # # Testing executors that do not AWS pre-installed
+      # Testing executors that do not AWS pre-installed
       - integration-test-install:
           name: integration-test-web-identity-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
@@ -122,61 +153,61 @@ workflows:
             - run:
                 name: Web Identity Test - Logging into ECR
                 command: aws ecr get-login-password --region us-west-2 --profile "OIDC-User" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
-      # # Testing executors that do not AWS pre-installed
-      # - integration-test-install:
-      #     name: integration-test-install-<<matrix.executor>>
-      #     context: [CPE_ORBS_AWS]
-      #     matrix:
-      #       alias: test-install
-      #       parameters:
-      #         executor: ["docker-base", "macos", "alpine"]
-      #     filters: *filters
-      #     post-steps:
-      #       - check_aws_version
-      # # Test installing specific versions on executors without AWS pre-installed
-      # - integration-test-install:
-      #     name: integration-test-install-version-<<matrix.executor>>
-      #     context: [CPE_ORBS_AWS]
-      #     matrix:
-      #       alias: test-install-version
-      #       parameters:
-      #         executor: ["docker-base", "macos", "alpine"]
-      #     version: "2.1.10"
-      #     filters: *filters
-      #     post-steps:
-      #       - check_aws_version:
-      #           version: "2.1.10"
-      # # Test overriding existing version of AWS pre-installed
-      # - integration-test-install:
-      #     name: integration-test-install-override-version-<<matrix.executor>>
-      #     context: [CPE_ORBS_AWS]
-      #     matrix:
-      #       alias: test-install-override-version
-      #       parameters:
-      #         executor: ["linuxvm", "windows", "arm"]
-      #     version: "2.1.10"
-      #     install_dir: "/usr/local/aws-cli"
-      #     binary_dir: ""
-      #     override_installed: true
-      #     filters: *filters
-      #     post-steps:
-      #       - check_aws_version:
-      #           version: "2.1.10"
-      # - integration-test-role-arn-setup:
-      #     name: integration-test-role_arn-config
-      #     profile_name: "CircleCI-Tester"
-      #     role_arn: ${ROLE_ARN}
-      #     context: [CPE_ORBS_AWS]
-      # - orb-tools/pack:
-      #     filters: *release-filters
-      # - orb-tools/publish:
-      #     orb_name: circleci/aws-cli
-      #     vcs_type: << pipeline.project.type >>
-      #     pub_type: production
-      #     enable_pr_comment: true
-      #     context: orb-publisher
-      #     requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-profile, integration-test-role_arn-config]
-      #     filters: *release-filters
+      # Testing executors that do not AWS pre-installed
+      - integration-test-install:
+          name: integration-test-install-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
+          matrix:
+            alias: test-install
+            parameters:
+              executor: ["docker-base", "macos", "alpine"]
+          filters: *filters
+          post-steps:
+            - check_aws_version
+      # Test installing specific versions on executors without AWS pre-installed
+      - integration-test-install:
+          name: integration-test-install-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
+          matrix:
+            alias: test-install-version
+            parameters:
+              executor: ["docker-base", "macos", "alpine"]
+          version: "2.1.10"
+          filters: *filters
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
+      # Test overriding existing version of AWS pre-installed
+      - integration-test-install:
+          name: integration-test-install-override-version-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
+          matrix:
+            alias: test-install-override-version
+            parameters:
+              executor: ["linuxvm", "windows", "arm"]
+          version: "2.1.10"
+          install_dir: "/usr/local/aws-cli"
+          binary_dir: ""
+          override_installed: true
+          filters: *filters
+          post-steps:
+            - check_aws_version:
+                version: "2.1.10"
+      - integration-test-role-arn-setup:
+          name: integration-test-role_arn-config
+          profile_name: "CircleCI-Tester"
+          role_arn: ${ROLE_ARN}
+          context: [CPE_ORBS_AWS]
+      - orb-tools/pack:
+          filters: *release-filters
+      - orb-tools/publish:
+          orb_name: circleci/aws-cli
+          vcs_type: << pipeline.project.type >>
+          pub_type: production
+          enable_pr_comment: true
+          context: orb-publisher
+          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-profile, integration-test-role_arn-config]
+          filters: *release-filters
 executors:
   alpine:
     docker:
