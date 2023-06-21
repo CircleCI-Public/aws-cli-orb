@@ -106,7 +106,7 @@ workflows:
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile_name: "OIDC-User"
           context: [CPE-OIDC]
-          executor: docker-base
+          executor: arm
           post-steps:
             - run:
                 name: Web Identity Test - Logging into ECR
