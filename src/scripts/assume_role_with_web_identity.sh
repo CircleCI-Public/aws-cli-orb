@@ -1,7 +1,7 @@
 # shellcheck disable=SC2148
-ORB_STR_ROLE_SESSION_NAME=$(circleci env subst "${ORB_STR_ROLE_SESSION_NAME}")
-ORB_STR_ROLE_ARN=$(circleci env subst "${ORB_STR_ROLE_ARN}")
-ORB_STR_PROFILE_NAME=$(circleci env subst "$ORB_STR_PROFILE_NAME")
+ORB_STR_ROLE_SESSION_NAME="$(circleci env subst "${ORB_STR_ROLE_SESSION_NAME}")"
+ORB_STR_ROLE_ARN="$(circleci env subst "${ORB_STR_ROLE_ARN}")"
+ORB_STR_PROFILE_NAME="$(circleci env subst "$ORB_STR_PROFILE_NAME")"
 
 
 if [ -z "${ORB_STR_ROLE_SESSION_NAME}" ]; then
