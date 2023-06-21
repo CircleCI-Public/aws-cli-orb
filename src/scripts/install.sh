@@ -13,7 +13,6 @@ else
 fi
 
 Install_AWS_CLI() {
-    # local version="$1"
     echo "Installing AWS CLI v2"
     cd /tmp || exit
     # Platform check
