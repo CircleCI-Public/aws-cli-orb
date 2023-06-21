@@ -1,6 +1,8 @@
 # shellcheck disable=SC2148
 
+set -x
 ORB_STR_AWS_CLI_VERSION="$(echo "${ORB_STR_AWS_CLI_VERSION}" | circleci env subst)"
+set +x
 ORB_EVAL_INSTALL_DIR="$(eval echo "${ORB_EVAL_INSTALL_DIR}")"
 ORB_EVAL_BINARY_DIR="$(eval echo "${ORB_EVAL_BINARY_DIR}")"
 
@@ -11,7 +13,7 @@ else
 fi
 
 Install_AWS_CLI() {
-    local version="$1"
+    # local version="$1"
     echo "Installing AWS CLI v2"
     cd /tmp || exit
     # Platform check
@@ -34,7 +36,7 @@ Install_AWS_CLI() {
     # Install per platform
     case $SYS_ENV_PLATFORM in
     linux_x86)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install -i "${ORB_EVAL_INSTALL_DIR}" -b "${ORB_EVAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
@@ -44,9 +46,9 @@ Install_AWS_CLI() {
             echo "Chocolatey is required to uninstall AWS"
             exit 1
         fi
-        choco install awscli --version="$version"
-        echo "$version"
-        if echo "$version" | grep "2."; then
+        choco install awscli --version="$1"
+        echo "$1"
+        if echo "$1" | grep "2."; then
             echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLIV2\"" >> "$BASH_ENV"
 
         else
@@ -54,12 +56,12 @@ Install_AWS_CLI() {
         fi
         ;;
     macos)
-        curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$version.pkg" -o "AWSCLIV2.pkg"
+        curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$1.pkg" -o "AWSCLIV2.pkg"
         $SUDO installer -pkg AWSCLIV2.pkg -target /
         rm AWSCLIV2.pkg
         ;;
     linux_arm)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$version.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install -i "${ORB_EVAL_INSTALL_DIR}" -b "${ORB_EVAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
@@ -80,9 +82,9 @@ Install_AWS_CLI() {
             glibc-i18n-2.34-r0.apk
 
         /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
 
-        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip"
+        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip"
         unzip awscliv2.zip
         aws/install
         rm -r awscliv2.zip ./aws
@@ -130,7 +132,7 @@ Uninstall_AWS_CLI() {
 
 if [ ! "$(command -v aws)" ]; then
     if [ "$ORB_STR_AWS_CLI_VERSION" = "latest" ]; then
-        Install_AWS_CLI
+        Install_AWS_CLI ""
     else
         if uname -a | grep "x86_64 Msys"; then
             Install_AWS_CLI "${ORB_STR_AWS_CLI_VERSION}"
