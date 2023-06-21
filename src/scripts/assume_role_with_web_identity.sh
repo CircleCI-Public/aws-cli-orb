@@ -5,6 +5,7 @@ ORB_STR_PROFILE_NAME="$(circleci env subst "$ORB_STR_PROFILE_NAME")"
 
 
 if [ -z "${ORB_STR_ROLE_SESSION_NAME}" ]; then
+
     echo "Role session name is required"
     exit 1
 fi
