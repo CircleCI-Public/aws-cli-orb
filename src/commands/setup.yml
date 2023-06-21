@@ -64,12 +64,14 @@ parameters:
   configure_default_region:
     description: |
       Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
+      Any AWS cli command will default to this region if none is specified with the --region cli parameter. 
     type: boolean
     default: true
 
   configure_profile_region:
     description: |
-      Boolean whether to configure the region for the custom (non-default) profile or not
+      Boolean whether to configure the region for the custom (non-default) profile. The specified region will be used for AWS cli
+      commands executed under that specific profile using the --profile cli parameter.
     type: boolean
     default: true
 
