@@ -64,7 +64,7 @@ parameters:
   configure_default_region:
     description: |
       Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
-      Any AWS cli command will default to this region if none is specified with the --region cli parameter.
+      Any AWS CLI command will default to this region if none is specified with the --region CLI parameter.
     type: boolean
     default: true
 
