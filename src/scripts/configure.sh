@@ -7,6 +7,7 @@ fi
 
 ORB_ENV_ACCESS_KEY_ID=$(circleci env subst "\$$ORB_ENV_ACCESS_KEY_ID")
 ORB_ENV_SECRET_ACCESS_KEY=$(circleci env subst "\$$ORB_ENV_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN=$(circleci env subst "$AWS_SESSION_TOKEN")
 ORB_STR_REGION=$(circleci env subst "\$$ORB_STR_REGION")
 ORB_STR_PROFILE_NAME=$(circleci env subst "$ORB_STR_PROFILE_NAME")
 
