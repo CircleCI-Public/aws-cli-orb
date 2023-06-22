@@ -160,7 +160,7 @@ workflows:
           matrix:
             alias: test-install
             parameters:
-              executor: ["docker-base", "macos", "alpine"]
+              executor: ["docker-base", "macos", "alpine", "docker-nounset-shell" ]
           filters: *filters
           post-steps:
             - check_aws_version
@@ -171,7 +171,7 @@ workflows:
           matrix:
             alias: test-install-version
             parameters:
-              executor: ["docker-base", "macos", "alpine"]
+              executor: ["docker-base", "macos", "alpine", "docker-nounset-shell" ]
           version: "2.1.10"
           filters: *filters
           post-steps:
@@ -213,6 +213,10 @@ executors:
     docker:
       - image: alpine:latest
   docker-base:
+    docker:
+      - image: cimg/base:stable
+  docker-nounset-shell:
+    shell: /bin/bash -o nounset
     docker:
       - image: cimg/base:stable
   macos:
