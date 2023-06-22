@@ -16,7 +16,6 @@ if [ -z "$ORB_STR_ACCESS_KEY_ID" ] || [ -z "${ORB_STR_SECRET_ACCESS_KEY}" ]; the
     exit 1
 fi
 
-set -x
 aws configure set aws_access_key_id \
     "$ORB_STR_ACCESS_KEY_ID" \
     --profile "$ORB_STR_PROFILE_NAME"
@@ -39,4 +38,3 @@ if [ "$ORB_BOOL_CONFIG_PROFILE_REGION" = "1" ]; then
     aws configure set region "$ORB_STR_REGION" \
         --profile "$ORB_STR_PROFILE_NAME"
 fi
-set +x
