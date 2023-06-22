@@ -163,6 +163,7 @@ workflows:
             - run:
                 name: Web Identity Test - Logging into ECR
                 command: aws ecr get-login-password --region us-west-2 --profile "OIDC-User" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
+          requires: [integration test web identity command with white spaces]
       # Testing executors that do not AWS CLI pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
