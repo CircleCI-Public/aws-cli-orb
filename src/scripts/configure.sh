@@ -1,5 +1,5 @@
 #!/bin/sh
-#shellcheck disable=#SC1090
+#shellcheck disable=SC1090
 if grep "Alpine" /etc/issue > /dev/null 2>&1; then
     touch "$BASH_ENV"
     . "$BASH_ENV"
