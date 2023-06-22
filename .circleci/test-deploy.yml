@@ -104,6 +104,7 @@ jobs:
 workflows:
   test-deploy:
     jobs:
+      # Testing region configuration
       - integration-test-install:
           name: integration-test-configure-profile-region
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
@@ -142,7 +143,16 @@ workflows:
                     echo "Default region not properly configured"
                     exit 1
                   fi
-      # Testing executors that do not AWS pre-installed
+      # Testing OIDC
+      - integration-test-install:
+          name: integration test web identity command with white spaces
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          context: [CPE-OIDC]
+          executor: docker-base
+          post-steps:
+            - run:
+                name: Web Identity Test - Logging into ECR
+                command: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
       - integration-test-install:
           name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
@@ -153,7 +163,7 @@ workflows:
             - run:
                 name: Web Identity Test - Logging into ECR
                 command: aws ecr get-login-password --region us-west-2 --profile "OIDC-User" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
-      # Testing executors that do not AWS pre-installed
+      # Testing executors that do not AWS CLI pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
           context: [CPE_ORBS_AWS]
