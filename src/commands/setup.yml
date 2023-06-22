@@ -52,7 +52,7 @@ parameters:
       the environment variable you will use to hold this
       value, i.e. AWS_SECRET_ACCESS_KEY.
     type: string
-    default: $(AWS_SECRET_ACCESS_KEY}
+    default: ${AWS_SECRET_ACCESS_KEY}
 
   region:
     description: |
