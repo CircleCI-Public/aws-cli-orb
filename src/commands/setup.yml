@@ -43,7 +43,7 @@ parameters:
       AWS access key id for IAM role. Set this to the name of
       the environment variable you will use to hold this
       value, i.e. AWS_ACCESS_KEY.
-    type: string_name
+    type: string
     default: ${AWS_ACCESS_KEY_ID}
 
   aws_secret_access_key:
@@ -51,7 +51,7 @@ parameters:
       AWS secret key for IAM role. Set this to the name of
       the environment variable you will use to hold this
       value, i.e. AWS_SECRET_ACCESS_KEY.
-    type: string_name
+    type: string
     default: $(AWS_SECRET_ACCESS_KEY}
 
   region:
