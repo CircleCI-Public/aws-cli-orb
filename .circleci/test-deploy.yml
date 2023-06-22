@@ -144,7 +144,7 @@ workflows:
                   fi
       # Testing executors that do not AWS pre-installed
       - integration-test-install:
-          name: integration-test-web-identity-profile
+          name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile_name: "OIDC-User"
           context: [CPE-OIDC]
