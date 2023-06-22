@@ -3,7 +3,17 @@ ORB_STR_ROLE_SESSION_NAME="$(circleci env subst "${ORB_STR_ROLE_SESSION_NAME}")"
 ORB_STR_ROLE_ARN="$(circleci env subst "${ORB_STR_ROLE_ARN}")"
 ORB_STR_PROFILE_NAME="$(circleci env subst "$ORB_STR_PROFILE_NAME")"
 
+<<<<<<< HEAD
 if [ -z "${ORB_STR_ROLE_SESSION_NAME}" ]; then
+=======
+# Replaces white spaces in role session name with dashes
+ORB_EVAL_ROLE_SESSION_NAME=$(echo "${ORB_EVAL_ROLE_SESSION_NAME}" | tr ' ' '-')
+
+# Replaces white spaces role session name with dashes
+ORB_EVAL_ROLE_SESSION_NAME=$(echo "${ORB_EVAL_ROLE_SESSION_NAME}" | tr ' ' '-')
+
+if [ -z "${ORB_EVAL_ROLE_SESSION_NAME}" ]; then
+>>>>>>> cd4235a (fix: unbound variable in config command)
     echo "Role session name is required"
     exit 1
 fi
