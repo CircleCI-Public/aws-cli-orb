@@ -30,11 +30,11 @@ if [ -n "${AWS_SESSION_TOKEN}" ]; then
         --profile "$ORB_STR_PROFILE_NAME"
 fi
 
-if [ "$ORB_BOOL_CONFIG_DEFAULT_REGION" = "1" ]; then
+if [ "$ORB_BOOL_CONFIG_DEFAULT_REGION" -eq "1" ]; then
     aws configure set default.region "$ORB_STR_REGION"
 fi
 
-if [ "$ORB_BOOL_CONFIG_PROFILE_REGION" = "1" ]; then
+if [ "$ORB_BOOL_CONFIG_PROFILE_REGION" -eq "1" ]; then
     aws configure set region "$ORB_STR_REGION" \
         --profile "$ORB_STR_PROFILE_NAME"
 fi
