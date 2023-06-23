@@ -66,10 +66,11 @@ Install_AWS_CLI() {
         rm -r awscliv2.zip ./aws
         ;;
     linux_alpine)
+        # Add dependancies to install AWS CLI on Alpine Linux
         apk --no-cache add \
             binutils \
-            curl
-
+            curl \
+            libcurl
         curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
