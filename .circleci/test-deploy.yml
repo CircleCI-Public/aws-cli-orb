@@ -19,6 +19,12 @@ jobs:
         description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
         default: latest
         type: string
+      configure_default_region:
+        type: boolean
+        default: true
+      configure_profile_region:
+        type: boolean
+        default: true
       override_installed:
         type: boolean
         default: false
@@ -47,6 +53,9 @@ jobs:
         description: Profile name to be configured.
         type: string
         default: "default"
+      region:
+        type: string
+        default: ${AWS_DEFAULT_REGION}
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
@@ -58,6 +67,9 @@ jobs:
           profile_name: <<parameters.profile_name>>
           session_duration: <<parameters.session_duration>>
           role_session_name: <<parameters.role_session_name>>
+          configure_default_region: <<parameters.configure_default_region>>
+          configure_profile_region: <<parameters.configure_profile_region>>
+          region: <<parameters.region>>
       - test_paging
   integration-test-role-arn-setup:
     executor: docker-base
@@ -92,6 +104,46 @@ jobs:
 workflows:
   test-deploy:
     jobs:
+      # Testing region configuration
+      - integration-test-install:
+          name: integration-test-configure-profile-region
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile_name: "OIDC-User"
+          context: [CPE-OIDC]
+          configure_default_region: false
+          region: us-west-2
+          executor: docker-base
+          post-steps:
+            - run:
+                name: Checking ~/.aws/config for profile region
+                command: |
+                  if grep "\[profile OIDC-User\]" ~/.aws/config && grep "us-west-2" ~/.aws/config;then 
+                    echo "Profile region properly configured"
+                    exit 0
+                  else
+                    echo "Profile region not properly configured"
+                    exit 1
+                  fi
+      - integration-test-install:
+          name: integration-test-configure-default-region
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile_name: "OIDC-User"
+          context: [CPE-OIDC]
+          configure_profile_region: false
+          region: us-west-1
+          executor: docker-base
+          post-steps:
+            - run:
+                name: Checking ~/.aws/config for default region
+                command: |
+                  if grep "\[default\]" ~/.aws/config && grep "us-west-1" ~/.aws/config;then 
+                    echo "Default region properly configured"
+                    exit 0
+                  else
+                    echo "Default region not properly configured"
+                    exit 1
+                  fi
+      # Testing OIDC
       - integration-test-install:
           name: integration test web identity command with white spaces
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
@@ -104,14 +156,14 @@ workflows:
       - integration-test-install:
           name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
-          profile_name: "OIDC-User"
+          profile_name: "OIDC-Tester"
           context: [CPE-OIDC]
           executor: docker-base
           post-steps:
             - run:
                 name: Web Identity Test - Logging into ECR
-                command: aws ecr get-login-password --region us-west-2 --profile "OIDC-User" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
-      # Testing executors that do not AWS pre-installed
+                command: aws ecr get-login-password --region us-west-2 --profile "OIDC-Tester" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
+      # Testing executors that do not AWS CLI pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
           context: [CPE_ORBS_AWS]

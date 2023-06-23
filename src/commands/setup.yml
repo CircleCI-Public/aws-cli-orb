@@ -43,16 +43,16 @@ parameters:
       AWS access key id for IAM role. Set this to the name of
       the environment variable you will use to hold this
       value, i.e. AWS_ACCESS_KEY.
-    type: env_var_name
-    default: AWS_ACCESS_KEY_ID
+    type: string
+    default: ${AWS_ACCESS_KEY_ID}
 
   aws_secret_access_key:
     description: |
       AWS secret key for IAM role. Set this to the name of
       the environment variable you will use to hold this
       value, i.e. AWS_SECRET_ACCESS_KEY.
-    type: env_var_name
-    default: AWS_SECRET_ACCESS_KEY
+    type: string
+    default: ${AWS_SECRET_ACCESS_KEY}
 
   region:
     description: |
@@ -64,12 +64,14 @@ parameters:
   configure_default_region:
     description: |
       Some AWS actions don't require a region; set this to false if you do not want to store a default region in ~/.aws/config
+      Any AWS CLI command will default to this region if none is specified with the --region CLI parameter.
     type: boolean
     default: true
 
   configure_profile_region:
     description: |
-      Boolean whether to configure the region for the custom (non-default) profile or not
+      Boolean whether to configure the region for the custom (non-default) profile. The specified region will be used for AWS CLI
+      commands executed under that specific profile using the --profile CLI parameter.
     type: boolean
     default: true
 
@@ -111,8 +113,8 @@ steps:
   - run:
       name: Configure AWS Access Key ID
       environment:
-        ORB_ENV_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
-        ORB_ENV_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
+        ORB_STR_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
+        ORB_STR_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
         ORB_STR_PROFILE_NAME: <<parameters.profile_name>>
         ORB_BOOL_CONFIG_DEFAULT_REGION: <<parameters.configure_default_region>>
         ORB_BOOL_CONFIG_PROFILE_REGION: <<parameters.configure_profile_region>>
