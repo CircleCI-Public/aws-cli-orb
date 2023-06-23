@@ -170,7 +170,7 @@ workflows:
           matrix:
             alias: test-install
             parameters:
-              executor: ["docker-base", "macos", "alpine", "docker-nounset-shell" ]
+              executor: ["docker-base", "macos", "alpine", "docker-nounset-shell", terraform ]
           filters: *filters
           post-steps:
             - check_aws_version
@@ -219,6 +219,9 @@ workflows:
           requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config]
           filters: *release-filters
 executors:
+  terraform:
+    docker:
+      - image: hashicorp/terraform:1.3.4
   alpine:
     docker:
       - image: alpine:latest

@@ -1,8 +1,5 @@
 # shellcheck disable=SC2148
-
-set -x
-ORB_STR_AWS_CLI_VERSION="$(echo "${ORB_STR_AWS_CLI_VERSION}" | circleci env subst)"
-set +x
+ORB_STR_AWS_CLI_VERSION="$(circleci env subst "${ORB_STR_AWS_CLI_VERSION}")"
 ORB_EVAL_INSTALL_DIR="$(eval echo "${ORB_EVAL_INSTALL_DIR}")"
 ORB_EVAL_BINARY_DIR="$(eval echo "${ORB_EVAL_BINARY_DIR}")"
 
@@ -66,10 +63,13 @@ Install_AWS_CLI() {
         rm -r awscliv2.zip ./aws
         ;;
     linux_alpine)
+        # Add dependencies to install AWS CLI on Alpine Linux
+        apk update
         apk --no-cache add \
             binutils \
             curl
-
+        apk --no-cache add libcurl
+        apk --no-cache upgrade libcurl
         curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
