@@ -1,8 +1,5 @@
 # shellcheck disable=SC2148
-
-set -x
 ORB_STR_AWS_CLI_VERSION="$(echo "${ORB_STR_AWS_CLI_VERSION}" | circleci env subst)"
-set +x
 ORB_EVAL_INSTALL_DIR="$(eval echo "${ORB_EVAL_INSTALL_DIR}")"
 ORB_EVAL_BINARY_DIR="$(eval echo "${ORB_EVAL_BINARY_DIR}")"
 
@@ -67,6 +64,7 @@ Install_AWS_CLI() {
         ;;
     linux_alpine)
         # Add dependancies to install AWS CLI on Alpine Linux
+        apk update
         apk --no-cache add \
             binutils \
             curl \
