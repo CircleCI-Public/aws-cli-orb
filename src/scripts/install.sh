@@ -63,7 +63,7 @@ Install_AWS_CLI() {
         rm -r awscliv2.zip ./aws
         ;;
     linux_alpine)
-        # Add dependancies to install AWS CLI on Alpine Linux
+        # Add dependencies to install AWS CLI on Alpine Linux
         apk update
         apk --no-cache add \
             binutils \
