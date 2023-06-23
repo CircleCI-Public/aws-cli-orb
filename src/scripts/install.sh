@@ -70,7 +70,8 @@ Install_AWS_CLI() {
         apk --no-cache add \
             binutils \
             curl \
-            libcurl
+        apk --no-cache add libcurl
+        apk --no-cache upgrade libcurl
         curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
         curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
