@@ -26,6 +26,13 @@ parameters:
     type: string
     default: "default"
 
+  region:
+    description: |
+      AWS region to operate in
+      (defaults to env var of ${AWS_DEFAULT_REGION})
+    type: string
+    default: ${AWS_DEFAULT_REGION}
+
 steps:
   - run:
       name: Generate shortlived AWS Keys using CircleCI OIDC token.
@@ -34,4 +41,5 @@ steps:
         ORB_STR_ROLE_SESSION_NAME: <<parameters.role_session_name>>
         ORB_INT_SESSION_DURATION: <<parameters.session_duration>>
         ORB_STR_PROFILE_NAME: <<parameters.profile_name>>
+        ORB_STR_REGION: <<parameters.region>>
       command: <<include(scripts/assume_role_with_web_identity.sh)>>

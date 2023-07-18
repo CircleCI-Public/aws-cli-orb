@@ -110,6 +110,7 @@ steps:
             role_session_name: <<parameters.role_session_name>>
             session_duration: <<parameters.session_duration>>
             profile_name: <<parameters.profile_name>>
+            region: <<parameters.region>>
   - run:
       name: Configure AWS Access Key ID
       environment:
