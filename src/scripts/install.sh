@@ -141,10 +141,14 @@ if [ ! "$(command -v aws)" ]; then
     fi
 elif [ "$ORB_BOOL_OVERRIDE" -eq 1 ]; then
     Uninstall_AWS_CLI
-    if uname -a | grep "x86_64 Msys"; then
-        Install_AWS_CLI "${ORB_STR_AWS_CLI_VERSION}"
+    if [ "$ORB_STR_AWS_CLI_VERSION" = "latest" ]; then
+        Install_AWS_CLI ""
     else
-        Install_AWS_CLI "-${ORB_STR_AWS_CLI_VERSION}"
+        if uname -a | grep "x86_64 Msys"; then
+            Install_AWS_CLI "${ORB_STR_AWS_CLI_VERSION}"
+        else
+            Install_AWS_CLI "-${ORB_STR_AWS_CLI_VERSION}"
+        fi
     fi
 else
     echo "AWS CLI is already installed, skipping installation."
