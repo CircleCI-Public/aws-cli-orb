@@ -28,6 +28,7 @@ $(aws sts assume-role-with-web-identity \
 --web-identity-token "${CIRCLE_OIDC_TOKEN_V2}" \
 --duration-seconds "${ORB_INT_SESSION_DURATION}" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+--region "${ORB_STR_REGION}" \
 --output text)
 EOF
 
