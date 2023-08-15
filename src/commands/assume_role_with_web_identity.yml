@@ -1,5 +1,5 @@
 description: |
-  Generate a shortlived AWS_ACCESS_KEY_ID, AWS_ACCESS_KEY_ID and AWS_SESSION_TOKEN using the $CIRCLE_OIDC_TOKEN_V2.
+  Generate a shortlived AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN using the $CIRCLE_OIDC_TOKEN_V2.
   A properly configured web identity based ARN is also required for configuration.
   Use these keys and create a profile with the aws-cli/setup commands.
   For more information, see the CircleCI OIDC docs: https://circleci.com/docs/2.0/openid-connect-tokens/
