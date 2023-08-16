@@ -1,7 +1,7 @@
 # shellcheck disable=SC2148
-ORB_STR_AWS_CLI_VERSION="$(echo "${ORB_STR_AWS_CLI_VERSION}" | circleci env subst)"
-ORB_EVAL_INSTALL_DIR="$(eval echo "${ORB_EVAL_INSTALL_DIR}")"
-ORB_EVAL_BINARY_DIR="$(eval echo "${ORB_EVAL_BINARY_DIR}")"
+AWS_CLI_STR_AWS_CLI_VERSION="$(echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | circleci env subst)"
+AWS_CLI_EVAL_INSTALL_DIR="$(eval echo "${AWS_CLI_EVAL_INSTALL_DIR}" | circleci env subst)"
+AWS_CLI_EVAL_BINARY_DIR="$(eval echo "${AWS_CLI_EVAL_BINARY_DIR}" | circleci env subst)"
 
 if grep "Alpine" /etc/issue >/dev/null 2>&1; then
     if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
@@ -34,7 +34,7 @@ Install_AWS_CLI() {
     linux_x86)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install -i "${ORB_EVAL_INSTALL_DIR}" -b "${ORB_EVAL_BINARY_DIR}"
+        $SUDO ./aws/install -i "${AWS_CLI_EVAL_INSTALL_DIR}" -b "${AWS_CLI_EVAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
         ;;
     windows)
@@ -59,7 +59,7 @@ Install_AWS_CLI() {
     linux_arm)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$1.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
-        $SUDO ./aws/install -i "${ORB_EVAL_INSTALL_DIR}" -b "${ORB_EVAL_BINARY_DIR}"
+        $SUDO ./aws/install -i "${AWS_CLI_EVAL_INSTALL_DIR}" -b "${AWS_CLI_EVAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
         ;;
     linux_alpine)
@@ -95,7 +95,7 @@ Install_AWS_CLI() {
         ;;
     esac
     # Toggle AWS Pager
-    if [ "$ORB_BOOL_DISABLE_PAGER" -eq 1 ]; then
+    if [ "$AWS_CLI_BOOL_DISABLE_PAGER" -eq 1 ]; then
         if [ -z "${AWS_PAGER+x}" ]; then
             echo 'export AWS_PAGER=""' >>"$BASH_ENV"
             echo "AWS_PAGER is being set to the empty string to disable all output paging for AWS CLI commands."
@@ -130,24 +130,24 @@ Uninstall_AWS_CLI() {
 }
 
 if [ ! "$(command -v aws)" ]; then
-    if [ "$ORB_STR_AWS_CLI_VERSION" = "latest" ]; then
+    if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI ""
     else
         if uname -a | grep "x86_64 Msys"; then
-            Install_AWS_CLI "${ORB_STR_AWS_CLI_VERSION}"
+            Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
         else
-            Install_AWS_CLI "-${ORB_STR_AWS_CLI_VERSION}"
+            Install_AWS_CLI "-${AWS_CLI_STR_AWS_CLI_VERSION}"
         fi
     fi
-elif [ "$ORB_BOOL_OVERRIDE" -eq 1 ]; then
+elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ]; then
     Uninstall_AWS_CLI
-    if [ "$ORB_STR_AWS_CLI_VERSION" = "latest" ]; then
+    if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI ""
     else
         if uname -a | grep "x86_64 Msys"; then
-            Install_AWS_CLI "${ORB_STR_AWS_CLI_VERSION}"
+            Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
         else
-            Install_AWS_CLI "-${ORB_STR_AWS_CLI_VERSION}"
+            Install_AWS_CLI "-${AWS_CLI_STR_AWS_CLI_VERSION}"
         fi
     fi
 else

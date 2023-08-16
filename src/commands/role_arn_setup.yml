@@ -18,7 +18,7 @@ steps:
   - run:
       name: Configure role arn for profile <<parameters.profile_name>>
       environment:
-        ORB_STR_PROFILE_NAME: <<parameters.profile_name>>
-        ORB_STR_SOURCE_PROFILE: <<parameters.source_profile>>
-        ORB_STR_ROLE_ARN: <<parameters.role_arn>>
+        AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
+        AWS_CLI_STR_SOURCE_PROFILE: <<parameters.source_profile>>
+        AWS_CLI_STR_ROLE_ARN: <<parameters.role_arn>>
       command: <<include(scripts/role_arn_setup.sh)>>

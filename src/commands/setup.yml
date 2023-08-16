@@ -114,10 +114,10 @@ steps:
   - run:
       name: Configure AWS Access Key ID
       environment:
-        ORB_STR_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
-        ORB_STR_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
-        ORB_STR_PROFILE_NAME: <<parameters.profile_name>>
-        ORB_BOOL_CONFIG_DEFAULT_REGION: <<parameters.configure_default_region>>
-        ORB_BOOL_CONFIG_PROFILE_REGION: <<parameters.configure_profile_region>>
-        ORB_STR_REGION: <<parameters.region>>
+        AWS_CLI_STR_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
+        AWS_CLI_STR_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
+        AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
+        AWS_CLI_BOOL_CONFIG_DEFAULT_REGION: <<parameters.configure_default_region>>
+        AWS_CLI_BOOL_CONFIG_PROFILE_REGION: <<parameters.configure_profile_region>>
+        AWS_CLI_STR_REGION: <<parameters.region>>
       command: <<include(scripts/configure.sh)>>
