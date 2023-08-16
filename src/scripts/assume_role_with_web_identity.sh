@@ -1,8 +1,8 @@
 #!/bin/sh
-ORB_STR_ROLE_SESSION_NAME="$(circleci env subst "${ORB_STR_ROLE_SESSION_NAME}")"
-ORB_STR_ROLE_ARN="$(circleci env subst "${ORB_STR_ROLE_ARN}")"
-ORB_STR_PROFILE_NAME="$(circleci env subst "$ORB_STR_PROFILE_NAME")"
-ORB_STR_REGION="$(circleci env subst "$ORB_STR_REGION")"
+ORB_STR_ROLE_SESSION_NAME="$(echo "${ORB_STR_ROLE_SESSION_NAME}" | circleci env subst)"
+ORB_STR_ROLE_ARN="$(echo "${ORB_STR_ROLE_ARN}" | circleci env subst)"
+ORB_STR_PROFILE_NAME="$(echo "${ORB_STR_PROFILE_NAME}" | circleci env subst)"
+ORB_STR_REGION="$(echo "${ORB_STR_REGION}" | circleci env subst)"
 
 # Replaces white spaces in role session name with dashes
 ORB_STR_ROLE_SESSION_NAME=$(echo "${ORB_STR_ROLE_SESSION_NAME}" | tr ' ' '-')

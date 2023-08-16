@@ -1,5 +1,5 @@
 # shellcheck disable=SC2148
-ORB_STR_AWS_CLI_VERSION="$(circleci env subst "${ORB_STR_AWS_CLI_VERSION}")"
+ORB_STR_AWS_CLI_VERSION="$(echo "${ORB_STR_AWS_CLI_VERSION}" | circleci env subst)"
 ORB_EVAL_INSTALL_DIR="$(eval echo "${ORB_EVAL_INSTALL_DIR}")"
 ORB_EVAL_BINARY_DIR="$(eval echo "${ORB_EVAL_BINARY_DIR}")"
 

@@ -5,11 +5,11 @@ if grep "Alpine" /etc/issue > /dev/null 2>&1; then
     . "$BASH_ENV"
 fi
 
-ORB_STR_ACCESS_KEY_ID=$(circleci env subst "$ORB_STR_ACCESS_KEY_ID")
-ORB_STR_SECRET_ACCESS_KEY=$(circleci env subst "$ORB_STR_SECRET_ACCESS_KEY")
-AWS_SESSION_TOKEN="$(circleci env subst "$AWS_SESSION_TOKEN")"
-ORB_STR_REGION="$(circleci env subst "$ORB_STR_REGION")"
-ORB_STR_PROFILE_NAME="$(circleci env subst "$ORB_STR_PROFILE_NAME")"
+ORB_STR_ACCESS_KEY_ID="$(echo "$ORB_STR_ACCESS_KEY_ID" | circleci env subst)"
+ORB_STR_SECRET_ACCESS_KEY="$(echo "$ORB_STR_SECRET_ACCESS_KEY" | circleci env subst)"
+AWS_SESSION_TOKEN="$(echo "$AWS_SESSION_TOKEN" | circleci env subst)"
+ORB_STR_REGION="$(echo "$ORB_STR_REGION" | circleci env subst)"
+ORB_STR_PROFILE_NAME="$(echo "$ORB_STR_PROFILE_NAME" | circleci env subst)"
 
 if [ -z "$ORB_STR_ACCESS_KEY_ID" ] || [ -z "${ORB_STR_SECRET_ACCESS_KEY}" ]; then 
     echo "Cannot configure profile. AWS access key id and AWS secret access key must be provided."

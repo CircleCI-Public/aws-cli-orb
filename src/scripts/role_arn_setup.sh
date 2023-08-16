@@ -1,7 +1,7 @@
 #!/bin/sh
-ORB_STR_ROLE_ARN="$(circleci env subst "${ORB_STR_ROLE_ARN}")"
-ORB_STR_PROFILE_NAME="$(circleci env subst "${ORB_STR_PROFILE_NAME}")"
-ORB_STR_SOURCE_PROFILE="$(circleci env subst "${ORB_STR_SOURCE_PROFILE}")"
+ORB_STR_ROLE_ARN="$(echo "${ORB_STR_ROLE_ARN}" | circleci env subst)"
+ORB_STR_PROFILE_NAME="$(echo "${ORB_STR_PROFILE_NAME}" | circleci env subst)"
+ORB_STR_SOURCE_PROFILE="$(echo "${ORB_STR_SOURCE_PROFILE}" | circleci env subst)"
 
 
 if [ ! -f "${HOME}/.aws/credentials" ]; then
