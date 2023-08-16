@@ -2,6 +2,7 @@
 ORB_STR_ROLE_SESSION_NAME="$(circleci env subst "${ORB_STR_ROLE_SESSION_NAME}")"
 ORB_STR_ROLE_ARN="$(circleci env subst "${ORB_STR_ROLE_ARN}")"
 ORB_STR_PROFILE_NAME="$(circleci env subst "$ORB_STR_PROFILE_NAME")"
+ORB_STR_REGION="$(circleci env subst "$ORB_STR_REGION")"
 
 # Replaces white spaces in role session name with dashes
 ORB_STR_ROLE_SESSION_NAME=$(echo "${ORB_STR_ROLE_SESSION_NAME}" | tr ' ' '-')
@@ -21,14 +22,18 @@ if [ ! "$(command -v aws)" ]; then
     exit 1
 fi
 
+if [ -n "${ORB_STR_REGION}" ]; then
+    set -- "$@" --region "${ORB_STR_REGION}"
+fi
+
 read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<EOF
 $(aws sts assume-role-with-web-identity \
 --role-arn "${ORB_STR_ROLE_ARN}" \
 --role-session-name "${ORB_STR_ROLE_SESSION_NAME}" \
 --web-identity-token "${CIRCLE_OIDC_TOKEN_V2}" \
 --duration-seconds "${ORB_INT_SESSION_DURATION}" \
+"$@" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
---region "${ORB_STR_REGION}" \
 --output text)
 EOF
 
