@@ -35,4 +35,8 @@ steps:
         AWS_CLI_BOOL_OVERRIDE: <<parameters.override_installed>>
         AWS_CLI_EVAL_INSTALL_DIR: <<parameters.install_dir>>
         AWS_CLI_EVAL_BINARY_DIR: <<parameters.binary_dir>>
+        SCRIPT_BUILD_WINDOWS: << include(scripts/windows/install.sh) >>
+        SCRIPT_BUILD_LINUX: << include(scripts/linux/install.sh) >>
+        SCRIPT_BUILD_MACOS: << include(scripts/macos/install.sh) >>
+        SCRIPT_UTILS: << include(scripts/utils.sh) >>
       command: <<include(scripts/install.sh)>>

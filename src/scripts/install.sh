@@ -12,81 +12,20 @@ fi
 Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
     cd /tmp || exit
-    # Platform check
-    if uname -a | grep "Darwin"; then
-        export SYS_ENV_PLATFORM=macos
-    elif uname -a | grep "x86_64 GNU/Linux"; then
-        export SYS_ENV_PLATFORM=linux_x86
-    elif uname -a | grep "aarch64 GNU/Linux"; then
-        export SYS_ENV_PLATFORM=linux_arm
-    elif uname -a | grep "x86_64 Msys"; then
-        export SYS_ENV_PLATFORM=windows
-    elif grep "Alpine" /etc/issue >/dev/null 2>&1; then
-        export SYS_ENV_PLATFORM=linux_alpine
-    else
-        echo "This platform appears to be unsupported."
-        uname -a
-        exit 1
-    fi
+
+    eval "$SCRIPT_UTILS"
+    detect_os
 
     # Install per platform
     case $SYS_ENV_PLATFORM in
-    linux_x86)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
-        unzip -q -o awscliv2.zip
-        $SUDO ./aws/install -i "${AWS_CLI_EVAL_INSTALL_DIR}" -b "${AWS_CLI_EVAL_BINARY_DIR}"
-        rm -r awscliv2.zip ./aws
+    linux)
+        eval "$SCRIPT_BUILD_LINUX"
         ;;
     windows)
-        if [ ! "$(command -v choco)" ]; then
-            echo "Chocolatey is required to uninstall AWS"
-            exit 1
-        fi
-        choco install awscli --version="$1"
-        echo "$1"
-        if echo "$1" | grep "2."; then
-            echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLIV2\"" >> "$BASH_ENV"
-
-        else
-            echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLI/bin\"" >>"$BASH_ENV"
-        fi
+        eval "$SCRIPT_BUILD_WINDOWS"
         ;;
     macos)
-        curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$1.pkg" -o "AWSCLIV2.pkg"
-        $SUDO installer -pkg AWSCLIV2.pkg -target /
-        rm AWSCLIV2.pkg
-        ;;
-    linux_arm)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-aarch64$1.zip" -o "awscliv2.zip"
-        unzip -q -o awscliv2.zip
-        $SUDO ./aws/install -i "${AWS_CLI_EVAL_INSTALL_DIR}" -b "${AWS_CLI_EVAL_BINARY_DIR}"
-        rm -r awscliv2.zip ./aws
-        ;;
-    linux_alpine)
-        # Add dependencies to install AWS CLI on Alpine Linux
-        apk update
-        apk --no-cache add \
-            binutils \
-            curl
-        apk --no-cache add libcurl
-        apk --no-cache upgrade libcurl
-        curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk
-
-        apk add --force-overwrite --no-cache \
-            glibc-2.34-r0.apk \
-            glibc-bin-2.34-r0.apk \
-            glibc-i18n-2.34-r0.apk
-
-        /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
-
-        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip"
-        unzip awscliv2.zip
-        aws/install
-        rm -r awscliv2.zip ./aws
+        eval "$SCRIPT_BUILD_MACOS"
         ;;
     *)
         echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
