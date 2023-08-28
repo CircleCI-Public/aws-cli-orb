@@ -41,31 +41,6 @@ Toggle_Pager(){
     fi
 }
 
-# Uninstall_AWS_CLI() {
-#     if uname -a | grep "x86_64 Msys"; then
-#         if [ ! "$(command -v choco)" ]; then
-#             echo "Chocolatey is required to uninstall AWS"
-#             exit 1
-#         fi
-#         choco uninstall awscli
-#     else
-#         AWS_CLI_PATH=$(command -v aws)
-#         echo "$AWS_CLI_PATH"
-#         if [ -n "$AWS_CLI_PATH" ]; then
-#             EXISTING_AWS_VERSION=$(aws --version)
-#             echo "Uninstalling ${EXISTING_AWS_VERSION}"
-#             # shellcheck disable=SC2012
-#             if [ -L "$AWS_CLI_PATH" ]; then
-#                 AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
-#             fi
-#             if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
-#             $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
-#         else
-#             echo "No AWS install found"
-#         fi
-#     fi
-# }
-
 if [ ! "$(command -v aws)" ]; then
     if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI ""
