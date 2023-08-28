@@ -51,7 +51,6 @@ Uninstall_AWS_CLI() {
         if [ -L "$AWS_CLI_PATH" ]; then
             AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
         fi
-        if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
         $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
     else
         echo "No AWS install found"

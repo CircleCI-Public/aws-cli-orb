@@ -1,21 +1,14 @@
-# shellcheck disable=SC2148
+#!/bin/sh
 AWS_CLI_STR_AWS_CLI_VERSION="$(echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | circleci env subst)"
 AWS_CLI_EVAL_INSTALL_DIR="$(eval echo "${AWS_CLI_EVAL_INSTALL_DIR}" | circleci env subst)"
 AWS_CLI_EVAL_BINARY_DIR="$(eval echo "${AWS_CLI_EVAL_BINARY_DIR}" | circleci env subst)"
 
 eval "$SCRIPT_UTILS"
 detect_os
-
-if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
-    if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
-else
-    if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
-fi
+set_sudo
 
 # Install per platform
-if [ "$SYS_ENV_PLATFORM" = "linux" ]; then
-    eval "$SCRIPT_INSTALL_LINUX"
-elif [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
+if [ "$SYS_ENV_PLATFORM" = "linux" ] || [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
     eval "$SCRIPT_INSTALL_LINUX"
 elif [ "$SYS_ENV_PLATFORM" = "windows" ]; then
     eval "$SCRIPT_INSTALL_WINDOWS"
@@ -38,7 +31,7 @@ Toggle_Pager(){
     fi
 }
 
-if [ ! "$(command -v aws)" ]; then
+if ! command -v aws >/dev/null 2>&1; then
     Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
     Toggle_Pager
 elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ]; then

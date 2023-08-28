@@ -1,4 +1,4 @@
-#!/bin/sh
+# shellcheck disable=SC2148
 detect_os() { 
   detected_platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
@@ -27,4 +27,12 @@ detect_os() {
   esac
 
   export SYS_ENV_PLATFORM
+}
+
+set_sudo(){
+    if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
+        if [ "$ID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
+    else
+        if [ "$EUID" = 0 ]; then export SUDO=""; else export SUDO="sudo"; fi
+    fi
 }
