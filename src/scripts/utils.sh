@@ -1,19 +1,30 @@
 #!/bin/sh
-detect_os(){
+detect_os() { 
+  detected_platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
-    # Platform check
-    if uname -a | grep "Darwin"; then
-        SYS_ENV_PLATFORM=macos
-    elif uname -s | grep "Linux"; then
-        SYS_ENV_PLATFORM=linux
-    elif uname -s | grep "MSYS"; then
-        SYS_ENV_PLATFORM=windows
-    else
-        echo "This platform appears to be unsupported."
-        uname -a
-        exit 1
-    fi
+  case "$detected_platform" in
+    linux*)
+        if grep "Alpine" /etc/issue >/dev/null 2>&1; then
+            printf '%s\n' "Detected OS: Alpine Linux."
+            SYS_ENV_PLATFORM=linux_alpine
+        else
+            printf '%s\n' "Detected OS: Linux."
+            SYS_ENV_PLATFORM=linux
+        fi  
+      ;;
+    darwin*)
+      printf '%s\n' "Detected OS: macOS."
+      SYS_ENV_PLATFORM=macos
+      ;;
+    msys*|cygwin*)
+      printf '%s\n' "Detected OS: Windows."
+      SYS_ENV_PLATFORM=windows
+      ;;
+    *)
+      printf '%s\n' "Unsupported OS: \"$detected_platform\"."
+      exit 1
+      ;;
+  esac
 
-    export SYS_ENV_PLATFORM
-
+  export SYS_ENV_PLATFORM
 }

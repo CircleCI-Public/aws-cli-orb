@@ -1,8 +1,14 @@
 #!/bin/sh
 Install_AWS_CLI() {
+    if [ "$1" = "latest" ]; then
+        version=""
+    else
+        version="-$1"
+    fi
+
     echo "Installing AWS CLI v2"
     cd /tmp || exit
-    if grep "Alpine" /etc/issue >/dev/null 2>&1; then
+    if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
         apk update
         apk --no-cache add \
             binutils \
@@ -20,15 +26,15 @@ Install_AWS_CLI() {
             glibc-i18n-2.34-r0.apk
 
         /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip" -o "awscliv2.zip"
 
-        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$1.zip"
+        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip"
         unzip awscliv2.zip
         aws/install
         rm -r awscliv2.zip ./aws 
     else
         PLATFORM=$(uname -m)
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-$PLATFORM$1.zip" -o "awscliv2.zip"
+        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-$PLATFORM$version.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
         $SUDO ./aws/install -i "${AWS_CLI_EVAL_INSTALL_DIR}" -b "${AWS_CLI_EVAL_BINARY_DIR}"
         rm -r awscliv2.zip ./aws
