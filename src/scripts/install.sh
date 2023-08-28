@@ -9,30 +9,28 @@ else
     if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 fi
 
-Install_AWS_CLI() {
-    echo "Installing AWS CLI v2"
-    cd /tmp || exit
+eval "$SCRIPT_UTILS"
+detect_os
 
-    eval "$SCRIPT_UTILS"
-    detect_os
+# Install per platform
+case $SYS_ENV_PLATFORM in
+linux)
+    eval "$SCRIPT_BUILD_LINUX"
+    ;;
+windows)
+    eval "$SCRIPT_BUILD_WINDOWS"
+    ;;
+macos)
+    eval "$SCRIPT_BUILD_MACOS"
+    ;;
+*)
+    echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
+    echo "https://github.com/CircleCI-Public/aws-cli-orb/issues/new"
+    exit 1
+    ;;
+esac
 
-    # Install per platform
-    case $SYS_ENV_PLATFORM in
-    linux)
-        eval "$SCRIPT_BUILD_LINUX"
-        ;;
-    windows)
-        eval "$SCRIPT_BUILD_WINDOWS"
-        ;;
-    macos)
-        eval "$SCRIPT_BUILD_MACOS"
-        ;;
-    *)
-        echo "This orb does not currently support your platform. If you believe it should, please consider opening an issue on the GitHub repository:"
-        echo "https://github.com/CircleCI-Public/aws-cli-orb/issues/new"
-        exit 1
-        ;;
-    esac
+Toggle_Pager(){
     # Toggle AWS Pager
     if [ "$AWS_CLI_BOOL_DISABLE_PAGER" -eq 1 ]; then
         if [ -z "${AWS_PAGER+x}" ]; then
@@ -43,52 +41,54 @@ Install_AWS_CLI() {
     fi
 }
 
-Uninstall_AWS_CLI() {
-    if uname -a | grep "x86_64 Msys"; then
-        if [ ! "$(command -v choco)" ]; then
-            echo "Chocolatey is required to uninstall AWS"
-            exit 1
-        fi
-        choco uninstall awscli
-    else
-        AWS_CLI_PATH=$(command -v aws)
-        echo "$AWS_CLI_PATH"
-        if [ -n "$AWS_CLI_PATH" ]; then
-            EXISTING_AWS_VERSION=$(aws --version)
-            echo "Uninstalling ${EXISTING_AWS_VERSION}"
-            # shellcheck disable=SC2012
-            if [ -L "$AWS_CLI_PATH" ]; then
-                AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
-            fi
-            if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
-            $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
-        else
-            echo "No AWS install found"
-        fi
-    fi
-}
+# Uninstall_AWS_CLI() {
+#     if uname -a | grep "x86_64 Msys"; then
+#         if [ ! "$(command -v choco)" ]; then
+#             echo "Chocolatey is required to uninstall AWS"
+#             exit 1
+#         fi
+#         choco uninstall awscli
+#     else
+#         AWS_CLI_PATH=$(command -v aws)
+#         echo "$AWS_CLI_PATH"
+#         if [ -n "$AWS_CLI_PATH" ]; then
+#             EXISTING_AWS_VERSION=$(aws --version)
+#             echo "Uninstalling ${EXISTING_AWS_VERSION}"
+#             # shellcheck disable=SC2012
+#             if [ -L "$AWS_CLI_PATH" ]; then
+#                 AWS_SYMLINK_PATH=$(ls -l "$AWS_CLI_PATH" | sed -e 's/.* -> //')
+#             fi
+#             if uname -a | grep "x86_64 Msys"; then export SUDO=""; fi
+#             $SUDO rm -rf "$AWS_CLI_PATH" "$AWS_SYMLINK_PATH" "$HOME/.aws/" "/usr/local/bin/aws" "/usr/local/bin/aws_completer" "/usr/local/aws-cli"
+#         else
+#             echo "No AWS install found"
+#         fi
+#     fi
+# }
 
 if [ ! "$(command -v aws)" ]; then
     if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI ""
     else
-        if uname -a | grep "x86_64 Msys"; then
+        if [ "${SYS_ENV_PLATFORM}" = "windows" ]; then
             Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
         else
             Install_AWS_CLI "-${AWS_CLI_STR_AWS_CLI_VERSION}"
         fi
     fi
+    Toggle_Pager
 elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ]; then
     Uninstall_AWS_CLI
     if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
         Install_AWS_CLI ""
     else
-        if uname -a | grep "x86_64 Msys"; then
+        if [ "${SYS_ENV_PLATFORM}" = "windows" ]; then
             Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
         else
             Install_AWS_CLI "-${AWS_CLI_STR_AWS_CLI_VERSION}"
         fi
     fi
+    Toggle_Pager
 else
     echo "AWS CLI is already installed, skipping installation."
     aws --version
