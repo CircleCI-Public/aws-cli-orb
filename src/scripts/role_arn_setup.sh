@@ -7,7 +7,7 @@ if [ ! -f "${HOME}/.aws/credentials" ]; then
     echo "Credentials not found. Run setup command before role-arn-setup."
     exit 1
 fi
-set -x
+
 aws configure set profile."${AWS_CLI_STR_PROFILE_NAME}".role_arn "${AWS_CLI_STR_ROLE_ARN}"
 aws configure set profile."${AWS_CLI_STR_PROFILE_NAME}".source_profile "${AWS_CLI_STR_SOURCE_PROFILE}"
-set +x
+
