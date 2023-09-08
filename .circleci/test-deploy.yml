@@ -198,7 +198,7 @@ workflows:
           version: "2.1.10"
           install_dir: "/usr/local/aws-cli"
           binary_dir: ""
-          override_installed: true
+          override_installed: false
           filters: *filters
           post-steps:
             - check_aws_version:

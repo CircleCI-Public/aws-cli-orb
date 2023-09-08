@@ -4,9 +4,9 @@ AWS_CLI_STR_ROLE_ARN="$(echo "${AWS_CLI_STR_ROLE_ARN}" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "${AWS_CLI_STR_PROFILE_NAME}" | circleci env subst)"
 AWS_CLI_STR_REGION="$(echo "${AWS_CLI_STR_REGION}" | circleci env subst)"
 
+
 # Replaces white spaces in role session name with dashes
 AWS_CLI_STR_ROLE_SESSION_NAME=$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | tr ' ' '-')
-
 if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
     exit 1
