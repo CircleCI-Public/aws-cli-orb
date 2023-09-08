@@ -23,7 +23,6 @@ if [ ! "$(command -v aws)" ]; then
 fi
 
 if [ -n "${AWS_CLI_STR_REGION}" ]; then
-    echo "${AWS_CLI_STR_REGION}"
     set -- "$@" --region "${AWS_CLI_STR_REGION}"
 fi
 

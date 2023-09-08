@@ -156,13 +156,13 @@ workflows:
       - integration-test-install:
           name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
-          profile_name: OIDC-Tester
+          profile_name: "OIDC-Tester"
           context: [CPE-OIDC]
           executor: docker-base
           post-steps:
             - run:
                 name: Web Identity Test - Logging into ECR
-                command: aws ecr get-login-password --region us-west-2 --profile OIDC-Tester | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
+                command: aws ecr get-login-password --region us-west-2 --profile "OIDC-Tester" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
       # Testing executors that do not AWS CLI pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
