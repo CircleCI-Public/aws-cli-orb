@@ -70,7 +70,16 @@ jobs:
           configure_default_region: <<parameters.configure_default_region>>
           configure_profile_region: <<parameters.configure_profile_region>>
           region: <<parameters.region>>
-      - test_paging
+      - run:
+          name: Test that paging is disabled
+          command: |-
+            # Test with aws command that would require paging if a pager is enabled
+            touch "${BASH_ENV}"
+            . "${BASH_ENV}"
+            aws --version
+            aws ec2 describe-images --profile << parameters.profile_name >> \
+              --owners amazon \
+              --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
   integration-test-role-arn-setup:
     executor: docker-base
     parameters:
@@ -264,16 +273,3 @@ commands:
             else
               if ! command -v aws &> /dev/null; then exit 1; else exit 0; fi
             fi
-  test_paging:
-    steps:
-      - run:
-          name: Test that paging is disabled
-          command: |-
-            # Test with aws command that would require paging if a pager is enabled
-            if cat /etc/issue | grep "Alpine" || uname -a | grep "x86_64 Msys"; then
-              source $BASH_ENV
-            fi
-            aws --version
-            aws ec2 describe-images \
-              --owners amazon \
-              --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
