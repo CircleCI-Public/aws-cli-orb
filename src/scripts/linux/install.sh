@@ -1,4 +1,5 @@
 #!/bin/sh
+#shellcheck disable=SC1090
 Install_AWS_CLI() {
     if [ "$1" = "latest" ]; then
         version=""

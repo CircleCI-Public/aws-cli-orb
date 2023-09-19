@@ -37,14 +37,17 @@ $(aws sts assume-role-with-web-identity \
 --output text)
 EOF
 
+temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
+touch "$temp_file"
+
 if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ] || [ -z "${AWS_SESSION_TOKEN}" ]; then
     echo "Failed to assume role";
     exit 1
 else 
     {
-        echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
-        echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
-        echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
-    } >>"$BASH_ENV"
+        echo "export AWS_CLI_STR_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
+        echo "export AWS_CLI_STR_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
+        echo "export AWS_CLI_STR_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
+    }  >> "$temp_file"
     echo "Assume role with web identity succeeded"
 fi
