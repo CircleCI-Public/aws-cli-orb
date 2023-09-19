@@ -1,4 +1,6 @@
-description: Configure a new profile to assume a role defined by a role_arn.
+description: | 
+  Configure a new profile to assume a role defined by a role_arn. Must first authenticate with
+  OIDC or static AWS Keys stored as environment variables in CircleCI. 
 usage:
   version: 2.1
 

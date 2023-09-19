@@ -79,7 +79,7 @@ jobs:
             aws --version
             aws ec2 describe-images --profile << parameters.profile_name >> \
               --owners amazon \
-              --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
+              --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs" 
   integration-test-role-arn-setup:
     executor: docker-base
     parameters:
@@ -97,6 +97,7 @@ jobs:
       - aws-cli/setup
       - aws-cli/role_arn_setup:
           profile_name: <<parameters.profile_name>>
+          source_profile: <<parameters.source_profile>>
           role_arn: <<parameters.role_arn>>
       - run:
           name: Check if profiles were created
@@ -214,9 +215,14 @@ workflows:
                 version: "2.1.10"
       - integration-test-role-arn-setup:
           name: integration-test-role-arn-config
-          profile_name: "CircleCI-Tester"
-          role_arn: ${ROLE_ARN}
+          source_profile: default
+          profile_name: CircleCI-Tester
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           context: [CPE_ORBS_AWS]
+          post-steps:
+            - run:
+                  name: Logging into ECR with new profile
+                  command: aws ecr get-login-password --region us-west-2 --profile "CircleCI-Tester" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
       - orb-tools/pack:
           filters: *release-filters
       - orb-tools/publish:
