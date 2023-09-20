@@ -4,7 +4,7 @@ description: |
   Install and configure the AWS command-line interface (awscli) version 2.
   (To use AWS CLI v1 view version 1.4.1 of this orb)
 
-  Supports Linux x86_64, MacOS, and Arm64 V8.
+  Supports Linux x86_64, MacOS, Arm64 V8 and Windows with bash.exe
 
 display:
   source_url: https://github.com/CircleCI-Public/aws-cli-orb
