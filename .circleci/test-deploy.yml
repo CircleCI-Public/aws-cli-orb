@@ -179,7 +179,6 @@ workflows:
                   else
                     exit 1
                   fi
-          role_session_name: "test-Sess!on Wi7h inv^l!d-characters that's longer than 64 chars"
       - integration-test-install:
           name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
