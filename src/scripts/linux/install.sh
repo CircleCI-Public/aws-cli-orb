@@ -10,10 +10,8 @@ Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
     cd /tmp || exit
     if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
-        apk update
-        apk --no-cache add \
-            binutils \
-            curl
+        apk update && apk upgrade && apk add -U curl
+        apk --no-cache add binutils 
         apk --no-cache add libcurl
         apk --no-cache upgrade libcurl
         curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
