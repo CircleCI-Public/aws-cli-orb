@@ -166,9 +166,19 @@ workflows:
       - integration-test-install:
           name: integration-test-web-identity-parameters
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
-          role_session_name: "test-Sess!on Wi7h inv^l!d-characters that's longer than 64 chars"
+          session_duration: "${TEST_SESSION_DURATION}"
           context: [CPE-OIDC]
           executor: docker-base
+          role_session_name: "test-Sess!on Wi7h inv^l!d-characters that's longer than 64 chars"
+          post-steps:
+            - run:
+                name: Check Values of Expanded Variables
+                command: |
+                  if [ "${TEST_SESSION_DURATION}" -eq "900" ]; then
+                    exit 0
+                  else
+                    exit 1
+                  fi
       - integration-test-install:
           name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
