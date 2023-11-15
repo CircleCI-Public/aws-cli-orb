@@ -229,6 +229,17 @@ workflows:
           post-steps:
             - check_aws_version:
                 version: "2.1.10"
+      - integration-test-install:
+          name: integration-test-install-override-version-with-latest-<<matrix.executor>>
+          context: [CPE_ORBS_AWS]
+          matrix:
+            alias: test-install-override-version-with-latest
+            parameters:
+              executor: ["linuxvm", "windows", "arm"]
+          install_dir: "/usr/local/aws-cli"
+          binary_dir: ""
+          override_installed: true
+          filters: *filters
       - integration-test-role-arn-setup:
           name: integration-test-role-arn-config
           source_profile: default
@@ -247,7 +258,7 @@ workflows:
           pub_type: production
           enable_pr_comment: true
           context: orb-publisher
-          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config]
+          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest]
           filters: *release-filters
 executors:
   terraform:
@@ -275,7 +286,7 @@ executors:
       image: ubuntu-2004:202101-01
   windows:
     machine:
-      image: windows-server-2019-vs2019:stable
+      image: windows-server-2019-vs2019:2023.04.1
     shell: bash.exe
     resource_class: windows.medium
 commands:
