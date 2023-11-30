@@ -33,12 +33,12 @@ Toggle_Pager(){
 
 if ! command -v aws >/dev/null 2>&1; then
     Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
-    Toggle_Pager
 elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ] || [ "${AWS_CLI_STR_AWS_CLI_VERSION}" != "latest" ]; then
     Uninstall_AWS_CLI
     Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
-    Toggle_Pager
 else
     echo "AWS CLI is already installed, skipping installation."
     aws --version
 fi
+
+Toggle_Pager
