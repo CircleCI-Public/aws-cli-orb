@@ -232,10 +232,7 @@ workflows:
       - integration-test-install:
           name: integration-test-skip-install-matched-version
           context: [CPE_ORBS_AWS]
-          matrix:
-            alias: test-install-override-version
-            parameters:
-              executor: [ "arm" ]
+          executor: [ "arm" ]
           version: "2.1.21"
           install_dir: "/usr/local/aws-cli"
           binary_dir: ""
