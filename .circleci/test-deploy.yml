@@ -56,7 +56,10 @@ jobs:
       region:
         type: string
         default: ${AWS_DEFAULT_REGION}
-    executor: <<parameters.executor>>
+      set_aws_env_vars:
+        type: boolean
+        default: true
+        executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
           version: <<parameters.version>>
@@ -70,6 +73,7 @@ jobs:
           configure_default_region: <<parameters.configure_default_region>>
           configure_profile_region: <<parameters.configure_profile_region>>
           region: <<parameters.region>>
+          set_aws_env_vars: <<parameter.set_aws_env_vars>>
       - run:
           name: Test that paging is disabled
           command: |-
@@ -173,7 +177,7 @@ workflows:
           set_aws_env_vars: false
           post-steps:
             - run:
-                name: Check Values of Expanded Variables
+                name: Check for temporary file containing keys
                 command: |
                   if [  -f "/tmp/default.keys" ]; then
                     exit 0
@@ -181,7 +185,7 @@ workflows:
                     exit 1
                   fi
             - run:
-                name: Check for temporary file containing keys
+                name: Check Values of Expanded Variables
                 command: |
                   if [ "${TEST_SESSION_DURATION}" -eq "900" ]; then
                     exit 0
