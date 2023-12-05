@@ -4,12 +4,11 @@ AWS_CLI_STR_ROLE_ARN="$(echo "${AWS_CLI_STR_ROLE_ARN}" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "${AWS_CLI_STR_PROFILE_NAME}" | circleci env subst)"
 AWS_CLI_STR_REGION="$(echo "${AWS_CLI_STR_REGION}" | circleci env subst)"
 AWS_CLI_INT_SESSION_DURATION="$(echo "${AWS_CLI_INT_SESSION_DURATION}" | circleci env subst)"
+AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "${AWS_CLI_BOOL_SET_AWS_ENV_VARS}" | circleci env subst)"
 
-# Sanitise role session name
-# Remove invalid characters
 AWS_CLI_STR_ROLE_SESSION_NAME=$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | tr -sC 'A-Za-z0-9=,.@_\-' '-')
-# Trim to 64 characters
 AWS_CLI_STR_ROLE_SESSION_NAME=$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | cut -c -64)
+
 if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
     exit 1
@@ -40,17 +39,25 @@ $(aws sts assume-role-with-web-identity \
 --output text)
 EOF
 
-temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
-touch "$temp_file"
-
 if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ] || [ -z "${AWS_SESSION_TOKEN}" ]; then
     echo "Failed to assume role";
     exit 1
+elif [ "${AWS_CLI_BOOL_SET_AWS_ENV_VARS}" = 1 ]; then
+    {
+        echo "export AWS_CLI_STR_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
+        echo "export AWS_CLI_STR_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
+        echo "export AWS_CLI_STR_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
+    }  >> "$BASH_ENV"
+
+    echo "AWS keys successfully written to BASH_ENV"
 else
+    temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
+    touch "$temp_file"
     {
         echo "export AWS_CLI_STR_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
         echo "export AWS_CLI_STR_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
         echo "export AWS_CLI_STR_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
     }  >> "$temp_file"
-    echo "Assume role with web identity succeeded"
+    
+    echo "AWS keys successfully written to ${AWS_CLI_STR_PROFILE_NAME}.keys"
 fi
