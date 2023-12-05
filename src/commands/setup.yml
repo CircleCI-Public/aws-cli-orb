@@ -92,6 +92,14 @@ parameters:
     type: string
     default: "3600"
 
+  set_aws_env_vars:
+    description: |
+      Write AWS keys generated from OIDC to a temporary file.
+      Set to false if generating keys for multiple profiles.
+      By default, the keys are written to $BASH_ENV.
+    type: boolean
+    default: true
+
 steps:
   - install:
       version: <<parameters.version>>
@@ -111,6 +119,7 @@ steps:
             session_duration: <<parameters.session_duration>>
             profile_name: <<parameters.profile_name>>
             region: <<parameters.region>>
+            set_aws_env_vars: <<parameters.set_aws_env_vars>>
   - run:
       name: Configure AWS Access Key ID
       environment:
@@ -120,4 +129,5 @@ steps:
         AWS_CLI_BOOL_CONFIG_DEFAULT_REGION: <<parameters.configure_default_region>>
         AWS_CLI_BOOL_CONFIG_PROFILE_REGION: <<parameters.configure_profile_region>>
         AWS_CLI_STR_REGION: <<parameters.region>>
+        AWS_CLI_BOOL_SET_AWS_ENV_VARS: <<parameters.set_aws_env_vars>>
       command: <<include(scripts/configure.sh)>>
