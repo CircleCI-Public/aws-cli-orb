@@ -33,13 +33,21 @@ parameters:
     type: string
     default: ${AWS_DEFAULT_REGION}
 
+  set_aws_env_vars:
+    description: |
+      Set this to false to write keys generated from OIDC to a temporary file.
+      By default, the keys are written to $BASH_ENV.
+    type: boolean
+    default: true
+
 steps:
   - run:
-      name: Generate shortlived AWS Keys using CircleCI OIDC token.
+      name: Generate short lived AWS Keys using CircleCI OIDC token.
       environment:
         AWS_CLI_STR_ROLE_ARN: <<parameters.role_arn>>
         AWS_CLI_STR_ROLE_SESSION_NAME: <<parameters.role_session_name>>
         AWS_CLI_INT_SESSION_DURATION: <<parameters.session_duration>>
         AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
         AWS_CLI_STR_REGION: <<parameters.region>>
+        AWS_CLI_BOOL_SET_AWS_ENV_VARS: <<parameters.set_aws_env_vars>>
       command: <<include(scripts/assume_role_with_web_identity.sh)>>
