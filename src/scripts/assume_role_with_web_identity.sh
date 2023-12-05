@@ -6,11 +6,9 @@ AWS_CLI_STR_REGION="$(echo "${AWS_CLI_STR_REGION}" | circleci env subst)"
 AWS_CLI_INT_SESSION_DURATION="$(echo "${AWS_CLI_INT_SESSION_DURATION}" | circleci env subst)"
 AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "${AWS_CLI_BOOL_SET_AWS_ENV_VARS}" | circleci env subst)"
 
-# Sanitise role session name
-# Remove invalid characters
 AWS_CLI_STR_ROLE_SESSION_NAME=$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | tr -sC 'A-Za-z0-9=,.@_\-' '-')
-# Trim to 64 characters
 AWS_CLI_STR_ROLE_SESSION_NAME=$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | cut -c -64)
+
 if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
     exit 1

@@ -5,10 +5,14 @@ AWS_CLI_STR_SECRET_ACCESS_KEY="$(echo "\$$AWS_CLI_STR_SECRET_ACCESS_KEY" | circl
 AWS_CLI_STR_SESSION_TOKEN="$(echo "$AWS_CLI_STR_SESSION_TOKEN" | circleci env subst)"
 AWS_CLI_STR_REGION="$(echo "$AWS_CLI_STR_REGION" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "$AWS_CLI_STR_PROFILE_NAME" | circleci env subst)"
+AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" | circleci env subst)"
 
-if [ -z "$AWS_CLI_STR_ACCESS_KEY_ID" ] && [ -z "${AWS_CLI_STR_SECRET_ACCESS_KEY}" ]; then 
+if [ -z "$AWS_CLI_STR_ACCESS_KEY_ID" ] && [ -z "${AWS_CLI_STR_SECRET_ACCESS_KEY}" ] && [ "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" = 0 ]; then 
     temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
     . "$temp_file"
+else 
+    touch "${BASH_ENV}"
+    . "${BASH_ENV}"
 fi
 
 aws configure set aws_access_key_id \
@@ -33,4 +37,3 @@ if [ "$AWS_CLI_BOOL_CONFIG_PROFILE_REGION" -eq "1" ]; then
     aws configure set region "$AWS_CLI_STR_REGION" \
         --profile "$AWS_CLI_STR_PROFILE_NAME"
 fi
-
