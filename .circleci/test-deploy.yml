@@ -170,9 +170,18 @@ workflows:
           context: [CPE-OIDC]
           executor: docker-base
           role_session_name: "test-Sess!on Wi7h inv^l!d-characters that's longer than 64 chars"
+          set_aws_env_vars: false
           post-steps:
             - run:
                 name: Check Values of Expanded Variables
+                command: |
+                  if [  -f "/tmp/default.keys" ]; then
+                    exit 0
+                  else
+                    exit 1
+                  fi
+            - run:
+                name: Check for temporary file containing keys
                 command: |
                   if [ "${TEST_SESSION_DURATION}" -eq "900" ]; then
                     exit 0
