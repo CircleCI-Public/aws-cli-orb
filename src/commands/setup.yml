@@ -94,7 +94,8 @@ parameters:
 
   set_aws_env_vars:
     description: |
-      Set this to false to write keys generated from OIDC to a temporary file.
+      Write AWS keys generated from OIDC to a temporary file.
+      Set to false if generating keys for multiple profiles.
       By default, the keys are written to $BASH_ENV.
     type: boolean
     default: true
