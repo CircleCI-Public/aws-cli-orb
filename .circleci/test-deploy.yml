@@ -77,7 +77,6 @@ jobs:
       - run:
           name: Test that paging is disabled
           command: |-
-            set -x
             # Test with aws command that would require paging if a pager is enabled
             touch "${BASH_ENV}"
             . "${BASH_ENV}"
@@ -85,7 +84,6 @@ jobs:
             aws ec2 describe-images --profile << parameters.profile_name >> \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs" 
-            set +x
   integration-test-role-arn-setup:
     executor: docker-base
     parameters:
@@ -181,9 +179,7 @@ workflows:
             - run:
                 name: Check for temporary file containing keys
                 command: |
-                  if [  -f "/tmp/default.keys" ]; then
-                    exit 0
-                  else
+                  if [ ! -f "/tmp/default.keys" ]; then
                     exit 1
                   fi
             - run:
