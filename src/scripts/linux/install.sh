@@ -1,37 +1,21 @@
 #!/bin/sh
 #shellcheck disable=SC1090
 Install_AWS_CLI() {
-    if [ "$1" = "latest" ]; then
-        version=""
-    else
-        version="-$1"
-    fi
-
     echo "Installing AWS CLI v2"
     cd /tmp || exit
     if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
         apk update && apk upgrade && apk add -U curl
-        apk --no-cache add binutils 
+        apk --no-cache add binutils
         apk --no-cache add libcurl
         apk --no-cache upgrade libcurl
-        curl -L https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-bin-2.34-r0.apk
-        curl -LO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-i18n-2.34-r0.apk
-
-        apk add --force-overwrite --no-cache \
-            glibc-2.34-r0.apk \
-            glibc-bin-2.34-r0.apk \
-            glibc-i18n-2.34-r0.apk
-
-        /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
-        curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip" -o "awscliv2.zip"
-
-        echo "https://awscli.amazonaws.com/awscli-exe-linux-x86_64$version.zip"
-        unzip awscliv2.zip
-        aws/install
-        rm -r awscliv2.zip ./aws 
+        apk --no-cache add aws-cli
     else
+        if [ "$1" = "latest" ]; then
+            version=""
+        else
+            version="-$1"
+        fi
+
         PLATFORM=$(uname -m)
         curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-$PLATFORM$version.zip" -o "awscliv2.zip"
         unzip -q -o awscliv2.zip
