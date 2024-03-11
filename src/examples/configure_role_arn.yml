@@ -18,7 +18,7 @@ usage:
             profile_name: new-profile
             role_arn: "arn:aws:iam::123456789012:role/example-role"
             source_profile: default # Use profile created from setup command
-        - run: aws sts assume-role --role_arn "arn:aws:iam::123456789012:role/example-role" --role_session_name AWSCLI-Session
+        - run: aws sts assume-role --role-arn "arn:aws:iam::123456789012:role/example-role" --role-session-name AWSCLI-Session
 
   workflows:
     aws-cli:
