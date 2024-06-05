@@ -42,6 +42,13 @@ parameters:
     default: true
 
 steps:
+  - setup:
+      role_arn: <<parameters.role_arn>>
+      role_session_name: <<parameters.role_session_name>>
+      session_duration: <<parameters.session_duration>>
+      profile_name: <<parameters.profile_name>>
+      region: <<parameters.region>>
+      set_aws_env_vars: <<parameters.set_aws_env_vars>>
   - run:
       name: Generate short lived AWS Keys using CircleCI OIDC token.
       environment:

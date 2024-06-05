@@ -6,14 +6,14 @@ usage:
   version: 2.1
 
   orbs:
-    aws-cli: circleci/aws-cli@4.0
+    aws-cli: circleci/aws-cli@4.1
 
   jobs:
     aws-cli-example:
       executor: aws-cli/default
       steps:
         - checkout
-        - aws-cli/setup:
+        - aws-cli/assume_role_with_identity:
             profile_name: WEB IDENTITY PROFILE
             role_arn: arn:aws:iam::123456789012:role/WEB-IDENTITY-ROLE
             role_session_name: example-session
