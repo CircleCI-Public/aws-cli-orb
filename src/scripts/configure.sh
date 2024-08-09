@@ -7,7 +7,7 @@ AWS_CLI_STR_REGION="$(echo "$AWS_CLI_STR_REGION" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "$AWS_CLI_STR_PROFILE_NAME" | circleci env subst)"
 AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" | circleci env subst)"
 
-if [ "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" = 0 ]; then 
+if [ -z "$AWS_CLI_STR_ACCESS_KEY_ID" ] && [ -z "${AWS_CLI_STR_SECRET_ACCESS_KEY}" ] && [ "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" = 0 ]; then 
     temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
     . "$temp_file"
 else 
