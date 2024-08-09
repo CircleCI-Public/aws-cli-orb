@@ -1,8 +1,16 @@
 #!/bin/sh
 Install_AWS_CLI() {
-    curl -o awscli.tar.gz https://awscli.amazonaws.com/awscli-$version.tar.gz
+    if [ "$1" = "latest" ]; then
+        version=""
+    else
+        version="$1"
+    fi
+    echo "Installing AWS CLI v2"
+    cd /tmp || exit
+    curl -o "awscli.tar.gz https://awscli.amazonaws.com/awscli-$version.tar.gz"
     tar -xzf awscli.tar.gz
-    cd awscli-$version
+    rm awscli.tar.gz
+    cd "awscli-$version" || exit
     ./configure --with-download-deps
     make
     make install
