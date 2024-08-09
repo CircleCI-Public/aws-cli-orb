@@ -204,7 +204,7 @@ workflows:
       # Testing executors that do not AWS CLI pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
-          context: [CPE_ORBS_AWS]
+          # context: [CPE_ORBS_AWS]
           matrix:
             alias: test-install
             parameters:
@@ -215,7 +215,7 @@ workflows:
       # Test installing specific versions on executors without AWS pre-installed
       - integration-test-install:
           name: integration-test-install-version-<<matrix.executor>>
-          context: [CPE_ORBS_AWS]
+          # context: [CPE_ORBS_AWS]
           matrix:
             alias: test-install-version
             parameters:
@@ -228,7 +228,7 @@ workflows:
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
-          context: [CPE_ORBS_AWS]
+          # context: [CPE_ORBS_AWS]
           matrix:
             alias: test-install-override-version
             parameters:
@@ -243,7 +243,7 @@ workflows:
                 version: "2.13.25"
       - integration-test-install:
           name: integration-test-skip-install-matched-version
-          context: [CPE_ORBS_AWS]
+          # context: [CPE_ORBS_AWS]
           executor: arm
           version: "2.1.21"
           install_dir: "/usr/local/aws-cli"
@@ -254,7 +254,7 @@ workflows:
                 version: "2.1.21"
       - integration-test-install:
           name: integration-test-install-override-version-with-latest-<<matrix.executor>>
-          context: [CPE_ORBS_AWS]
+          # context: [CPE_ORBS_AWS]
           matrix:
             alias: test-install-override-version-with-latest
             parameters:
@@ -268,7 +268,7 @@ workflows:
           source_profile: default
           profile_name: CircleCI-Tester
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
-          context: [CPE_ORBS_AWS]
+          # context: [CPE_ORBS_AWS]
           post-steps:
             - run:
                   name: Logging into ECR with new profile
