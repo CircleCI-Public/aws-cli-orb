@@ -115,9 +115,63 @@ jobs:
               echo Wrong configuration set.
               exit 1
             fi
+  integration-test-oidc-setup:
+    parameters:
+      executor:
+        type: executor
+      role_arn:
+        type: string
+        default: ""
+      role_session_name:
+        description: An identifier for the assumed role session
+        type: string
+        default: ${CIRCLE_JOB}
+      profile_name:
+        description: Profile name to be configured.
+        type: string
+        default: "default"
+      access_key_id:
+        description: Access key to login.
+        type: string
+        default: ""
+      secret_access_key:
+        description: Secret to login.
+        type: string
+        default: ""
+      region:
+        type: string
+        default: ${AWS_DEFAULT_REGION}
+    executor: <<parameters.executor>>
+    steps:
+      - aws-cli/setup:
+          role_arn: <<parameters.role_arn>>
+          profile_name: <<parameters.profile_name>>
+          role_session_name: <<parameters.role_session_name>>
+          region: <<parameters.region>>
 workflows:
   test-deploy:
     jobs:
+      # Testing auth uses oidc whe specified together with env variables
+      - integration-test-oidc-setup:
+          name: integration-test-oidc-withenv
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile_name: integration-test
+          region: us-west-2
+          executor: docker-base-withenv
+          post-steps:
+            - run:
+                name: Validating auth
+                command: aws sts get-caller-identity --profile integration-test
+      - integration-test-oidc-setup:
+          name: integration-test-oidc-with-noenv
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          profile_name: integration-test
+          region: us-west-2
+          executor: docker-base
+          post-steps:
+            - run:
+                name: Validating auth
+                command: aws sts get-caller-identity --profile integration-test                
       # Testing region configuration
       - integration-test-install:
           name: integration-test-configure-profile-region
@@ -292,6 +346,12 @@ executors:
   docker-base:
     docker:
       - image: cimg/base:stable
+  docker-base-withenv:
+    docker:
+    - image: 
+      environment:
+        AWS_ACCESS_KEY_ID: "key"
+        AWS_SECRET_ACCESS_KEY: "secret"      
   docker-nounset-shell:
     shell: /bin/bash -o nounset
     docker:
