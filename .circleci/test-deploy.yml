@@ -81,6 +81,7 @@ jobs:
             touch "${BASH_ENV}"
             . "${BASH_ENV}"
             aws --version
+            aws sts get-caller-identity --profile << parameters.profile_name >>
             aws ec2 describe-images --profile << parameters.profile_name >> \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
