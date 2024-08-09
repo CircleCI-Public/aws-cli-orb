@@ -8,12 +8,12 @@ Install_AWS_CLI() {
     echo "Installing AWS CLI v$version"
     cd /tmp || exit
     curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
-    tar -xzf awscli.tar.gz --one-top-level=awscli --strip-components=1
+    tar -xzf awscli.tar.gz -C awscli --strip-components=1
     rm awscli.tar.gz
     cd awscli || exit
     ./configure --with-download-deps
     make
-    make install
+    $SUDO make install
 }
 
 Uninstall_AWS_CLI() {
