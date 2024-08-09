@@ -8,10 +8,9 @@ Install_AWS_CLI() {
     echo "Installing AWS CLI v$version"
     cd /tmp || exit
     curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
-    tar -xzf awscli.tar.gz
+    tar -xzf awscli.tar.gz --one-top-level=awscli --strip-components=1
     rm awscli.tar.gz
-    aws_folder=$(ls -dt */ | head -n 1)
-    cd "$aws_folder" || exit
+    cd awscli || exit
     ./configure --with-download-deps
     make
     make install
