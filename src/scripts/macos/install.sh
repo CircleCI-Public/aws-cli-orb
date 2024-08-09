@@ -8,6 +8,7 @@ Install_AWS_CLI() {
     echo "Installing AWS CLI v$version"
     cd /tmp || exit
     curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
+    mkdir awscli
     tar -xzf awscli.tar.gz -C awscli --strip-components=1
     rm awscli.tar.gz
     cd awscli || exit
