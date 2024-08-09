@@ -348,7 +348,7 @@ executors:
       - image: cimg/base:stable
   docker-base-withenv:
     docker:
-      - image: 
+      - image: cimg/base:stable
         environment:
           AWS_ACCESS_KEY_ID: "key"
           AWS_SECRET_ACCESS_KEY: "secret"      
