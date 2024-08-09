@@ -3,11 +3,11 @@ Install_AWS_CLI() {
     if [ "$1" = "latest" ]; then
         version=""
     else
-        version="$1"
+        version="-$1"
     fi
-    echo "Installing AWS CLI v2"
+    echo "Installing AWS CLI v$version"
     cd /tmp || exit
-    curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli-$version.tar.gz"
+    curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
     tar -xzf awscli.tar.gz
     rm awscli.tar.gz
     cd "awscli-$version" || exit
