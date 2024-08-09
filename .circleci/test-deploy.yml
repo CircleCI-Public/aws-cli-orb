@@ -348,10 +348,10 @@ executors:
       - image: cimg/base:stable
   docker-base-withenv:
     docker:
-    - image: 
-      environment:
-        AWS_ACCESS_KEY_ID: "key"
-        AWS_SECRET_ACCESS_KEY: "secret"      
+      - image: 
+        environment:
+          AWS_ACCESS_KEY_ID: "key"
+          AWS_SECRET_ACCESS_KEY: "secret"      
   docker-nounset-shell:
     shell: /bin/bash -o nounset
     docker:
