@@ -10,7 +10,7 @@ Install_AWS_CLI() {
     curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
     tar -xzf awscli.tar.gz
     rm awscli.tar.gz
-    cd "awscli-$version" || exit
+    cd "awscli$version" || exit
     ./configure --with-download-deps
     make
     make install
