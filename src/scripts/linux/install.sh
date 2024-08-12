@@ -4,16 +4,11 @@ Install_AWS_CLI() {
     echo "Installing AWS CLI v2"
     cd /tmp || exit
     if [ "$SYS_ENV_PLATFORM" = "linux_alpine" ]; then
-        if [ "$1" = "latest" ]; then
-            version=""
-        else
-            version="=$1"
-        fi
         apk update && apk upgrade && apk add -U curl
         apk --no-cache add binutils
         apk --no-cache add libcurl
         apk --no-cache upgrade libcurl
-        apk --no-cache add aws-cli$version
+        apk --no-cache add aws-cli
     else
         if [ "$1" = "latest" ]; then
             version=""

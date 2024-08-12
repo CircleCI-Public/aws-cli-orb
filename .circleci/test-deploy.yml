@@ -220,11 +220,11 @@ workflows:
             alias: test-install-version
             parameters:
               executor: ["docker-base", "macos", "alpine", "docker-nounset-shell" ]
-          version: "2.13.25"
+          version: "2.15.57"
           filters: *filters
           post-steps:
             - check_aws_version:
-                version: "2.13.25"
+                version: "2.15.57"
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
@@ -233,14 +233,14 @@ workflows:
             alias: test-install-override-version
             parameters:
               executor: ["linuxvm", "windows", "arm"]
-          version: "2.13.25"
+          version: "2.15.57"
           install_dir: "/usr/local/aws-cli"
           binary_dir: ""
           override_installed: false
           filters: *filters
           post-steps:
             - check_aws_version:
-                version: "2.13.25"
+                version: "2.15.57"
       - integration-test-install:
           name: integration-test-skip-install-matched-version
           context: [CPE_ORBS_AWS]
