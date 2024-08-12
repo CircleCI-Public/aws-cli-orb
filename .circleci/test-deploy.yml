@@ -156,6 +156,7 @@ workflows:
       - integration-test-oidc-setup:
           name: integration-test-oidc-withenv
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          context: [CPE_ORBS_AWS]
           profile_name: integration-test
           region: us-west-2
           executor: docker-base-withenv
@@ -166,6 +167,7 @@ workflows:
       - integration-test-oidc-setup:
           name: integration-test-oidc-with-noenv
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          context: [CPE_ORBS_AWS]
           profile_name: integration-test
           region: us-west-2
           executor: docker-base
