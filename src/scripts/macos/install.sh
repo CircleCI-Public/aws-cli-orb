@@ -5,11 +5,16 @@ Install_AWS_CLI() {
     else
         version="-$1"
     fi
-    echo "Installing AWS CLI v2"
+    echo "Installing AWS CLI v$version"
     cd /tmp || exit
-    curl -sSL "https://awscli.amazonaws.com/AWSCLIV2$version.pkg" -o "AWSCLIV2.pkg"
-    $SUDO installer -pkg AWSCLIV2.pkg -target /
-    rm AWSCLIV2.pkg
+    curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
+    mkdir awscli
+    tar -xzf awscli.tar.gz -C awscli --strip-components=1
+    rm awscli.tar.gz
+    cd awscli || exit
+    ./configure --with-download-deps
+    make
+    $SUDO make install
 }
 
 Uninstall_AWS_CLI() {

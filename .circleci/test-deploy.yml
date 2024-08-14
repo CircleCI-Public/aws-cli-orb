@@ -81,6 +81,7 @@ jobs:
             touch "${BASH_ENV}"
             . "${BASH_ENV}"
             aws --version
+            aws sts get-caller-identity --profile << parameters.profile_name >>
             aws ec2 describe-images --profile << parameters.profile_name >> \
               --owners amazon \
               --filters "Name=platform,Values=windows" "Name=root-device-type,Values=ebs"
@@ -115,9 +116,65 @@ jobs:
               echo Wrong configuration set.
               exit 1
             fi
+  integration-test-oidc-setup:
+    parameters:
+      executor:
+        type: executor
+      role_arn:
+        type: string
+        default: ""
+      role_session_name:
+        description: An identifier for the assumed role session
+        type: string
+        default: ${CIRCLE_JOB}
+      profile_name:
+        description: Profile name to be configured.
+        type: string
+        default: "default"
+      access_key_id:
+        description: Access key to login.
+        type: string
+        default: ""
+      secret_access_key:
+        description: Secret to login.
+        type: string
+        default: ""
+      region:
+        type: string
+        default: ${AWS_DEFAULT_REGION}
+    executor: <<parameters.executor>>
+    steps:
+      - aws-cli/setup:
+          role_arn: <<parameters.role_arn>>
+          profile_name: <<parameters.profile_name>>
+          role_session_name: <<parameters.role_session_name>>
+          region: <<parameters.region>>
 workflows:
   test-deploy:
     jobs:
+      # Testing auth uses oidc whe specified together with env variables
+      - integration-test-oidc-setup:
+          name: integration-test-oidc-withenv
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          context: [CPE_ORBS_AWS]
+          profile_name: integration-test
+          region: us-west-2
+          executor: docker-base-withenv
+          post-steps:
+            - run:
+                name: Validating auth
+                command: aws sts get-caller-identity --profile integration-test
+      - integration-test-oidc-setup:
+          name: integration-test-oidc-with-noenv
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          context: [CPE_ORBS_AWS]
+          profile_name: integration-test
+          region: us-west-2
+          executor: docker-base
+          post-steps:
+            - run:
+                name: Validating auth
+                command: aws sts get-caller-identity --profile integration-test                
       # Testing region configuration
       - integration-test-install:
           name: integration-test-configure-profile-region
@@ -219,11 +276,11 @@ workflows:
             alias: test-install-version
             parameters:
               executor: ["docker-base", "macos", "alpine", "docker-nounset-shell" ]
-          version: "2.13.25"
+          version: "2.15.57"
           filters: *filters
           post-steps:
             - check_aws_version:
-                version: "2.13.25"
+                version: "2.15.57"
       # Test overriding existing version of AWS pre-installed
       - integration-test-install:
           name: integration-test-install-override-version-<<matrix.executor>>
@@ -232,20 +289,21 @@ workflows:
             alias: test-install-override-version
             parameters:
               executor: ["linuxvm", "windows", "arm"]
-          version: "2.13.25"
+          version: "2.15.57"
           install_dir: "/usr/local/aws-cli"
           binary_dir: ""
-          override_installed: false
+          override_installed: true
           filters: *filters
           post-steps:
             - check_aws_version:
-                version: "2.13.25"
+                version: "2.15.57"
       - integration-test-install:
           name: integration-test-skip-install-matched-version
           context: [CPE_ORBS_AWS]
           executor: arm
           version: "2.1.21"
           install_dir: "/usr/local/aws-cli"
+          override_installed: true
           binary_dir: ""
           filters: *filters
           post-steps:
@@ -292,6 +350,12 @@ executors:
   docker-base:
     docker:
       - image: cimg/base:stable
+  docker-base-withenv:
+    docker:
+      - image: cimg/base:stable
+        environment:
+          AWS_ACCESS_KEY_ID: "key"
+          AWS_SECRET_ACCESS_KEY: "secret"      
   docker-nounset-shell:
     shell: /bin/bash -o nounset
     docker:
