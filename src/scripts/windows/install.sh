@@ -8,13 +8,12 @@ Install_AWS_CLI(){
     fi
     echo "Installing AWS CLI v2"
     cd /tmp || exit
-    
+
     if ! command -v choco >/dev/null 2>&1; then
         echo "Chocolatey is required to install AWS"
         exit 1
     fi
-    
-    choco install awscli --version="$version"
+    yes "Yes" | choco install -y awscli --version="$version"
     echo "Installing AWS CLI version $version"
     if echo "$1" | grep -e "^2\." -e "latest"; then
         echo "export PATH=\"\${PATH}:/c/Program Files/Amazon/AWSCLIV2\"" >> "$BASH_ENV"
@@ -28,5 +27,5 @@ Uninstall_AWS_CLI() {
         echo "Chocolatey is required to uninstall AWS"
         exit 1
     fi
-    choco uninstall awscli   
+    choco uninstall awscli
 }

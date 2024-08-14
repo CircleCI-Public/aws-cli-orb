@@ -15,7 +15,7 @@ if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
 fi
 
 if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ]; then
-    echo "OIDC Token cannot be found. A CircleCI context must be specified."
+    echo "OIDC Token cannot be found."
     exit 1
 fi
 
