@@ -292,7 +292,7 @@ workflows:
           version: "2.15.57"
           install_dir: "/usr/local/aws-cli"
           binary_dir: ""
-          override_installed: false
+          override_installed: true
           filters: *filters
           post-steps:
             - check_aws_version:
@@ -303,6 +303,7 @@ workflows:
           executor: arm
           version: "2.1.21"
           install_dir: "/usr/local/aws-cli"
+          override_installed: true
           binary_dir: ""
           filters: *filters
           post-steps:
