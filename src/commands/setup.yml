@@ -1,6 +1,6 @@
 description: |
   Installs aws-cli and then configure and store AWS credentials in
-  ~/.aws/credentials and ~/.aws/config. 
+  ~/.aws/credentials and ~/.aws/config.
   If role_session_name and role_arn are provided, it will attempt to use OIDC auth.
 
 parameters:
