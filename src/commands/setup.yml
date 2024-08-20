@@ -1,6 +1,7 @@
 description: |
-  Configure and store AWS credentials in
-  ~/.aws/credentials and ~/.aws/config
+  Installs aws-cli and then configure and store AWS credentials in
+  ~/.aws/credentials and ~/.aws/config.
+  If role_session_name and role_arn are provided, it will attempt to use OIDC auth.
 
 parameters:
   version:
@@ -113,13 +114,16 @@ steps:
           - <<parameters.role_session_name>>
           - <<parameters.role_arn>>
       steps:
-        - assume_role_with_web_identity:
-            role_arn: <<parameters.role_arn>>
-            role_session_name: <<parameters.role_session_name>>
-            session_duration: <<parameters.session_duration>>
-            profile_name: <<parameters.profile_name>>
-            region: <<parameters.region>>
-            set_aws_env_vars: <<parameters.set_aws_env_vars>>
+        - run:
+            name: Assume Role with Web Identity
+            environment:
+              AWS_CLI_STR_ROLE_ARN: <<parameters.role_arn>>
+              AWS_CLI_STR_ROLE_SESSION_NAME: <<parameters.role_session_name>>
+              AWS_CLI_INT_SESSION_DURATION: <<parameters.session_duration>>
+              AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
+              AWS_CLI_STR_REGION: <<parameters.region>>
+              AWS_CLI_BOOL_SET_AWS_ENV_VARS: <<parameters.set_aws_env_vars>>
+            command: <<include(scripts/assume_role_with_web_identity.sh)>>
   - run:
       name: Configure AWS Access Key ID
       environment:
