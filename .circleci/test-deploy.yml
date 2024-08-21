@@ -154,9 +154,22 @@ jobs:
     steps:
       - aws-cli/install:
           use_brew: true
+  integration-test-brew-install-python3.12:
+    executor: macos
+    steps:
+      - run:
+        name: Install python 3.12
+        command: |-
+          brew install python@3.12
+          python --version
+      - aws-cli-install:
+        use_brew: true
 workflows:
   test-deploy:
     jobs:
+      - integration-test-brew-install-python3.12:
+          post-steps:
+            - check_aws_version
       - integration-test-brew-install:
           post-steps:
             - check_aws_version
