@@ -154,7 +154,7 @@ jobs:
     steps:
       - aws-cli/install:
           use_brew: true
-  integration-test-brew-install-python3.12:
+  integration-test-brew-install-python-new:
     executor: macos
     steps:
       - run:
@@ -167,7 +167,7 @@ jobs:
 workflows:
   test-deploy:
     jobs:
-      - integration-test-brew-install-python3.12:
+      - integration-test-brew-install-python-new:
           post-steps:
             - check_aws_version
       - integration-test-brew-install:
@@ -359,7 +359,7 @@ workflows:
           pub_type: production
           enable_pr_comment: true
           context: orb-publisher
-          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install]
+          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install, integration-test-brew-install-python-new]
           filters: *release-filters
 executors:
   terraform:
