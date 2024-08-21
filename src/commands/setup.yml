@@ -101,6 +101,12 @@ parameters:
     type: boolean
     default: true
 
+  use_brew:
+    type: boolean
+    default: false
+    description: |
+      Set to true if you want to use brew to install the awscli. Only compatible with MacOs executor. Default to false.    
+
 steps:
   - install:
       version: <<parameters.version>>
@@ -108,6 +114,7 @@ steps:
       override_installed: <<parameters.override_installed>>
       install_dir: <<parameters.install_dir>>
       binary_dir: <<parameters.binary_dir>>
+      use_brew: <<parameters.use_brew>>
   - when:
       condition:
         and:
