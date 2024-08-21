@@ -158,12 +158,12 @@ jobs:
     executor: macos
     steps:
       - run:
-        name: Install python 3.12
-        command: |-
-          brew install python@3.12
-          python --version
-      - aws-cli-install:
-        use_brew: true
+          name: Install python 3.12
+          command: |-
+            brew install python@3.12
+            python --version
+      - aws-cli/install:
+          use_brew: true
 workflows:
   test-deploy:
     jobs:
