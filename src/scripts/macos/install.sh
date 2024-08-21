@@ -7,7 +7,7 @@ Install_AWS_CLI() {
         else
             version="@$1"
         fi
-        brew install awscli$version
+        brew install "awscli$version"
     else
         if [ "$1" = "latest" ]; then
             version=""
