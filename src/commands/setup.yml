@@ -105,7 +105,7 @@ parameters:
     type: boolean
     default: false
     description: |
-      Set to true if you want to use brew to install the awscli. Only compatible with MacOs executor. Default to false.    
+      Set to true if you want to use brew to install the awscli. Only compatible with MacOs executor. Default to false.
 
 steps:
   - install:
