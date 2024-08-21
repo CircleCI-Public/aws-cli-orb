@@ -160,6 +160,7 @@ jobs:
       - run:
           name: Install python 3.12
           command: |-
+            brew uninstall python@3.11
             brew install python@3.12
             python --version
       - aws-cli/install:
