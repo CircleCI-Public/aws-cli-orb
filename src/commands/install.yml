@@ -30,7 +30,7 @@ parameters:
     type: boolean
     default: false
     description: |
-      Set to true if you want to use brew to install the awscli. Only compatible with MacOs executor. Default to false.
+      Set to true if you want to use the Homebrew CLI to install the awscli. Only compatible with the macOS executor. Defaults to false.
       When using brew, only the brew version is available.
 steps:
   - run:
