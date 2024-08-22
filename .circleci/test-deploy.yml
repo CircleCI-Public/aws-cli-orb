@@ -164,6 +164,7 @@ jobs:
             brew upgrade pyenv
             pyenv install 3.12
             pyenv global 3.12
+            pyenv uninstall 3.11
       - run:
           name: Verify python version
           command: |-
