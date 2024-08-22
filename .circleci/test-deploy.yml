@@ -161,10 +161,12 @@ jobs:
           name: Install python 3.12
           command: |-
             brew install python@3.12
+            rm /usr/local/bin/python
             ln -s -f /opt/homebrew/bin/python3 /usr/local/bin/python
       - run:
           name: Verify python version
           command: |-
+            which python
             python --version
       - aws-cli/install:
           use_brew: true
