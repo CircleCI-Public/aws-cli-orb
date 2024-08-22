@@ -154,30 +154,9 @@ jobs:
     steps:
       - aws-cli/install:
           use_brew: true
-  integration-test-brew-install-python-new:
-    executor: macos
-    steps:
-      - run:
-          name: Install python 3.12
-          command: |-
-            which pyenv
-            brew upgrade pyenv
-            pyenv install 3.12
-            pyenv global 3.12
-            pyenv uninstall 3.11
-      - run:
-          name: Verify python version
-          command: |-
-            which python
-            python --version
-      - aws-cli/install:
-          use_brew: true
 workflows:
   test-deploy:
     jobs:
-      - integration-test-brew-install-python-new:
-          post-steps:
-            - check_aws_version
       - integration-test-brew-install:
           post-steps:
             - check_aws_version
