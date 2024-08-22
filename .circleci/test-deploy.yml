@@ -160,7 +160,6 @@ jobs:
       - run:
           name: Install python 3.12
           command: |-
-            rm /usr/local/bin/python
             brew install python@3.12
             ln -s -f /opt/homebrew/bin/python3 /usr/local/bin/python
       - run:
