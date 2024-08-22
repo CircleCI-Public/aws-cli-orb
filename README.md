@@ -12,7 +12,7 @@ CircleCI orb for installing and configuring the AWS CLI in your CircleCI jobs.
 Please visit the the Orb Registry's [usage examples](https://circleci.com/developer/orbs/orb/circleci/aws-cli#usage-install-aws-cli) for the `install-aws-cli` example.
 
 ### How to Contribute
-We welcome [issues](https://github.com/CircleCI-Public/aws-ecr-orb/issues) to and [pull requests](https://github.com/CircleCI-Public/aws-ecr-orb/pulls) against this repository! 
+We welcome [issues](https://github.com/CircleCI-Public/aws-cli-orb/issues) to and [pull requests](https://github.com/CircleCI-Public/aws-cli-orb/pulls) against this repository! 
 
 
 For further questions/comments about this or other orbs, visit [CircleCI's Orbs discussion forum](https://discuss.circleci.com/c/orbs).

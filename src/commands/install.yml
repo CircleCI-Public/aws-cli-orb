@@ -26,6 +26,12 @@ parameters:
     default: /usr/local/bin
     description: |
       The main aws program in the install directory is symbolically linked to the file aws in the specified path. Defaults to /usr/local/bin
+  use_brew:
+    type: boolean
+    default: false
+    description: |
+      Set to true if you want to use the Homebrew CLI to install the awscli. Only compatible with the macOS executor. Defaults to false.
+      When using brew, only the brew version is available.
 steps:
   - run:
       name: Install AWS CLI - <<parameters.version>>
@@ -38,5 +44,6 @@ steps:
         SCRIPT_INSTALL_WINDOWS: << include(scripts/windows/install.sh) >>
         SCRIPT_INSTALL_LINUX: << include(scripts/linux/install.sh) >>
         SCRIPT_INSTALL_MACOS: << include(scripts/macos/install.sh) >>
+        USE_BREW: <<parameters.use_brew>>
         SCRIPT_UTILS: << include(scripts/utils.sh) >>
       command: <<include(scripts/install.sh)>>
