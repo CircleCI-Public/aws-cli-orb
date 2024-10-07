@@ -403,7 +403,7 @@ executors:
       image: ubuntu-2004:current
     resource_class: arm.medium
   linuxvm:
-    # shell: bash -eox pipefail
+    shell: bash -eox pipefail
     machine:
       image: ubuntu-2004:current
   windows:

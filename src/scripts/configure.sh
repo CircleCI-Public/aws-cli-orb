@@ -17,7 +17,7 @@ else
     touch "${BASH_ENV}"
     . "${BASH_ENV}"
 fi
-
+echo "Key after subst is: $AWS_CLI_STR_ACCESS_KEY_ID"
 aws configure set aws_access_key_id \
     "$AWS_CLI_STR_ACCESS_KEY_ID" \
     --profile "$AWS_CLI_STR_PROFILE_NAME"
@@ -26,7 +26,7 @@ aws configure set aws_secret_access_key \
     "$AWS_CLI_STR_SECRET_ACCESS_KEY" \
     --profile "$AWS_CLI_STR_PROFILE_NAME"
 
-if [ -n "${AWS_CLI_STR_SESSION_TOKEN}" ]; then
+if [ -n "${AWS_CLI_STR_ROLE_ARN}" ]; then
     aws configure set aws_session_token \
         "${AWS_CLI_STR_SESSION_TOKEN}" \
         --profile "$AWS_CLI_STR_PROFILE_NAME"
