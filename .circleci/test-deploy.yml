@@ -154,9 +154,33 @@ jobs:
     steps:
       - aws-cli/install:
           use_brew: true
+  integration-test-multiple-setups:
+    parameters:
+      executor:
+        type: executor
+      role_arn:
+        type: string
+    executor: <<parameters.executor>>
+    steps:
+      - aws-cli/setup:
+          profile_name: integration-test-multiple-setups-oidc
+          role_arn: <<parameters.role_arn>>
+      - run: |
+          aws sts get-caller-identity --profile integration-test-multiple-setups-oidc
+      - aws-cli/setup:
+          profile_name: integration-test-multiple-setups-env
+      - run: |
+          aws sts get-caller-identity --profile integration-test-multiple-setups-env
 workflows:
   test-deploy:
     jobs:
+      - integration-test-multiple-setups:
+          context: [CPE_ORBS_AWS]
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          matrix:
+            alias: integration-test-multiple-setups
+            parameters:
+              executor: [macos, linuxvm]
       - integration-test-brew-install:
           post-steps:
             - check_aws_version
@@ -346,7 +370,7 @@ workflows:
           pub_type: production
           enable_pr_comment: true
           context: orb-publisher
-          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install]
+          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install, integration-test-multiple-setups]
           filters: *release-filters
 executors:
   terraform:
