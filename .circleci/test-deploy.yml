@@ -167,6 +167,9 @@ jobs:
           role_arn: <<parameters.role_arn>>
       - run: |
           aws sts get-caller-identity --profile integration-test-multiple-setups-oidc
+      - run: |
+          cat ~/.aws/config
+          cat ~/.aws/credentials
       - aws-cli/setup:
           profile_name: integration-test-multiple-setups-env
       - run: |
