@@ -6,6 +6,7 @@ AWS_CLI_STR_SESSION_TOKEN="$(echo "$AWS_CLI_STR_SESSION_TOKEN" | circleci env su
 AWS_CLI_STR_REGION="$(echo "$AWS_CLI_STR_REGION" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "$AWS_CLI_STR_PROFILE_NAME" | circleci env subst)"
 AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" | circleci env subst)"
+AWS_CLI_STR_ROLE_ARN="$(echo "${AWS_CLI_STR_ROLE_ARN}" | circleci env subst)"
 
 if [ -z "$AWS_CLI_STR_ACCESS_KEY_ID" ] && [ -z "${AWS_CLI_STR_SECRET_ACCESS_KEY}" ] && [ "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" = 0 ]; then 
     temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
@@ -23,7 +24,7 @@ aws configure set aws_secret_access_key \
     "$AWS_CLI_STR_SECRET_ACCESS_KEY" \
     --profile "$AWS_CLI_STR_PROFILE_NAME"
 
-if [ -n "${AWS_CLI_STR_SESSION_TOKEN}" ]; then
+if [ -n "${AWS_CLI_STR_ROLE_ARN}" ]; then
     aws configure set aws_session_token \
         "${AWS_CLI_STR_SESSION_TOKEN}" \
         --profile "$AWS_CLI_STR_PROFILE_NAME"
