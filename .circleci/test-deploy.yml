@@ -154,6 +154,26 @@ jobs:
     steps:
       - aws-cli/install:
           use_brew: true
+  integration-test-multiple-setups-reverse:
+    parameters:
+      executor:
+        type: executor
+      role_arn:
+        type: string
+    executor: <<parameters.executor>>
+    steps:
+      - aws-cli/setup:
+          profile_name: integration-test-multiple-setups-env
+      - run: |
+          aws sts get-caller-identity --profile integration-test-multiple-setups-env
+      - aws-cli/setup:
+          profile_name: integration-test-multiple-setups-oidc
+          role_arn: <<parameters.role_arn>>
+      - run: |
+          cat ~/.aws/config
+          cat ~/.aws/credentials
+      - run: |
+          aws sts get-caller-identity --profile integration-test-multiple-setups-oidc
   integration-test-multiple-setups:
     parameters:
       executor:
@@ -178,6 +198,13 @@ jobs:
 workflows:
   test-deploy:
     jobs:
+      - integration-test-multiple-setups-reverse:
+          context: [CPE_ORBS_AWS]
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
+          matrix:
+            alias: integration-test-multiple-setups
+            parameters:
+              executor: [macos, linuxvm]
       - integration-test-multiple-setups:
           context: [CPE_ORBS_AWS]
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
