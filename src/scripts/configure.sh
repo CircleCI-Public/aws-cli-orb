@@ -1,8 +1,6 @@
 #!/bin/sh
 #shellcheck disable=SC1090
-echo "Key before subst is: $AWS_CLI_STR_ACCESS_KEY_ID"
 AWS_CLI_STR_ACCESS_KEY_ID="$(echo "\$$AWS_CLI_STR_ACCESS_KEY_ID" | circleci env subst)"
-echo "Key after subst is: $AWS_CLI_STR_ACCESS_KEY_ID"
 AWS_CLI_STR_SECRET_ACCESS_KEY="$(echo "\$$AWS_CLI_STR_SECRET_ACCESS_KEY" | circleci env subst)"
 AWS_CLI_STR_SESSION_TOKEN="$(echo "$AWS_CLI_STR_SESSION_TOKEN" | circleci env subst)"
 AWS_CLI_STR_REGION="$(echo "$AWS_CLI_STR_REGION" | circleci env subst)"
@@ -17,7 +15,6 @@ else
     touch "${BASH_ENV}"
     . "${BASH_ENV}"
 fi
-echo "Key after subst is: $AWS_CLI_STR_ACCESS_KEY_ID"
 aws configure set aws_access_key_id \
     "$AWS_CLI_STR_ACCESS_KEY_ID" \
     --profile "$AWS_CLI_STR_PROFILE_NAME"
