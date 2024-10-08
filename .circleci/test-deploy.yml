@@ -163,6 +163,7 @@ jobs:
     executor: <<parameters.executor>>
     steps:
       - aws-cli/setup:
+          set_aws_env_vars: false
           profile_name: integration-test-multiple-setups-oidc
           role_arn: <<parameters.role_arn>>
       - run: |
