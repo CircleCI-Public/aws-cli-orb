@@ -135,6 +135,7 @@ steps:
   - run:
       name: Configure AWS Access Key ID
       environment:
+        AWS_CLI_STR_ROLE_ARN: <<parameters.role_arn>>
         AWS_CLI_STR_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
         AWS_CLI_STR_SECRET_ACCESS_KEY: <<parameters.aws_secret_access_key>>
         AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
