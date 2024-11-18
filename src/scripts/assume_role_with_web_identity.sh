@@ -44,6 +44,11 @@ if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ] || [ -z "$
     exit 1
 elif [ "${AWS_CLI_BOOL_SET_AWS_ENV_VARS}" = 1 ]; then
     {
+        # These are the original aws variables, and will be used when no profile is passed.
+        echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
+        echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
+        echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
+        # These are used for the configure script, which will use them to configure the profile
         echo "export AWS_CLI_STR_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
         echo "export AWS_CLI_STR_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\""
         echo "export AWS_CLI_STR_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\""
