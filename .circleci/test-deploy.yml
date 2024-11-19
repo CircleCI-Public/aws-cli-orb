@@ -425,7 +425,7 @@ executors:
       - image: cimg/base:stable
   macos:
     macos:
-      xcode: 14.2.0
+      xcode: 16.1.0
   arm:
     machine:
       image: ubuntu-2004:current
