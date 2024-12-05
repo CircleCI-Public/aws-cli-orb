@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 AWS_CLI_STR_AWS_CLI_VERSION="$(echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | circleci env subst)"
 AWS_CLI_EVAL_INSTALL_DIR="$(eval echo "${AWS_CLI_EVAL_INSTALL_DIR}" | circleci env subst)"
 AWS_CLI_EVAL_BINARY_DIR="$(eval echo "${AWS_CLI_EVAL_BINARY_DIR}" | circleci env subst)"
@@ -32,6 +32,7 @@ Toggle_Pager(){
 }
 
 if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
+    # shellcheck disable=SC3040
     set +o pipefail
     CLI_COMPARISON_VERSION="$(wget -q -O - https://api.github.com/repos/aws/aws-cli/tags | grep '"name":' | head -n 1 | awk -F'"' '{print $4}')"
     echo "Latest is: $CLI_COMPARISON_VERSION"
