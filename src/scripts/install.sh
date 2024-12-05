@@ -31,10 +31,16 @@ Toggle_Pager(){
     fi
 }
 
+if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
+    CLI_COMPARISON_VERSION="$(curl -s https://api.github.com/repos/aws/aws-cli/tags | jq -r '.[0].name')"
+else
+    CLI_COMPARISON_VERSION="$AWS_CLI_STR_AWS_CLI_VERSION"
+fi
+
 if ! command -v aws >/dev/null 2>&1; then
     Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
-elif aws --version | awk '{print $2}' |grep "${AWS_CLI_STR_AWS_CLI_VERSION}"; then
-    echo "AWS CLI version ${AWS_CLI_STR_AWS_CLI_VERSION} already installed. Skipping installation"
+elif aws --version | awk '{print $2}' | grep "${CLI_COMPARISON_VERSION}"; then
+    echo "AWS CLI version ${CLI_COMPARISON_VERSION} already installed. Skipping installation"
     exit 0
 elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ]; then
     Uninstall_AWS_CLI
