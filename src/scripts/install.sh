@@ -32,7 +32,7 @@ Toggle_Pager(){
 }
 
 if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
-    CLI_COMPARISON_VERSION="$(wget -q -O - https://api.github.com/repos/aws/aws-cli/tags | grep -m 1 '"name":' | head -n 1 | awk -F'"' '{print $4}')"
+    CLI_COMPARISON_VERSION="$(wget -q -O - https://api.github.com/repos/aws/aws-cli/tags | grep -m 1 '"name":' | awk -F'"' '{print $4}')"
     echo "Latest is: $CLI_COMPARISON_VERSION"
 else
     CLI_COMPARISON_VERSION="$AWS_CLI_STR_AWS_CLI_VERSION"
