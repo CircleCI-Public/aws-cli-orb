@@ -7,7 +7,7 @@ Install_AWS_CLI() {
         apk update && apk upgrade && apk add --no-cache curl unzip bash
         curl -Lo /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub 
         curl -Lo glibc.apk https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r0/glibc-2.35-r0.apk
-        apk add --no-cache glibc.apk
+        apk add --no-cache --force-overwrite glibc.apk
         rm -f glibc.apk
         # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$VERSION.zip" -o awscliv2.zip
         # unzip awscliv2.zip
@@ -15,7 +15,7 @@ Install_AWS_CLI() {
         # rm -rf awscliv2.zip aws
     # else
     fi
-    
+
     if [ "$1" = "latest" ]; then
         version=""
     else
