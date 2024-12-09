@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 AWS_CLI_STR_AWS_CLI_VERSION="$(echo "${AWS_CLI_STR_AWS_CLI_VERSION}" | circleci env subst)"
 AWS_CLI_EVAL_INSTALL_DIR="$(eval echo "${AWS_CLI_EVAL_INSTALL_DIR}" | circleci env subst)"
 AWS_CLI_EVAL_BINARY_DIR="$(eval echo "${AWS_CLI_EVAL_BINARY_DIR}" | circleci env subst)"
@@ -31,10 +31,20 @@ Toggle_Pager(){
     fi
 }
 
+if [ "$AWS_CLI_STR_AWS_CLI_VERSION" = "latest" ]; then
+    # shellcheck disable=SC3040
+    set +o pipefail
+    CLI_COMPARISON_VERSION="$(wget -q -O - https://api.github.com/repos/aws/aws-cli/tags | grep '"name":' | head -n 1 | awk -F'"' '{print $4}')"
+    echo "Latest is: $CLI_COMPARISON_VERSION"
+    set -o pipefail
+else
+    CLI_COMPARISON_VERSION="$AWS_CLI_STR_AWS_CLI_VERSION"
+fi
+
 if ! command -v aws >/dev/null 2>&1; then
     Install_AWS_CLI "${AWS_CLI_STR_AWS_CLI_VERSION}"
-elif aws --version | awk '{print $2}' |grep "${AWS_CLI_STR_AWS_CLI_VERSION}"; then
-    echo "AWS CLI version ${AWS_CLI_STR_AWS_CLI_VERSION} already installed. Skipping installation"
+elif aws --version | awk '{print $2}' | grep "${CLI_COMPARISON_VERSION}"; then
+    echo "AWS CLI version ${CLI_COMPARISON_VERSION} already installed. Skipping installation"
     exit 0
 elif [ "$AWS_CLI_BOOL_OVERRIDE" -eq 1 ]; then
     Uninstall_AWS_CLI
