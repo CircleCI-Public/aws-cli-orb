@@ -2,7 +2,9 @@ description: "Install the AWS CLI via Pip if not already installed."
 
 parameters:
   version:
-    description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+    description: |
+      Select a specific version of the AWS v2 CLI. By default the latest version will be used.
+      This value is ignored on Alpine, and the default version on the repositories is installed.
     default: latest
     type: string
   override_installed:
