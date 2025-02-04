@@ -45,7 +45,7 @@ parameters:
       the environment variable you will use to hold this
       value, i.e. AWS_ACCESS_KEY.
     type: string
-    default: AWS_ACCESS_KEY_ID
+    default: $AWS_ACCESS_KEY_ID
 
   aws_secret_access_key:
     description: |
@@ -53,7 +53,7 @@ parameters:
       the environment variable you will use to hold this
       value, i.e. AWS_SECRET_ACCESS_KEY.
     type: string
-    default: AWS_SECRET_ACCESS_KEY
+    default: $AWS_SECRET_ACCESS_KEY
 
   region:
     description: |
