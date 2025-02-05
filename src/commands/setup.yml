@@ -44,14 +44,14 @@ parameters:
       AWS access key. By default this will be set to the $AWS_ACCESS_KEY_ID.
       If you don't have these variable in your context, update the value.
     type: string
-    default: $AWS_ACCESS_KEY_ID
+    default: AWS_ACCESS_KEY_ID
 
   aws_secret_access_key:
     description: |
       AWS secret key. By default this will be set to the $AWS_SECRET_ACCESS_KEY.
       If you don't have these variable in your context, update the value.
     type: string
-    default: $AWS_SECRET_ACCESS_KEY
+    default: AWS_SECRET_ACCESS_KEY
 
   region:
     description: |

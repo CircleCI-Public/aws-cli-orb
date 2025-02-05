@@ -1,7 +1,7 @@
 #!/bin/sh
 #shellcheck disable=SC1090
-AWS_CLI_STR_ACCESS_KEY_ID="$(echo "$AWS_CLI_STR_ACCESS_KEY_ID" | circleci env subst)"
-AWS_CLI_STR_SECRET_ACCESS_KEY="$(echo "$AWS_CLI_STR_SECRET_ACCESS_KEY" | circleci env subst)"
+AWS_CLI_STR_ACCESS_KEY_ID="$(echo "\$$AWS_CLI_STR_ACCESS_KEY_ID" | circleci env subst)"
+AWS_CLI_STR_SECRET_ACCESS_KEY="$(echo "\$$AWS_CLI_STR_SECRET_ACCESS_KEY" | circleci env subst)"
 AWS_CLI_STR_SESSION_TOKEN="$(echo "$AWS_CLI_STR_SESSION_TOKEN" | circleci env subst)"
 AWS_CLI_STR_REGION="$(echo "$AWS_CLI_STR_REGION" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "$AWS_CLI_STR_PROFILE_NAME" | circleci env subst)"

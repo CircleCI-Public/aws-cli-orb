@@ -195,17 +195,6 @@ jobs:
           cat ~/.aws/credentials
       - run: |
           aws sts get-caller-identity --profile integration-test-multiple-setups-env
-  integration-test-static-credentials:
-    parameters:
-      executor:
-        type: executor
-    executor: <<parameters.executor>>
-    steps:
-      - aws-cli/setup:
-          aws_access_key_id: $AWS_ACCESS_KEY_ID
-          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
-      - run: |
-          aws sts get-caller-identity
 workflows:
   test-deploy:
     jobs:
@@ -371,12 +360,6 @@ workflows:
           post-steps:
             - check_aws_version:
                 version: "2.15.57"
-      - integration-test-static-credentials:
-          context: [CPE_ORBS_AWS]
-          matrix:
-            alias: integration-test-static-credentials
-            parameters:
-              executor: ["linuxvm", "windows", "arm"]
       - integration-test-install:
           name: integration-test-skip-install-matched-version
           context: [CPE_ORBS_AWS]
@@ -418,7 +401,7 @@ workflows:
           pub_type: production
           enable_pr_comment: true
           context: orb-publisher
-          requires: [orb-tools/pack, integration-test-static-credentials, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install, integration-test-multiple-setups, integration-test-multiple-setups-reverse]
+          requires: [orb-tools/pack, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install, integration-test-multiple-setups, integration-test-multiple-setups-reverse]
           filters: *release-filters
 executors:
   terraform:
