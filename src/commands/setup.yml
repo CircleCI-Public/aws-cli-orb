@@ -106,14 +106,24 @@ parameters:
       Set to true if you want to use brew to install the awscli. Only compatible with MacOs executor. Default to false.
       When using brew, only the brew version is available.
 
+  disable_aws_install:
+    type: boolean
+    default: false
+    description: |
+      Set to true if you want to disable the AWS CLI install step. Default to false.
+
 steps:
-  - install:
-      version: <<parameters.version>>
-      disable_aws_pager: <<parameters.disable_aws_pager>>
-      override_installed: <<parameters.override_installed>>
-      install_dir: <<parameters.install_dir>>
-      binary_dir: <<parameters.binary_dir>>
-      use_brew: <<parameters.use_brew>>
+  - when:
+      condition:
+        not: <<parameters.disable_aws_install>>
+      steps:
+        - install:
+            version: <<parameters.version>>
+            disable_aws_pager: <<parameters.disable_aws_pager>>
+            override_installed: <<parameters.override_installed>>
+            install_dir: <<parameters.install_dir>>
+            binary_dir: <<parameters.binary_dir>>
+            use_brew: <<parameters.use_brew>>
   - when:
       condition:
         and:
