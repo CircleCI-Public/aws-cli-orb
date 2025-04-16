@@ -115,8 +115,7 @@ parameters:
 steps:
   - when:
       condition:
-        not:
-          - <<parameters.disable_aws_install>>
+        not: <<parameters.disable_aws_install>>
       steps:
         - install:
             version: <<parameters.version>>
