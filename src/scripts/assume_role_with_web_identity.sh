@@ -14,8 +14,20 @@ if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
     exit 1
 fi
 
-if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ]; then
-    echo "OIDC Token cannot be found."
+if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ] || [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
+    for i in {1..3}; do
+        echo "Attempt $i: Checking OIDC tokens"
+        CIRCLE_OIDC_TOKEN=$(circleci run oidc get --claims "{\"aud\":\"${CIRCLE_ORGANIZATION_ID}\"}")
+        if [ -n "$CIRCLE_OIDC_TOKEN" ] || [ -n "$CIRCLE_OIDC_TOKEN_V2" ]; then
+            echo "Successfully set CIRCLE_OIDC_TOKEN"
+            echo 'export CIRCLE_OIDC_TOKEN="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
+            echo 'export CIRCLE_OIDC_TOKEN_V2="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
+            exit 0
+        fi
+        echo "Waiting 1 second before retry"
+        sleep 1
+    done
+    echo "Failed to set CIRCLE_OIDC_TOKEN_V2 after 3 attempts"
     exit 1
 fi
 
