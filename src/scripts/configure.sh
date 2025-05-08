@@ -1,5 +1,15 @@
 #!/bin/sh
 #shellcheck disable=SC1090
+
+# Ensure variables are loaded from $BASH_ENV as required
+touch "${BASH_ENV}"
+. "${BASH_ENV}"
+
+if [ "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" = 0 ]; then 
+    temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
+    . "$temp_file" 
+fi
+
 AWS_CLI_STR_ACCESS_KEY_ID="$(echo "$AWS_CLI_STR_ACCESS_KEY_ID" | circleci env subst)"
 AWS_CLI_STR_SECRET_ACCESS_KEY="$(echo "$AWS_CLI_STR_SECRET_ACCESS_KEY" | circleci env subst)"
 AWS_CLI_STR_SESSION_TOKEN="$(echo "$AWS_CLI_STR_SESSION_TOKEN" | circleci env subst)"
@@ -8,13 +18,6 @@ AWS_CLI_STR_PROFILE_NAME="$(echo "$AWS_CLI_STR_PROFILE_NAME" | circleci env subs
 AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" | circleci env subst)"
 AWS_CLI_STR_ROLE_ARN="$(echo "${AWS_CLI_STR_ROLE_ARN}" | circleci env subst)"
 
-if [ "$AWS_CLI_BOOL_SET_AWS_ENV_VARS" = 0 ]; then 
-    temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
-    . "$temp_file"
-else 
-    touch "${BASH_ENV}"
-    . "${BASH_ENV}"
-fi
 aws configure set aws_access_key_id \
     "$AWS_CLI_STR_ACCESS_KEY_ID" \
     --profile "$AWS_CLI_STR_PROFILE_NAME"
