@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# Ensure that we load any variables specified by earlier steps
-source "$BASH_ENV"
+# Ensure variables are loaded from $BASH_ENV as required
+touch "${BASH_ENV}"
+. "${BASH_ENV}"
 
 AWS_CLI_STR_ROLE_SESSION_NAME="$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | circleci env subst)"
 AWS_CLI_STR_ROLE_ARN="$(echo "${AWS_CLI_STR_ROLE_ARN}" | circleci env subst)"
