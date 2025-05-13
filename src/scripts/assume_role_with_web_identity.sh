@@ -19,7 +19,7 @@ if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ] || [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
     for i in {1..3}; do
         echo "Attempt $i: Minting OIDC tokens"
         CIRCLE_OIDC_TOKEN=$(circleci run oidc get --claims "{\"aud\":\"${CIRCLE_ORGANIZATION_ID}\"}")
-        if [ -n "$CIRCLE_OIDC_TOKEN" ]; then
+        if [ -n "$CIRCLE_OIDC_TOKEN" ] && [ ${#CIRCLE_OIDC_TOKEN} -ge 4 ] && [ "$(echo "$CIRCLE_OIDC_TOKEN" | cut -c1-3)" = "eyJ" ]; then
             echo "Successfully set CIRCLE_OIDC_TOKEN"
             echo 'export CIRCLE_OIDC_TOKEN="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
             echo 'export CIRCLE_OIDC_TOKEN_V2="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
