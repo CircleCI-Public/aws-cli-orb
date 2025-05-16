@@ -1,4 +1,5 @@
 #!/bin/sh
+#shellcheck disable=SC1090
 
 # Ensure variables are loaded from $BASH_ENV as required
 touch "${BASH_ENV}"
