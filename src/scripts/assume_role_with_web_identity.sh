@@ -1,4 +1,10 @@
 #!/bin/sh
+#shellcheck disable=SC1090
+
+# Ensure variables are loaded from $BASH_ENV as required
+touch "${BASH_ENV}"
+. "${BASH_ENV}"
+
 AWS_CLI_STR_ROLE_SESSION_NAME="$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | circleci env subst)"
 AWS_CLI_STR_ROLE_ARN="$(echo "${AWS_CLI_STR_ROLE_ARN}" | circleci env subst)"
 AWS_CLI_STR_PROFILE_NAME="$(echo "${AWS_CLI_STR_PROFILE_NAME}" | circleci env subst)"
