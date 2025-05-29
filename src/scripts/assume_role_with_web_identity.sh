@@ -31,6 +31,7 @@ if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ] || [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
             echo 'export CIRCLE_OIDC_TOKEN="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
             echo 'export CIRCLE_OIDC_TOKEN_V2="'"$CIRCLE_OIDC_TOKEN_V2"'"' >> "$BASH_ENV"
             TOKEN_SETUP_SUCCESS=true
+            source "$BASH_ENV"
             break
         fi
         echo "Waiting 1 second before retry"
