@@ -14,9 +14,20 @@ parameters:
     type: string
     default: "default"
 
+  when:
+    description: |
+      Allows script to run on a specific condition of a workflow.
+      The default is 'on_success', means the script will run only if all previous steps were successful
+      'on_fail' means the script will run if any previous step fails
+      'always' means it will run regardless of the success or failure of previous steps in the workflow
+    type: enum
+    enum: ["on_success", "on_fail", "always"]
+    default: "on_success"
+
 steps:
   - run:
       name: Configure role arn for profile <<parameters.profile_name>>
+      when: <<parameters.when>>
       environment:
         AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
         AWS_CLI_STR_SOURCE_PROFILE: <<parameters.source_profile>>
