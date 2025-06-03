@@ -111,7 +111,7 @@ parameters:
     default: false
     description: |
       Set to true if you want to disable the AWS CLI install step. Default to false.
-  
+
   when:
     description: |
       Allows script to run on a specific condition of a workflow.
