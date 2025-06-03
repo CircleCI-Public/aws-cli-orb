@@ -112,12 +112,23 @@ parameters:
     description: |
       Set to true if you want to disable the AWS CLI install step. Default to false.
 
+  when:
+    description: |
+      Allows script to run on a specific condition of a workflow.
+      The default is 'on_success', means the script will run only if all previous steps were successful
+      'on_fail' means the script will run if any previous step fails
+      'always' means it will run regardless of the success or failure of previous steps in the workflow
+    type: enum
+    enum: ["on_success", "on_fail", "always"]
+    default: "on_success"
+
 steps:
   - when:
       condition:
         not: <<parameters.disable_aws_install>>
       steps:
         - install:
+            when: <<parameters.when>>
             version: <<parameters.version>>
             disable_aws_pager: <<parameters.disable_aws_pager>>
             override_installed: <<parameters.override_installed>>
@@ -132,6 +143,7 @@ steps:
       steps:
         - run:
             name: Assume Role with Web Identity
+            when: <<parameters.when>>
             environment:
               AWS_CLI_STR_ROLE_ARN: <<parameters.role_arn>>
               AWS_CLI_STR_ROLE_SESSION_NAME: <<parameters.role_session_name>>
@@ -142,6 +154,7 @@ steps:
             command: <<include(scripts/assume_role_with_web_identity.sh)>>
   - run:
       name: Configure AWS Access Key ID
+      when: <<parameters.when>>
       environment:
         AWS_CLI_STR_ROLE_ARN: <<parameters.role_arn>>
         AWS_CLI_STR_ACCESS_KEY_ID: <<parameters.aws_access_key_id>>
