@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #shellcheck disable=SC1090
 
 # Ensure variables are loaded from $BASH_ENV as required
@@ -82,6 +82,10 @@ elif [ "${AWS_CLI_BOOL_SET_AWS_ENV_VARS}" = 1 ]; then
     echo "AWS keys successfully written to BASH_ENV"
 else
     temp_file="/tmp/${AWS_CLI_STR_PROFILE_NAME}.keys"
+    if [[ "$temp_file" == */* ]]; then
+        temp_folder="${temp_file%/*}"
+        mkdir -p "$temp_folder"
+    fi
     touch "$temp_file"
     {
         echo "export AWS_CLI_STR_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\""
