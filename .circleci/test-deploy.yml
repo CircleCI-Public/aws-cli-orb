@@ -210,6 +210,7 @@ workflows:
   test-deploy:
     jobs:
       - integration-test-multiple-setups-reverse:
+          filters: *filters
           context: [CPE_ORBS_AWS]
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           matrix:
@@ -217,6 +218,7 @@ workflows:
             parameters:
               executor: [macos, linuxvm]
       - integration-test-multiple-setups:
+          filters: *filters
           context: [CPE_ORBS_AWS]
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           matrix:
@@ -224,10 +226,12 @@ workflows:
             parameters:
               executor: [macos, linuxvm]
       - integration-test-brew-install:
+          filters: *filters
           post-steps:
             - check_aws_version
       # Testing auth uses oidc whe specified together with env variables
       - integration-test-oidc-setup:
+          filters: *filters
           name: integration-test-oidc-withenv
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           context: [CPE_ORBS_AWS]
@@ -239,6 +243,7 @@ workflows:
                 name: Validating auth
                 command: aws sts get-caller-identity --profile integration-test
       - integration-test-oidc-setup:
+          filters: *filters
           name: integration-test-oidc-with-noenv
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           context: [CPE_ORBS_AWS]
@@ -251,6 +256,7 @@ workflows:
                 command: aws sts get-caller-identity --profile integration-test                
       # Testing region configuration
       - integration-test-install:
+          filters: *filters
           name: integration-test-configure-profile-region
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile_name: "OIDC-User"
@@ -270,6 +276,7 @@ workflows:
                     exit 1
                   fi
       - integration-test-install:
+          filters: *filters
           name: integration-test-configure-default-region
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile_name: "OIDC-User"
@@ -290,6 +297,7 @@ workflows:
                   fi
       # Testing OIDC
       - integration-test-install:
+          filters: *filters
           name: integration test web identity command with white spaces
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           context: [CPE-OIDC]
@@ -299,6 +307,7 @@ workflows:
                 name: Web Identity Test - Logging into ECR
                 command: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
       - integration-test-install:
+          filters: *filters
           name: integration-test-web-identity-parameters
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           session_duration: "${TEST_SESSION_DURATION}"
@@ -322,6 +331,7 @@ workflows:
                     exit 1
                   fi
       - integration-test-install:
+          filters: *filters
           name: integration-test-web-identity-with-profile
           role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_TEST
           profile_name: "OIDC-Tester"
@@ -372,6 +382,7 @@ workflows:
             - check_aws_version:
                 version: "2.15.57"
       - integration-test-static-credentials:
+          filters: *filters
           context: [CPE_ORBS_AWS]
           matrix:
             alias: integration-test-static-credentials
