@@ -148,9 +148,6 @@ steps:
       condition:
         and:
           - <<parameters.role_session_name>>
-          - <<parameters.role_arn>>
-          - not:
-            - equal: [<<parameters.role_arn>>, ""]
           - not: <<parameters.disable_oidc>>
       steps:
         - run:
