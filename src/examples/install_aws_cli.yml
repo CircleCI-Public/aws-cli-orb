@@ -11,11 +11,16 @@ usage:
       steps:
         - checkout
         - aws-cli/setup:
-            profile_name: example
+            # In these case the aws keys are used with names by default, they must be in the context you set
+            # In case your context has different names, or you are passing the values directly (not recommeded) configure these parameters
+            # aws_access_key_id: $MY_KEY
+            # aws_secret_access_key: $MY_SECRET
+            profile_name: example # The authentication will be done to this profile
         - run: echo "Run your code here"
 
   workflows:
     aws-cli:
       jobs:
         - aws-cli-example:
+            # The context here has AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to be used in the setup
             context: aws
