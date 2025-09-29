@@ -22,5 +22,5 @@ usage:
     aws-cli:
       jobs:
         - aws-cli-example:
-            # The context here has AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to be used in the setup
+            # This example context has AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY defined, which are used in the setup command
             context: aws
