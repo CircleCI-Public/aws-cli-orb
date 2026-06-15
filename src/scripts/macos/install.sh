@@ -4,6 +4,9 @@ Install_AWS_CLI() {
     if [ "$USE_BREW" -eq 1 ]; then
         HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ASK=1 brew install "awscli"
     else
+        if [ "$(uname -m)" = "arm64" ]; then
+            $SUDO softwareupdate --install-rosetta --agree-to-license || true
+        fi
         if [ "$1" = "latest" ]; then
             pkg_url="https://awscli.amazonaws.com/AWSCLIV2.pkg"
         else
