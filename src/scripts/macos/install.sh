@@ -1,23 +1,20 @@
 #!/bin/sh
 Install_AWS_CLI() {
-    echo "Installing AWS CLI v$version"
+    echo "Installing AWS CLI v$1"
     if [ "$USE_BREW" -eq 1 ]; then
-        brew install "awscli"
+        HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ASK=1 brew install "awscli"
     else
-        if [ "$1" = "latest" ]; then
-            version=""
-        else
-            version="-$1"
+        if [ "$(uname -m)" = "arm64" ]; then
+            $SUDO softwareupdate --install-rosetta --agree-to-license || true
         fi
-        cd /tmp || exit
-        curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
-        mkdir awscli
-        tar -xzf awscli.tar.gz -C awscli --strip-components=1
-        rm awscli.tar.gz
-        cd awscli || exit
-        ./configure --with-download-deps
-        make
-        $SUDO make install
+        if [ "$1" = "latest" ]; then
+            pkg_url="https://awscli.amazonaws.com/AWSCLIV2.pkg"
+        else
+            pkg_url="https://awscli.amazonaws.com/AWSCLIV2-$1.pkg"
+        fi
+        curl -o /tmp/AWSCLIV2.pkg "$pkg_url"
+        $SUDO installer -pkg /tmp/AWSCLIV2.pkg -target /
+        rm /tmp/AWSCLIV2.pkg
     fi
 }
 
