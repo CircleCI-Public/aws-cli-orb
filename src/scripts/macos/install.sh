@@ -5,19 +5,13 @@ Install_AWS_CLI() {
         HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ASK=1 brew install "awscli"
     else
         if [ "$1" = "latest" ]; then
-            version=""
+            pkg_url="https://awscli.amazonaws.com/AWSCLIV2.pkg"
         else
-            version="-$1"
+            pkg_url="https://awscli.amazonaws.com/AWSCLIV2-$1.pkg"
         fi
-        cd /tmp || exit
-        curl -o awscli.tar.gz "https://awscli.amazonaws.com/awscli$version.tar.gz"
-        mkdir awscli
-        tar -xzf awscli.tar.gz -C awscli --strip-components=1
-        rm awscli.tar.gz
-        cd awscli || exit
-        ./configure --with-download-deps
-        make
-        $SUDO make install
+        curl -o /tmp/AWSCLIV2.pkg "$pkg_url"
+        $SUDO installer -pkg /tmp/AWSCLIV2.pkg -target /
+        rm /tmp/AWSCLIV2.pkg
     fi
 }
 
