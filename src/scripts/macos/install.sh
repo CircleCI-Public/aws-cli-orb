@@ -2,7 +2,7 @@
 Install_AWS_CLI() {
     echo "Installing AWS CLI v$version"
     if [ "$USE_BREW" -eq 1 ]; then
-        brew install "awscli"
+        HOMEBREW_NO_ASK=1 brew install "awscli"
     else
         if [ "$1" = "latest" ]; then
             version=""
