@@ -1,6 +1,6 @@
 #!/bin/sh
 Install_AWS_CLI() {
-    echo "Installing AWS CLI v$version"
+    echo "Installing AWS CLI v$1"
     if [ "$USE_BREW" -eq 1 ]; then
         HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ASK=1 brew install "awscli"
     else
