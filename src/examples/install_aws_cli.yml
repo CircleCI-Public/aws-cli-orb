@@ -10,12 +10,12 @@ usage:
       executor: aws-cli/default
       steps:
         - checkout
-        - aws-cli/setup:
-            # This example assumes AWS keys exist in the context used in the example workflow below.
-            # If your context uses different names for these keys, or you are passing the values directly (not recommended), configure these parameters:
-            # aws_access_key_id: $MY_KEY
-            # aws_secret_access_key: $MY_SECRET
-            profile_name: example # The authentication will be done to this profile
+        # If your context uses non-default key names, or you want a named profile, configure parameters:
+        # aws-cli/setup:
+        #   aws_access_key_id: $MY_KEY
+        #   aws_secret_access_key: $MY_SECRET
+        #   profile_name: example
+        - aws-cli/setup
         - run: echo "Run your code here"
 
   workflows:
