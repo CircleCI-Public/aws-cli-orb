@@ -1,7 +1,8 @@
 description: |
   Installs aws-cli and then configure and store AWS credentials in
   ~/.aws/credentials and ~/.aws/config.
-  If role_session_name and role_arn are provided, it will attempt to use OIDC auth.
+  If role_arn is set, either explicitly or by the value of $AWS_ROLE_ARN, this command will attempt to use OIDC
+  auth. If you're providing $AWS_ROLE_ARN but don't want to use OIDC auth, set disable_oidc to true.
 
 parameters:
   version:
@@ -77,9 +78,10 @@ parameters:
   role_arn:
     description: |
       The Amazon Resource Name (ARN) of the role that the caller is assuming.
-      Role ARN must be configured for web identity.
+      Role ARN must be configured for web identity / OIDC auth.
+      (defaults to env var of ${AWS_ROLE_ARN})
     type: string
-    default: ""
+    default: ${AWS_ROLE_ARN}
 
   role_session_name:
     description: An identifier for the assumed role session
@@ -112,6 +114,13 @@ parameters:
     description: |
       Set to true if you want to disable the AWS CLI install step. Default to false.
 
+  disable_oidc:
+    type: boolean
+    default: false
+    description: |
+      Set to true if you want don't want to use OIDC auth but are setting $AWS_ROLE_ARN. This command will otherwise
+      attempt to use OIDC auth if $AWS_ROLE_ARN is set.
+
   when:
     description: |
       Allows script to run on a specific condition of a workflow.
@@ -139,7 +148,7 @@ steps:
       condition:
         and:
           - <<parameters.role_session_name>>
-          - <<parameters.role_arn>>
+          - not: <<parameters.disable_oidc>>
       steps:
         - run:
             name: Assume Role with Web Identity
