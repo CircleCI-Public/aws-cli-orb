@@ -20,28 +20,53 @@ if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
     exit 1
 fi
 
-if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ] || [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
-    TOKEN_SETUP_SUCCESS=false
-    for i in {1..3}; do
-        echo "Attempt $i: Minting OIDC tokens"
-        CIRCLE_OIDC_TOKEN=$(circleci run oidc get --claims "{\"aud\":\"${CIRCLE_ORGANIZATION_ID}\"}")
-        CIRCLE_OIDC_TOKEN_V2=$CIRCLE_OIDC_TOKEN
-        if [ -n "$CIRCLE_OIDC_TOKEN" ] && [ ${#CIRCLE_OIDC_TOKEN} -ge 4 ]; then
-            echo "Successfully set CIRCLE_OIDC_TOKEN"
-            echo 'export CIRCLE_OIDC_TOKEN="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
-            echo 'export CIRCLE_OIDC_TOKEN_V2="'"$CIRCLE_OIDC_TOKEN_V2"'"' >> "$BASH_ENV"
-            TOKEN_SETUP_SUCCESS=true
-            source "$BASH_ENV"
-            break
+if [ "${AWS_CLI_STR_OIDC_TOKEN_VERSION}" = "v3" ]; then
+    OIDC_TOKEN="${CIRCLE_OIDC_TOKEN_V3:-}"
+    if [ -z "${OIDC_TOKEN}" ]; then
+        for i in {1..3}; do
+            echo "Attempt $i: Minting V3 OIDC token"
+            OIDC_TOKEN=$(circleci run oidc get --v3 --claims "{\"aud\":\"${CIRCLE_ORGANIZATION_ID}\"}" || true)
+            if [ -n "$OIDC_TOKEN" ] && [ ${#OIDC_TOKEN} -ge 4 ]; then
+                echo "Successfully minted V3 OIDC token"
+                break
+            fi
+            OIDC_TOKEN=""
+            echo "Waiting 1 second before retry"
+            sleep 1
+        done
+
+        if [ -z "${OIDC_TOKEN}" ]; then
+            echo "Failed to obtain a V3 OIDC token after 3 attempts. V3 tokens are not issued for pipelines without a checkout source."
+            exit 1
         fi
-        echo "Waiting 1 second before retry"
-        sleep 1
-    done
-    
-    if [ "$TOKEN_SETUP_SUCCESS" = false ]; then
-        echo "Failed to set CIRCLE_OIDC_TOKEN and CIRCLE_OIDC_TOKEN_V2 after 3 attempts. Please try rerunning the worklow."
-        exit 1
     fi
+else
+    echo "WARNING: Assuming role with a V2 OIDC token. Consider setting oidc_token_version to v3 and updating the role's trust policy to match the V3 sub claim. See https://circleci.com/docs/guides/permissions-authentication/openid-connect-tokens/"
+
+    if [ -z "${CIRCLE_OIDC_TOKEN_V2}" ] || [ -z "${CIRCLE_OIDC_TOKEN}" ]; then
+        TOKEN_SETUP_SUCCESS=false
+        for i in {1..3}; do
+            echo "Attempt $i: Minting OIDC tokens"
+            CIRCLE_OIDC_TOKEN=$(circleci run oidc get --claims "{\"aud\":\"${CIRCLE_ORGANIZATION_ID}\"}")
+            CIRCLE_OIDC_TOKEN_V2=$CIRCLE_OIDC_TOKEN
+            if [ -n "$CIRCLE_OIDC_TOKEN" ] && [ ${#CIRCLE_OIDC_TOKEN} -ge 4 ]; then
+                echo "Successfully set CIRCLE_OIDC_TOKEN"
+                echo 'export CIRCLE_OIDC_TOKEN="'"$CIRCLE_OIDC_TOKEN"'"' >> "$BASH_ENV"
+                echo 'export CIRCLE_OIDC_TOKEN_V2="'"$CIRCLE_OIDC_TOKEN_V2"'"' >> "$BASH_ENV"
+                TOKEN_SETUP_SUCCESS=true
+                source "$BASH_ENV"
+                break
+            fi
+            echo "Waiting 1 second before retry"
+            sleep 1
+        done
+
+        if [ "$TOKEN_SETUP_SUCCESS" = false ]; then
+            echo "Failed to set CIRCLE_OIDC_TOKEN and CIRCLE_OIDC_TOKEN_V2 after 3 attempts. Please try rerunning the worklow."
+            exit 1
+        fi
+    fi
+    OIDC_TOKEN="${CIRCLE_OIDC_TOKEN_V2}"
 fi
 
 if [ ! "$(command -v aws)" ]; then
@@ -57,7 +82,7 @@ read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN <<EOF
 $(aws sts assume-role-with-web-identity \
 --role-arn "${AWS_CLI_STR_ROLE_ARN}" \
 --role-session-name "${AWS_CLI_STR_ROLE_SESSION_NAME}" \
---web-identity-token "${CIRCLE_OIDC_TOKEN_V2}" \
+--web-identity-token "${OIDC_TOKEN}" \
 --duration-seconds "${AWS_CLI_INT_SESSION_DURATION}" \
 "$@" \
 --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \

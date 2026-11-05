@@ -1,0 +1,32 @@
+description: |
+  Setup the AWS CLI and configure with Web Identity using a V3 OIDC token.
+  V3 tokens include the checkout source, checkout ref, config source and config ref in the sub claim,
+  so the role's trust policy can require that both the checked-out code and the pipeline config come
+  from a protected branch, for example:
+  org:<ORG_ID>:project:<PROJECT_ID>:user:*:checkout-source:github.com/<ORG>/<REPO>:checkout-ref:refs/heads/main:config-source:github.com/<ORG>/<REPO>:config-ref:refs/heads/main
+  To migrate an existing role without downtime, allow both the V2 and V3 sub patterns in the trust policy,
+  switch oidc_token_version to v3, then remove the V2 pattern.
+  For more information, see the CircleCI OIDC docs: https://circleci.com/docs/guides/permissions-authentication/openid-connect-tokens/
+usage:
+  version: 2.1
+
+  orbs:
+    aws-cli: circleci/aws-cli@5.5
+
+  jobs:
+    aws-cli-example:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/setup:
+            profile_name: WEB IDENTITY PROFILE
+            role_arn: arn:aws:iam::123456789012:role/WEB-IDENTITY-ROLE
+            role_session_name: example-session
+            oidc_token_version: v3
+        - run: echo "Run your code here"
+
+  workflows:
+    aws-cli:
+      jobs:
+        - aws-cli-example:
+            context: aws

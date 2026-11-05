@@ -91,6 +91,16 @@ parameters:
     type: string
     default: "3600"
 
+  oidc_token_version:
+    description: |
+      OIDC token version used to assume role_arn. V3 adds the config source and config ref
+      to the sub claim, so the role's trust policy can require that both the checked-out code
+      and the pipeline config come from a protected branch. The role's trust policy must match
+      the V3 sub format.
+    type: enum
+    enum: ["v2", "v3"]
+    default: "v2"
+
   set_aws_env_vars:
     description: |
       Write AWS keys generated from OIDC to a temporary file.
@@ -151,6 +161,7 @@ steps:
               AWS_CLI_STR_PROFILE_NAME: <<parameters.profile_name>>
               AWS_CLI_STR_REGION: <<parameters.region>>
               AWS_CLI_BOOL_SET_AWS_ENV_VARS: <<parameters.set_aws_env_vars>>
+              AWS_CLI_STR_OIDC_TOKEN_VERSION: <<parameters.oidc_token_version>>
             command: <<include(scripts/assume_role_with_web_identity.sh)>>
   - run:
       name: Configure AWS Access Key ID
