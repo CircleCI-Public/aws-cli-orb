@@ -206,6 +206,50 @@ jobs:
           aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
       - run: |
           aws sts get-caller-identity
+  integration-test-web-identity-v3:
+    executor: docker-base
+    parameters:
+      role_arn:
+        type: string
+      mint_token:
+        description: Clear $CIRCLE_OIDC_TOKEN_V3 so the orb has to mint the V3 token itself.
+        type: boolean
+        default: false
+    steps:
+      - when:
+          condition: <<parameters.mint_token>>
+          steps:
+            - run:
+                name: Clear CIRCLE_OIDC_TOKEN_V3
+                command: echo 'export CIRCLE_OIDC_TOKEN_V3=""' >> "$BASH_ENV"
+      - aws-cli/setup:
+          role_arn: <<parameters.role_arn>>
+          oidc_token_version: v3
+      - run:
+          name: Web Identity Test - Logging into ECR
+          command: |
+            aws sts get-caller-identity
+            aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
+  integration-test-web-identity-v2-rejected:
+    executor: docker-base
+    parameters:
+      role_arn:
+        type: string
+    steps:
+      - aws-cli/install
+      - run:
+          name: Check the role rejects a V2 OIDC token
+          command: |
+            if output=$(aws sts assume-role-with-web-identity \
+              --region us-west-2 \
+              --role-arn "<<parameters.role_arn>>" \
+              --role-session-name "${CIRCLE_JOB}" \
+              --web-identity-token "${CIRCLE_OIDC_TOKEN_V2}" 2>&1); then
+              echo "Expected the role to reject a V2 OIDC token, but assume-role succeeded"
+              exit 1
+            fi
+            echo "${output}"
+            echo "${output}" | grep -q "AccessDenied"
 workflows:
   test-deploy:
     jobs:
@@ -331,6 +375,17 @@ workflows:
             - run:
                 name: Web Identity Test - Logging into ECR
                 command: aws ecr get-login-password --region us-west-2 --profile "OIDC-Tester" | docker login --username AWS --password-stdin 122211685980.dkr.ecr.us-west-2.amazonaws.com
+      - integration-test-web-identity-v3:
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_V3_TEST
+          context: [CPE-OIDC]
+      - integration-test-web-identity-v3:
+          name: integration-test-web-identity-v3-mint
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_V3_TEST
+          mint_token: true
+          context: [CPE-OIDC]
+      - integration-test-web-identity-v2-rejected:
+          role_arn: arn:aws:iam::122211685980:role/CPE_ECR_OIDC_V3_TEST
+          context: [CPE-OIDC]
       # Testing executors that do not AWS CLI pre-installed
       - integration-test-install:
           name: integration-test-install-<<matrix.executor>>
@@ -418,7 +473,7 @@ workflows:
           pub_type: production
           enable_pr_comment: true
           context: orb-publisher
-          requires: [orb-tools/pack, integration-test-static-credentials, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install, integration-test-multiple-setups, integration-test-multiple-setups-reverse]
+          requires: [orb-tools/pack, integration-test-static-credentials, test-install, test-install-version, test-install-override-version, integration-test-web-identity-with-profile, integration test web identity command with white spaces,integration-test-role-arn-config, test-install-override-version-with-latest, integration-test-skip-install-matched-version, integration-test-brew-install, integration-test-multiple-setups, integration-test-multiple-setups-reverse, integration-test-web-identity-v3, integration-test-web-identity-v3-mint, integration-test-web-identity-v2-rejected]
           filters: *release-filters
 executors:
   terraform:
