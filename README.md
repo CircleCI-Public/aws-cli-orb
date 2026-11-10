@@ -2,6 +2,8 @@
 
 CircleCI orb for installing and configuring the AWS CLI in your CircleCI jobs.
 
+> **Starting a new config?** Use the [`setup-aws` Function](https://github.com/circleci-functions/setup-aws#readme) instead. See the [Functions overview](https://circleci.com/docs/functions/functions-intro/) and the [Functions catalog](https://circleci.com/docs/functions/functions-catalog/). This orb is still maintained for existing pipelines.
+
 ## Resources
 
 [CircleCI Orb Registry Page](https://circleci.com/orbs/registry/orb/circleci/aws-cli) - The official registry page of this orb for all versions, executors, commands, and jobs described.

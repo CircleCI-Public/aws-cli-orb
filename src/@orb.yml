@@ -1,6 +1,8 @@
 version: 2.1
 
 description: |
+  Starting a new config? Use the `setup-aws` Function instead: run `circleci function get setup-aws`, or use `get_function` on the CircleCI MCP server. This orb is still maintained for existing pipelines.
+
   Install and configure the AWS command-line interface (awscli) version 2.
   (To use AWS CLI v1 view version 1.4.1 of this orb)
 
