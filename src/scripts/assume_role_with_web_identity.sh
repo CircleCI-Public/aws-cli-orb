@@ -15,6 +15,11 @@ AWS_CLI_BOOL_SET_AWS_ENV_VARS="$(echo "${AWS_CLI_BOOL_SET_AWS_ENV_VARS}" | circl
 AWS_CLI_STR_ROLE_SESSION_NAME=$(printf '%s' "${AWS_CLI_STR_ROLE_SESSION_NAME}" | tr -sC 'A-Za-z0-9=,.@_\-' '-')
 AWS_CLI_STR_ROLE_SESSION_NAME=$(echo "${AWS_CLI_STR_ROLE_SESSION_NAME}" | cut -c -64)
 
+if [ -z "${AWS_CLI_STR_ROLE_ARN}" ]; then
+    echo "Role ARN is not specified. Skipping assume role with web identity."
+    exit 0
+fi
+
 if [ -z "${AWS_CLI_STR_ROLE_SESSION_NAME}" ]; then
     echo "Role session name is required"
     exit 1
